@@ -16,11 +16,13 @@ class User {
         this.role = admin.role;
     }
 
+    // Validate email
     static validateEmail(email) {
         // Return true if email is valid
         return testRegex(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, email);
     }
 
+    //Create a new user
     static createNewAdmin(newAdmin, result) {
 
         try {
@@ -38,7 +40,8 @@ class User {
         }
     }
 
-    static selectAdmin(email, result) {
+    // Get user by email
+    static findOneByEmail(email, result) {
         const validatedEmail = this.validateEmail(email)
 
         if (validatedEmail) {
@@ -67,10 +70,84 @@ class User {
                 throw error;
             }
         } else {
-            result({kind: 'A valid email is required'}, null);
-            return
+            return result({kind: 'A valid email is required'}, null);
         }
 
+    }
+
+    //Get user by id
+    static findOneById(id, result) {
+
+        try {
+            connectDb.query(`SELECT * FROM users WHERE id = ?`, [id], (err, res) => {
+                if (err) {
+                    console.log('Found error: ', err);
+                    result(err, null);
+                    return;
+                }
+                
+                if (res.length) {
+                    result(null, res)
+                    return;
+                } else {
+                    result({kind: 'not_found'}, null)
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    // Get all users
+    static findAll(name, result) {
+
+        let query = "SELECT * FROM users";
+
+        if(name) {
+            query += ` WHERE staff_name LIKE '%${name}%'`;
+        }
+
+        try {
+            connectDb.query(query, (err, res) => {
+                if (err) {
+                    console.log('error: ', err);
+                    result(err, null);
+                    return 
+                } 
+
+                result(null, res);
+                return
+            })
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    // Delete user by id
+    static deleteOneById(id, result) {
+
+        try {
+            connectDb.query(`DELETE FROM users WHERE id = ?`, [id], (err, res) => {
+                if (err) {
+                    console.log('Found error: ', err);
+                    result(err, null);
+                    return;
+                }
+                
+                if (res.length) {
+                    console.log('Found user', res)
+                    result(null, res)
+                    return;
+                } else {
+                    result({kind: 'not_found'}, null)
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
     }
 }
 

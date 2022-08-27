@@ -29,8 +29,9 @@ const PORT = process.env.DEV_PORT;
 // Routes
 const apiPath = "/api";
 app.use(apiPath + "/", homeRoutes);
-app.use(apiPath + '/users', userRoutes);
 app.use(apiPath + '/auth', authRoutes)
+app.use(apiPath + '/users', userRoutes);
+
 // Use middlewares
 app.use(notFound);
 app.use(errorHandlerMiddleware)

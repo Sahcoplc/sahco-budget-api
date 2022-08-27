@@ -18,7 +18,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const { id, email } = decoded;
     
-      await User.selectAdmin(email, (err, user) => {
+      await User.findOneByEmail(email, (err, user) => {
         if (err && err.kind === 'not_found') {
           // throw new UnauthenticatedError("Not authorized to access this route");
           res.status(401).json({

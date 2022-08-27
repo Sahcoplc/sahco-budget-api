@@ -14,7 +14,7 @@ export const createUser = asyncWrapper(async (req, res) => {
 
     try {
         //Check for duplicates
-        await User.selectAdmin(staff_email, (err, user) => {
+        await User.findOneByEmail(staff_email, (err, user) => {
             if (!err && user.length) {
                 // throw new BadRequestError("An account with this email already exists");
                 res.status(400).json({
@@ -57,6 +57,101 @@ export const createUser = asyncWrapper(async (req, res) => {
 
         })
 
+    } catch (error) {
+        throw error;
+    }
+})
+
+export const getUser = asyncWrapper(async (req, res) => {
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const userId = req.params.id;
+
+    try {
+        await User.findOneById(userId, (err, user) => {
+            if(err && err.kind === 'not_found') {
+                // throw createCustomError(`No user with id: ${userId}`, 404);
+                res.status(404).json({
+                    message: `No user with id: ${userId}`,
+                    success: 0,
+                })
+            }
+
+            if (user) {
+
+                delete user[0].pass_word;
+
+                res.status(200).json({
+                    message: "User details",
+                    data: user,
+                    success: 1,
+                })
+            }
+        })
+    } catch (error) {
+        throw error;
+    }
+})
+
+export const getUsers = asyncWrapper(async (req, res) => {
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const name = req.query.staff_name;
+
+    try {
+        await User.findAll(name, (err, users) => {
+            if (err) {
+                throw createCustomError(`Some error occured while retrieving users.`, 500);
+            }
+
+            if (users) {
+                users.map(user => (
+                    delete user.pass_word
+                ))
+                res.status(200).json({
+                    message: "Users",
+                    data: users,
+                    success: 1,
+                })
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+})
+
+export const deleteUser = asyncWrapper(async (req, res) => {
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const userId = req.params.id;
+
+    try {
+        await User.deleteOneById(userId, (err, user) => {
+            if(err && err.kind === 'not_found') {
+                res.status(200).json({
+                    message: "User Deleted Successfully",
+                    data: user,
+                    success: 1,
+                });
+            }
+
+            if (user) {
+
+                delete user[0].pass_word;
+
+                res.status(404).json({
+                    message: `No user found with id: ${userId}`,
+                    data: user,
+                    success: 0,
+                });
+            }
+        })
     } catch (error) {
         throw error;
     }

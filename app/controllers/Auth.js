@@ -25,9 +25,12 @@ export const login = asyncWrapper(async (req, res) => {
     const { staff_email, pass_word } = req.body;
 
     try {
-        await User.selectAdmin(staff_email, (err, user) => {
+        await User.findOneByEmail(staff_email, (err, user) => {
             if (err && err.kind === 'not_found') {
-                throw new BadRequestError("User does not exist");
+                res.status(200).json({
+                    message: "User does not exist",
+                    success: 0,
+                });
             }
 
             if (err && err.kind === 'A valid email is required') {
@@ -53,4 +56,10 @@ export const login = asyncWrapper(async (req, res) => {
     } catch (error) {
         throw error;
     }
+})
+
+export const sendResetOtp =asyncWrapper(async (req, res) => {
+    const { staff_email } = req.body;
+
+    
 })
