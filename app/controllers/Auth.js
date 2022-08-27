@@ -81,14 +81,14 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                 const otpExpiresIn = addHoursToDate(new Date(), 1)
 
                 const newUpdate = {
-                    ...user,
+                    ...user[0],
                     otp,
                     otpExpiresIn
                 }
 
-                console.log(newUpdate)
+                // console.log(newUpdate)
 
-                User.updateOneByEmail(user.staff_email, newUpdate, (err, updatedUser) => {
+                User.updateOneByEmail(user[0].staff_email, newUpdate, (err, updatedUser) => {
                     if (err && err.kind === 'not_found') {
                         res.status(404).json({
                             message: "User does not exist",
@@ -96,6 +96,8 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                         });
                     }
 
+                    console.log(err)
+                    console.log(updatedUser)
                     // if (err && err.kind === 'A valid email is required') {
                     //     throw new BadRequestError("A valid email is required");
                     // }
@@ -116,7 +118,7 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                             data: {
                               id: updatedUser.id,
                               email: updatedUser.staff_email,
-                              otpId: user.otp,
+                              otpId: updatedUser.otp,
                             },
                             success: 1,
                         });

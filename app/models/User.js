@@ -156,7 +156,7 @@ class User {
 
         if (validatedEmail) {
             try {
-                connectDb.query(`UPDAT users SET staff_name = ?, department = ?, gender = ?, avatar = ?, staff_email = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.staff_email, user.otp, user.otpExpiresIn, email], (err, res) => {
+                connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, staff_email = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.staff_email, user.otp, user.otpExpiresIn, email], (err, res) => {
                     if (err) {
                         console.log('error: ', err);
                         result(err, null);
