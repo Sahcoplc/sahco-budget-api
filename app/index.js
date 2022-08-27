@@ -28,7 +28,7 @@ app.use(express.json());
 // Mail setup
 app.set("view engine", "hbs");
 const exphbs = create({
-  layoutsDir: __dirname + "views/layouts",
+  layoutsDir: __dirname + "views/layout",
   extname: "hbs",
   defaultLayout: "main",
   partialsDir: __dirname + "views/partials/",

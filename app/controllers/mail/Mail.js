@@ -40,7 +40,7 @@ mailTransport.verify((error, success) => {
 const handlebarOptions = {
   viewEngine: {
     partialsDir: path.resolve("./app/views/partials/"),
-    layoutsDir: path.resolve("./app/views/layouts/"),
+    layoutsDir: path.resolve("./app/views/layout/"),
     defaultLayout: "main",
     extname: ".hbs",
   },
