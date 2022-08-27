@@ -80,14 +80,49 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                 const otp = Math.floor(100000 + Math.random() * 900000)
                 const otpExpiresIn = addHoursToDate(new Date(), 1)
 
-                new Mail(user.staff_email).sendMail("FORGET_PASSWORD", {
-                    subject: "RESET PASSWORD",
-                    data: {
-                        name: user.staff_name,
-                        otp: otp,
-                        id: user.id,
-                    },
+                const newUpdate = {
+                    ...user,
+                    otp,
+                    otpExpiresIn
+                }
+
+                console.log(newUpdate)
+
+                User.updateOneByEmail(user.staff_email, newUpdate, (err, updatedUser) => {
+                    if (err && err.kind === 'not_found') {
+                        res.status(404).json({
+                            message: "User does not exist",
+                            success: 0,
+                        });
+                    }
+
+                    // if (err && err.kind === 'A valid email is required') {
+                    //     throw new BadRequestError("A valid email is required");
+                    // }
+
+                    if (updatedUser) {
+
+                        new Mail(updatedUser.staff_email).sendMail("FORGET_PASSWORD", {
+                            subject: "RESET PASSWORD",
+                            data: {
+                                name: updatedUser.staff_name,
+                                otp: otp,
+                                id: user.id,
+                            },
+                        })
+
+                        res.status(200).json({
+                            message: "OTP sent.",
+                            data: {
+                              id: updatedUser.id,
+                              email: updatedUser.staff_email,
+                              otpId: user.otp,
+                            },
+                            success: 1,
+                        });
+                    }
                 })
+
             }
         })
     } catch (error) {

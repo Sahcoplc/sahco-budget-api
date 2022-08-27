@@ -149,6 +149,41 @@ class User {
             throw error;
         }
     }
+
+    // Update user by email
+    static updateOneByEmail(email, user, result) {
+        const validatedEmail = this.validateEmail(email)
+
+        if (validatedEmail) {
+            try {
+                connectDb.query(`UPDAT users SET staff_name = ?, department = ?, gender = ?, avatar = ?, staff_email = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.staff_email, user.otp, user.otpExpiresIn, email], (err, res) => {
+                    if (err) {
+                        console.log('error: ', err);
+                        result(err, null);
+                        return 
+                        // throw new createCustomError(err.message, 500)
+                    } 
+                    
+                    if(res.affectedRows == 0) {
+                        //not found User with the id
+                        result({ kind: 'not_found'}, null);
+                        return;
+
+                    } else {
+                        console.log(`${res.affectedRows} updated user: `);
+                        // result(null, res);
+                        result(null, { email: email, ...user });
+                        return 
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        } else {
+            return result({kind: 'A valid email is required'}, null);
+        }
+    }
 }
 
 export default User;
