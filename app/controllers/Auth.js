@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { generateHashString } from "../utils/encrypt.js";
+import { addHoursToDate } from "../utils/dateFunctions.js";
 import { createCustomError } from "../utils/customError.js";
 import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
+import Mail from "./mail/Mail.js";
 
 
 const payload = (user) => {
@@ -27,7 +29,7 @@ export const login = asyncWrapper(async (req, res) => {
     try {
         await User.findOneByEmail(staff_email, (err, user) => {
             if (err && err.kind === 'not_found') {
-                res.status(200).json({
+                res.status(404).json({
                     message: "User does not exist",
                     success: 0,
                 });
@@ -61,5 +63,35 @@ export const login = asyncWrapper(async (req, res) => {
 export const sendResetOtp =asyncWrapper(async (req, res) => {
     const { staff_email } = req.body;
 
+    try {
+        await User.findOneByEmail(staff_email, (err, user) => {
+            if (err && err.kind === 'not_found') {
+                res.status(404).json({
+                    message: "User does not exist",
+                    success: 0,
+                });
+            }
+
+            if (err && err.kind === 'A valid email is required') {
+                throw new BadRequestError("A valid email is required");
+            }
+
+            if(user) {
+                const otp = Math.floor(100000 + Math.random() * 900000)
+                const otpExpiresIn = addHoursToDate(new Date(), 1)
+
+                new Mail(user.staff_email).sendMail("FORGET_PASSWORD", {
+                    subject: "RESET PASSWORD",
+                    data: {
+                        name: user.staff_name,
+                        otp: otp,
+                        id: user.id,
+                    },
+                })
+            }
+        })
+    } catch (error) {
+        throw error;
+    }
     
 })

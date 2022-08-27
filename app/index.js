@@ -4,6 +4,9 @@ dotenv.config('.');
 
 import morgan from "morgan";
 import cors from "cors";
+import path from "path";
+import { create } from "express-handlebars";
+import { __dirname } from "./__Globals.js";
 
 // Connect to DB
 import connectDb from "./db/connect.js";
@@ -21,6 +24,17 @@ const app = express();
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
+
+// Mail setup
+app.set("view engine", "hbs");
+const exphbs = create({
+  layoutsDir: __dirname + "views/layouts",
+  extname: "hbs",
+  defaultLayout: "main",
+  partialsDir: __dirname + "views/partials/",
+});
+app.engine("hbs", exphbs.engine);
+app.use(express.static(path.join(__dirname, "public")));
 
 const HOSTNAME = process.env.DEV_HOST;
 const PORT = process.env.DEV_PORT;
