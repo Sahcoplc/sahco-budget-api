@@ -13,9 +13,10 @@ class User {
         this.department = admin.department;
         this.gender = admin.gender;
         this.avatar = admin.avatar;
+        this.role = admin.role;
     }
 
-    validateEmail(email) {
+    static validateEmail(email) {
         // Return true if email is valid
         return testRegex(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, email);
     }
@@ -26,10 +27,9 @@ class User {
             connectDb.query('INSERT INTO users SET ? ', [newAdmin], (err, res) => {
                 if (err) {
                     console.log('error: ', err);
-                    result(err, null);
-                    throw createCustomError(`Something happened`, 500)
+                    return result(err, null);
+                    // throw createCustomError(`Something happened`, 500)
                 }
-                console.log('Registered Admin: ', { id: res.insertId, ...newAdmin });
                 return result(null, { id: res.insertId, ...newAdmin });
             })
         } catch (error) {
@@ -43,27 +43,34 @@ class User {
 
         if (validatedEmail) {
             try {
-                connectDb.query(`SELECT * FROM users WHERE email = ?`, [email], (err, res) => {
+                connectDb.query(`SELECT * FROM users WHERE staff_email = ?`, [email], (err, res) => {
                     if (err) {
                         console.log('error: ', err);
                         result(err, null);
-                        return;
-                    } else if (!res.length) {
-                        console.log(res.length, " Existing admin with same email");
-                        // return result({ kind: 'not_found' }, null);
-                        throw createCustomError(`User not found`, 404);
+                        return 
+                        // throw new createCustomError(err.message, 500)
+                    } 
+                    
+                    if (res.length === 0) {
+                        console.log(res.length, " Existing users with same email");
+                        result({ kind: 'not_found' }, null);
+                        return 
+                        // throw createCustomError(`User not found`, 404);
                     } else {
-                        console.log(`${res.length} Found admin: `, res);
-                        return result(null, res);
+                        console.log(`${res.length} Found user: `);
+                        result(null, res);
+                        return 
                     }
                 })
             } catch (error) {
                 console.log(error);
                 throw error;
             }
+        } else {
+            result({kind: 'A valid email is required'}, null);
+            return
         }
 
-        return result('A valid email is required')
     }
 }
 

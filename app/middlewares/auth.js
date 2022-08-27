@@ -8,23 +8,39 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new UnauthenticatedError("No token provided");
+
+  } else {
+
+    const token = authHeader.split(" ")[1];
+
+    if (token) {
+  
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { id, email } = decoded;
+    
+      await User.selectAdmin(email, (err, user) => {
+        if (err && err.kind === 'not_found') {
+          // throw new UnauthenticatedError("Not authorized to access this route");
+          res.status(401).json({
+            message: "Not authorized to access this route.",
+            success: 0,
+          });
+        }
+
+        if (user) {
+
+          req.user = {
+            id,
+            email,
+            role: user[0].role,
+          };
+        }
+    
+        return next();
+      });
+    }
   }
 
-  const token = authHeader.split(" ")[1];
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const { id, email } = decoded;
-
-  const user = await User.findOne({ _id: id });
-  if (!user)
-    throw new UnauthenticatedError("Not authorized to access this route");
-
-  req.user = {
-    id,
-    email,
-    role: user.role,
-  };
-  return next();
 });
 
 export default authMiddleware;

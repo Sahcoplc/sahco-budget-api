@@ -13,7 +13,9 @@ import notFound from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 
 // Import routes
-import homeRoutes from './routes/home.js'
+import homeRoutes from './routes/Home.js'
+import userRoutes from './routes/User.js'
+import authRoutes from './routes/Auth.js'
 
 const app = express();
 app.use(cors());
@@ -27,7 +29,8 @@ const PORT = process.env.DEV_PORT;
 // Routes
 const apiPath = "/api";
 app.use(apiPath + "/", homeRoutes);
-
+app.use(apiPath + '/users', userRoutes);
+app.use(apiPath + '/auth', authRoutes)
 // Use middlewares
 app.use(notFound);
 app.use(errorHandlerMiddleware)
