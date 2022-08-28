@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const mailTransport = nodemailer.createTransport({
-  service: "outlook",
+  service: "gmail",
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
@@ -42,7 +42,7 @@ class Mail {
   sendMail(type, data = {}) {
     const htmlData = MailFormat.format(type, data.data);
     const mailOptions = {
-      from: '"Skyway Aviation Handling Company Plc." <gbemi.kotoye@outlook.com>',
+      from: '"Skyway Aviation Handling Company Plc." <gkotoye@gmail.com>',
       to: this.email,
       subject: data.subject || `Skyway Aviation Handling Company Plc.`,
       template: "emailTemplate",

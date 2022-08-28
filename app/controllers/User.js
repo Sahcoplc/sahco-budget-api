@@ -117,7 +117,12 @@ export const getUsers = asyncWrapper(async (req, res) => {
       }
 
       if (users) {
-        users.map((user) => delete user.pass_word);
+        users.map((user) => {
+            delete user.pass_word;
+            delete user.otp;
+            delete user.otpVerificationId,
+            delete user.otpExpiresIn
+        });
         res.status(200).json({
           message: "Users",
           data: users,

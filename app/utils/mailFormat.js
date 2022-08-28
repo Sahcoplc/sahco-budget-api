@@ -28,11 +28,9 @@ class MailFormat {
     return {
       title: "Welcome to Skyway Aviation Handling Company Plc.",
       greeting: `Hello ${data.name}`,
-      mainMsg: `Our team is excited to have you and your company join us. 
+      mainMsg: `Our team is excited to have you and your department join us. 
         Your default password is Pass@${data.staff_id}. 
-        Kindly login and start change your default password. 
-        Also, verify your account by clicking the button below to avoid being disabled after 7 days. 
-        Lenders NG team is available 24/7 to support you.`,
+        Kindly login and start by changing your default password.`,
       // callToActionText: "Click link to Verify account",
       // callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
       signature: "Best Regards",
@@ -49,7 +47,7 @@ class MailFormat {
     return {
       title: "Contact us",
       greeting: `Hello ${data.name}`,
-      mainMsg: `Thanks for contacting Lenders NG customer service.  Your message has been logged as a issue. 
+      mainMsg: `Thanks for contacting Skyway Aviation Handling Co. customer service.  Your message has been logged as a issue. 
         Expect a reply from our customer service team within 24 hours.`,
       callToActionText: "",
       callToActionLink: "",
