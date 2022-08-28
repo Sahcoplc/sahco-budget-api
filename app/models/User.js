@@ -58,9 +58,7 @@ class User {
                         console.log(res.length, " Existing users with same email");
                         result({ kind: 'not_found' }, null);
                         return 
-                        // throw createCustomError(`User not found`, 404);
                     } else {
-                        console.log(`${res.length} Found user: `);
                         result(null, res);
                         return 
                     }
@@ -156,7 +154,7 @@ class User {
 
         if (validatedEmail) {
             try {
-                connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, staff_email = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.staff_email, user.otp, user.otpExpiresIn, email], (err, res) => {
+                connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.otp, user.otpExpiresIn, email], (err, res) => {
                     if (err) {
                         console.log('error: ', err);
                         result(err, null);
@@ -171,8 +169,7 @@ class User {
 
                     } else {
                         console.log(`${res.affectedRows} updated user: `);
-                        // result(null, res);
-                        result(null, { email: email, ...user });
+                        result(null, { ...user });
                         return 
                     }
                 })

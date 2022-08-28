@@ -10,14 +10,12 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-const cloudinaryStorage = (folderName) => {
-  return new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-      folder: folderName,
-    },
-  });
-};
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "/profiles",
+  },
+});
 
 export default cloudinaryStorage;
 

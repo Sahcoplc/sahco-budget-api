@@ -29,19 +29,19 @@ class MailFormat {
       title: "Welcome to Skyway Aviation Handling Company Plc.",
       greeting: `Hello ${data.name}`,
       mainMsg: `Our team is excited to have you and your company join us. 
-        Your default password is your FIRSTNAME.LASTNAME. 
+        Your default password is Pass@${data.staff_id}. 
         Kindly login and start change your default password. 
         Also, verify your account by clicking the button below to avoid being disabled after 7 days. 
         Lenders NG team is available 24/7 to support you.`,
-      callToActionText: "Click link to Verify account",
-      callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
+      // callToActionText: "Click link to Verify account",
+      // callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc.",
       headerImg: "",
-      finalRemarkMsg: `You have 1 hour to verify your account.
-      If the button above does not take you to email verification, click
-      the link below to continue.`,
-      finalRemarkLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
+      // finalRemarkMsg: `You have 1 hour to verify your account.
+      // If the button above does not take you to email verification, click
+      // the link below to continue.`,
+      // finalRemarkLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
     };
   }
 

@@ -5,24 +5,8 @@ import MailFormat from "../../utils/mailFormat.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-// const mailTransport = nodemailer.createTransport({
-//   name: "mail.groceryshoppa.com",
-//   host: "mail.groceryshoppa.com",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: process.env.MAIL_USER,
-//     pass: process.env.MAIL_PASS,
-//   },
-//   tls: {
-//     rejectUnauthorized: true,
-//   },
-//   logger: true,
-//   debug: false,
-// });
-
 const mailTransport = nodemailer.createTransport({
-  service: "gmail",
+  service: "outlook",
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
@@ -58,7 +42,7 @@ class Mail {
   sendMail(type, data = {}) {
     const htmlData = MailFormat.format(type, data.data);
     const mailOptions = {
-      from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com>',
+      from: '"Skyway Aviation Handling Company Plc." <gbemi.kotoye@outlook.com>',
       to: this.email,
       subject: data.subject || `Skyway Aviation Handling Company Plc.`,
       template: "emailTemplate",

@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import { generateHashString } from "../utils/encrypt.js";
+// import { generateHashString } from "../utils/encrypt.js";
 import { addHoursToDate } from "../utils/dateFunctions.js";
-import { createCustomError } from "../utils/customError.js";
+// import { createCustomError } from "../utils/customError.js";
 import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
@@ -40,19 +40,34 @@ export const login = asyncWrapper(async (req, res) => {
             }
 
             if (user) {
-                const isPassword = comparePassword(pass_word, user[0].pass_word)
+                const password = comparePassword(pass_word, user[0].pass_word)
     
-                if (!isPassword) {
-                    throw new BadRequestError("Invalid credentials");
-                }
+                password.then(isPassword => {
+
+                    console.log(isPassword)
+                    if (!isPassword) {
+
+                        res.status(400).json({
+                            message: "Invalid credentials",
+                            success: 0,
+                        });
+
+                    } else {
+
+                        const data = payload(user[0]);
+            
+                        delete data.user.otp;
+                        delete data.user.otpExpiresIn;
+        
+                        res.status(200).json({
+                            message: "Login Successful",
+                            data: data,
+                            success: 1,
+                        });
+                    }
+
+                })
     
-                const data = payload(user[0]);
-    
-                res.status(200).json({
-                    message: "Login Successful",
-                    data: data,
-                    success: 1,
-                });
             }
         }) 
     } catch (error) {
@@ -86,8 +101,6 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                     otpExpiresIn
                 }
 
-                // console.log(newUpdate)
-
                 User.updateOneByEmail(user[0].staff_email, newUpdate, (err, updatedUser) => {
                     if (err && err.kind === 'not_found') {
                         res.status(404).json({
@@ -96,8 +109,6 @@ export const sendResetOtp =asyncWrapper(async (req, res) => {
                         });
                     }
 
-                    console.log(err)
-                    console.log(updatedUser)
                     // if (err && err.kind === 'A valid email is required') {
                     //     throw new BadRequestError("A valid email is required");
                     // }
