@@ -25,7 +25,7 @@ app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
 
-// Mail setup
+// Handlebars setup
 app.set("view engine", "hbs");
 const exphbs = create({
   layoutsDir: __dirname + "views/layout",
@@ -34,7 +34,7 @@ const exphbs = create({
   partialsDir: __dirname + "views/partials/",
 });
 app.engine("hbs", exphbs.engine);
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/public")));
 
 const HOSTNAME = process.env.DEV_HOST;
 const PORT = process.env.DEV_PORT;

@@ -6,10 +6,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const mailTransport = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.PROD_MAIL_HOST,
+  port: process.env.PROD_MAIL_PORT,
+  secure: true,
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
+    user: process.env.PROD_MAIL_USER,
+    pass: process.env.PROD_MAIL_PASS,
   },
 });
 
@@ -42,7 +44,7 @@ class Mail {
   sendMail(type, data = {}) {
     const htmlData = MailFormat.format(type, data.data);
     const mailOptions = {
-      from: '"Skyway Aviation Handling Company Plc." <gkotoye@gmail.com>',
+      from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com.ng>',
       to: this.email,
       subject: data.subject || `Skyway Aviation Handling Company Plc.`,
       template: "emailTemplate",

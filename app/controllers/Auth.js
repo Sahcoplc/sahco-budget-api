@@ -120,11 +120,10 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
               });
 
               res.status(200).json({
-                message: "OTP sent.",
+                message: "OTP Sent Successfully.",
                 data: {
                   id: updatedUser.id,
                   email: updatedUser.staff_email,
-                  otpId: updatedUser.otp,
                 },
                 success: 1,
               });
@@ -152,8 +151,6 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
             });
         }
 
-        console.log(user);
-
         if(user && user[0].otp !== otp) {
 
             res.status(400).json({
@@ -177,7 +174,6 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
                 ...user[0],
                 pass_word,
                 otp: 0,
-                otpVerificationId: 0,
                 otpExpiresIn: addHoursToDate(new Date(), 0.5),
             };
 
