@@ -70,7 +70,7 @@ class Mail {
     // eslint-disable-next-line no-console
     mailTransport.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.log(error);
+        console.log("Mail - ", error);
       }
       console.log("Message sent: ");
       mailTransport.close();
