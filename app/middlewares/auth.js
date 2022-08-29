@@ -19,7 +19,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const { id, email } = decoded;
     
       await User.findOneByEmail(email, (err, user) => {
-        if (err && err.kind === 'not_found') {
+        if (err && err.code === 404) {
           // throw new UnauthenticatedError("Not authorized to access this route");
           res.status(401).json({
             message: "Not authorized to access this route.",

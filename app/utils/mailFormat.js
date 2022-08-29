@@ -111,7 +111,7 @@ class MailFormat {
   }
 
   static default(type, data) {
-    throw createCustomError(`Email template not found.`, 404);
+    throw new createCustomError(`Email template not found.`, 404);
   }
 }
 

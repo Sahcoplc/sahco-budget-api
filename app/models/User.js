@@ -1,11 +1,9 @@
 import connectDb from "../db/connect.js";
 import { testRegex } from "../utils/regexFunctions.js";
-import { createCustomError } from '../utils/customError.js'
 
 //constructor
 class User {
     constructor(admin) {
-        console.log("the constructor: ", admin);
         this.staff_name = admin.staff_name;
         this.staff_email = admin.staff_email;
         this.pass_word = admin.pass_word;
@@ -24,7 +22,6 @@ class User {
 
     //Create a new user
     static createNewAdmin(newAdmin, result) {
-
         try {
             connectDb.query('INSERT INTO users SET ? ', [newAdmin], (err, res) => {
                 if (err) {
@@ -49,18 +46,15 @@ class User {
                 connectDb.query(`SELECT * FROM users WHERE staff_email = ?`, [email], (err, res) => {
                     if (err) {
                         console.log('error: ', err);
-                        result(err, null);
-                        return 
-                        // throw new createCustomError(err.message, 500)
+                        return result(err, null);
                     } 
                     
                     if (res.length === 0) {
                         console.log(res.length, " Existing users with same email");
-                        result({ kind: 'not_found' }, null);
-                        return 
+                        return result({code: 404}, null);
+                         
                     } else {
-                        result(null, res);
-                        return 
+                        return result(null, res);
                     }
                 })
             } catch (error) {
@@ -68,7 +62,7 @@ class User {
                 throw error;
             }
         } else {
-            return result({kind: 'A valid email is required'}, null);
+            return result({code: 400}, null);
         }
 
     }
@@ -85,10 +79,9 @@ class User {
                 }
                 
                 if (res.length) {
-                    result(null, res)
-                    return;
+                    return result(null, res)
                 } else {
-                    result({kind: 'not_found'}, null)
+                    return result({code: 404}, null)
                 }
             })
         } catch (error) {
@@ -134,12 +127,12 @@ class User {
                     return;
                 }
                 
-                if (res.length) {
+                if (res.affectedRows > 0) {
                     console.log('Found user', res)
                     result(null, res)
                     return;
                 } else {
-                    result({kind: 'not_found'}, null)
+                    return result({code: 404}, null)
                 }
             })
         } catch (error) {
@@ -164,7 +157,7 @@ class User {
                     
                     if(res.affectedRows == 0) {
                         //not found User with the id
-                        result({ kind: 'not_found'}, null);
+                        result({code: 404}, null);
                         return;
 
                     } else {
@@ -178,7 +171,7 @@ class User {
                 throw error;
             }
         } else {
-            return result({kind: 'A valid email is required'}, null);
+            return result({code: 400}, null);
         }
     }
 }

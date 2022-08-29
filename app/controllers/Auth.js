@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 // import { generateHashString } from "../utils/encrypt.js";
 import { addHoursToDate } from "../utils/dateFunctions.js";
-// import { createCustomError } from "../utils/customError.js";
+// import NotFound from "../utils/customError.js";
 import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
@@ -27,14 +27,15 @@ export const login = asyncWrapper(async (req, res) => {
 
   try {
     await User.findOneByEmail(staff_email, (err, user) => {
-      if (err && err.kind === "not_found") {
+      if (err && err.code === 404) {
         res.status(404).json({
           message: "User does not exist",
           success: 0,
         });
+        // throw new NotFound("User does not exist")
       }
 
-      if (err && err.kind === "A valid email is required") {
+      if (err && err.code === 400) {
         throw new BadRequestError("A valid email is required");
       }
 
@@ -64,6 +65,7 @@ export const login = asyncWrapper(async (req, res) => {
       }
     });
   } catch (error) {
+    console.log(error)
     throw error;
   }
 });
@@ -73,14 +75,14 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
 
   try {
     await User.findOneByEmail(staff_email, (err, user) => {
-      if (err && err.kind === "not_found") {
+      if (err && err.code === 404) {
         res.status(404).json({
           message: "User does not exist",
           success: 0,
         });
       }
 
-      if (err && err.kind === "A valid email is required") {
+      if (err && err.code === 400) {
         throw new BadRequestError("A valid email is required");
       }
 
@@ -96,7 +98,7 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
 
         User.updateOneByEmail(user[0].staff_email, newUpdate, (err, updatedUser) => {
 
-            if (err && err.kind === "not_found") {
+            if (err && err.code === 404) {
 
               res.status(404).json({
                 message: "User does not exist",
@@ -143,7 +145,7 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
   try {
     await User.findOneById(id, (err, user) => {
 
-        if (err && err.kind === "not_found") {
+        if (err && err.code === 404) {
             // throw createCustomError(`No user with id: ${userId}`, 404);
             res.status(404).json({
                 message: `No user with id: ${id}`,
@@ -180,7 +182,7 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
 
             User.updateOneByEmail(user[0].staff_email, updatedUser, (err, newUser) => {
               
-                if (err && err.kind === "not_found") {
+                if (err && err.code === 404) {
                     res.status(404).json({
                         message: "User does not exist",
                         success: 0,
@@ -189,7 +191,8 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
     
                 if (newUser) {
                     delete newUser.pass_word;
-    
+                    delete newUser.otp;
+                    
                     res.status(200).json({
                         message: "Password Updated Successfully",
                         data: newUser,
