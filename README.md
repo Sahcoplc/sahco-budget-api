@@ -8,4 +8,4 @@ This app is deployed in Heroku for test purpose here [https://sahco-budget-api.h
 
 ## API Documentation
 
-The API documentation is available here: [https://documenter.getpostman.com/view/9818036/UzQvs4aH ](https://documenter.getpostman.com/view/9818036/UzQvs4aH).
+The API documentation is available here: [https://documenter.getpostman.com/view/17957065/VUxLwTu4 ](https://documenter.getpostman.com/view/17957065/VUxLwTu4).

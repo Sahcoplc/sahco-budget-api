@@ -190,7 +190,7 @@ export const deleteUser = asyncWrapper(async (req, res) => {
   try {
     await User.deleteOneById(userId, (err, user) => {
       if (err && err.code === 404) {
-        res.status(200).json({
+        res.status(404).json({
           message: `No user found with id: ${userId}`,
           success: 0,
         });
@@ -198,7 +198,7 @@ export const deleteUser = asyncWrapper(async (req, res) => {
 
       if (user) {
 
-        res.status(404).json({
+        res.status(200).json({
           message: 'User Deleted Successfully',
           success: 1,
         });

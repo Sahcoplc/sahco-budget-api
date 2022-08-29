@@ -197,6 +197,9 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
                 if (newUser) {
                     delete newUser.pass_word;
                     delete newUser.otp;
+                    delete newUser.otpExpiresIn;
+                    delete newUser.otpVerificationId
+
                     
                     res.status(200).json({
                         message: "Password Updated Successfully",
