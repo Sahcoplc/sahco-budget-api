@@ -11,7 +11,11 @@ export const createUser = asyncWrapper(async (req, res) => {
     throw new UnauthenticatedError("Not authorized to access this route");
   }
 
-  const { staff_email, pass_word } = req.body;
+  const { staff_email, pass_word, role } = req.body;
+
+  if (!role) {
+    throw new BadRequestError("User role is required")
+  }
 
   try {
     //Check for duplicates
@@ -29,7 +33,7 @@ export const createUser = asyncWrapper(async (req, res) => {
         });
       }
 
-      if (err && err.code === 400) {
+      if (err && err.code === 404) {
         const hashed = generateHashString(pass_word);
 
         hashed.then((hashedPassword) => {

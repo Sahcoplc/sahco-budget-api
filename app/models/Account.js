@@ -24,16 +24,38 @@ class Account {
         }
     }
 
+    static findOne(account_type, result) {
+
+        try {
+            connectDb.query(`SELECT * FROM account WHERE account_type = ?`, [account_type], (err, res) => {
+                if (err) {
+                    console.log('error: ', err);
+                    return result(err, null);
+                } 
+
+                if (res.length === 0) {
+                    console.log(res.length, " Existing accounts");
+                    return result({code: 404}, null);
+                     
+                } else {
+                    return result(null, res);
+                }
+            })
+        } catch (error) {
+            throw error
+        }
+    }
+
     //Get all account
     static findAll(account_category, result) {
         let query = "SELECT * FROM account";
 
         if(account_category) {
-            query += ` WHERE account_category = ?`;
+            query += ` WHERE account_category LIKE '%${account_category}%'`;
         }
 
         try {
-            connectDb.query(query, [account_category], (err, res) => {
+            connectDb.query(query, (err, res) => {
                 if (err) {
                     console.log('error: ', err);
                     return result(err, null);
@@ -52,3 +74,5 @@ class Account {
         }
     }
 }
+
+export default Account;
