@@ -7,6 +7,7 @@ import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
 import Mail from "./mail/Mail.js";
+import { generateHashString } from "../utils/encrypt.js";
 
 const payload = (user) => {
   const token = jwt.sign(
@@ -171,10 +172,14 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
             // throw new BadRequestError("OTP expired");
 
         } else {
+          
+          const hashed = generateHashString(pass_word);
+
+          hashed.then((hashedPassword) => {
 
             const updatedUser = {
                 ...user[0],
-                pass_word,
+                pass_word: hashedPassword,
                 otp: 0,
                 otpExpiresIn: addHoursToDate(new Date(), 0.5),
             };
@@ -192,6 +197,9 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
                 if (newUser) {
                     delete newUser.pass_word;
                     delete newUser.otp;
+                    delete newUser.otpExpiresIn;
+                    delete newUser.otpVerificationId
+
                     
                     res.status(200).json({
                         message: "Password Updated Successfully",
@@ -200,8 +208,8 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
                     });
                 }
             });
+          })
         }
-
     });
   } catch (error) {
     throw error;
