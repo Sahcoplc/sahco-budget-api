@@ -1,0 +1,34 @@
+
+     <div class="container" id="main">
+        {{#if headerImg}}<img src={{headerImg}} alt="header"/>{{/if}}
+        <h4>{{greeting}},</h4>
+        <div class="container content">
+          <p>
+            {{mainMsg}}
+          </p>
+          {{#if callToActionText}} <a href="#{{callToActionLink}}" id="call-to-action" style="color: #ffffff;">{{callToActionText}}</a>{{/if}}
+        </div>
+        <div class="container final-remarks">
+         {{#if finalRemarkMsg}} <p>
+            {{finalRemarkMsg}}
+             {{#if finalRemarkLink}} <a href="#{{finalRemarkLink}}" style="color: #559155;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;">#{{finalRemarkLink}}</a> {{/if}}
+          </p>{{/if}}
+        </div>
+        <div class="container closing-signature">
+          <span>{{signature}}</span>
+          <span>{{senderName}}</span>
+        </div>
+        <div class="container main-footer">
+          <p>
+            <strong>Have questions? We have answers.</strong><br />
+            If you have any questions, browse our <a href="/">FAQs</a>. If you still need
+            assistance, submit a request via our support page.
+          </p>
+        </div>
+      </div>
+      {{>footer}}
+    </div>
+  
