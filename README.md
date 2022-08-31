@@ -4,7 +4,7 @@ This repository serve as the API for SAHCO Plc budget application. The main purp
 
 ## Staging deployment
 
-This app is deployed in Heroku for test purpose here [https://sahco-budget.onrender.com](https://sahco-budget.onrender.com).
+This app is deployed in Heroku for test purpose here [https://sahco-budget-nlro.onrender.com](https://sahco-budget-nlro.onrender.com).
 
 ## API Documentation
 
