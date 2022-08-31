@@ -6,20 +6,20 @@ import morgan from "morgan";
 import cors from "cors";
 import path from "path";
 import { create } from "express-handlebars";
-import { __dirname } from "./app/__Globals.js";
+import { __dirname } from "./__Globals.js";
 
 // Connect to DB
-import connectDb from "./app/db/connect.js";
+import connectDb from "./db/connect.js";
 
 // Middlewares
-import notFound from "./app/middlewares/notFound.js";
-import errorHandlerMiddleware from "./app/middlewares/errorHandler.js";
+import notFound from "./middlewares/notFound.js";
+import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 
 // Import routes
-import homeRoutes from './app/routes/Home.js'
-import userRoutes from './app/routes/User.js'
-import authRoutes from './app/routes/Auth.js'
-import accountRoutes from './app/routes/Account.js'
+import homeRoutes from './routes/Home.js'
+import userRoutes from './routes/User.js'
+import authRoutes from './routes/Auth.js'
+import accountRoutes from './routes/Account.js'
 
 const app = express();
 app.use(cors());
