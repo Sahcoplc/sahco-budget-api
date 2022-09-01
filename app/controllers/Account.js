@@ -27,7 +27,9 @@ export const createAccount = asyncWrapper(async (req, res) => {
             }
 
             if (err && err.code === 404) {
-                Account.createNewAccount(req.body, (err, newAcc) => {
+                const newAcc = new Account(req.body)
+                
+                Account.createNewAccount(newAcc, (err, newAcc) => {
                     if (err) {
                         throw err;
                     }
@@ -68,6 +70,53 @@ export const getAccount = asyncWrapper(async (req, res) => {
                     message: "Budget Account Details.",
                     data: acc,
                     success: 1
+                })
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+})
+
+export const updateAccount = asyncWrapper(async (req, res) => {
+
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const { account_category } = req.body;
+
+    if(!account_category) {
+        throw new BadRequestError("Account fields are required");
+    }
+
+    try {
+        await Account.findOneByCategory(account_category, (err, acc) => {
+            if (err && err.code === 404) {
+                // throw createCustomError(`No user with id: ${userId}`, 404);
+                res.status(404).json({
+                  message: `No account with category: ${account_category}`,
+                  success: 0,
+                });
+            }
+
+            if (acc) {
+                Account.updateByCategory(account_category, req.body, (err, newUpdate) => {
+                    if (err && err.code === 404) {
+                        res.status(404).json({
+                          message: "Account does not exist",
+                          success: 0,
+                        });
+                    }
+
+                    if (newUpdate) {
+                        console.log(newUpdate)
+                        res.status(200).json({
+                            message: "Account updated successfully.",
+                            data: newUpdate,
+                            success: 1
+                        })
+                    }
                 })
             }
         })

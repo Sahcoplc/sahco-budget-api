@@ -20,6 +20,7 @@ import homeRoutes from './routes/Home.js'
 import userRoutes from './routes/User.js'
 import authRoutes from './routes/Auth.js'
 import accountRoutes from './routes/Account.js'
+import budgetRoutes from './routes/Budget.js'
 
 const app = express();
 app.use(cors());
@@ -47,6 +48,8 @@ app.use(apiPath + "/", homeRoutes);
 app.use(apiPath + '/auth', authRoutes)
 app.use(apiPath + '/users', userRoutes);
 app.use(apiPath + '/account', accountRoutes);
+app.use(apiPath + '/budget', budgetRoutes);
+
 
 // Use middlewares
 app.use(notFound);
