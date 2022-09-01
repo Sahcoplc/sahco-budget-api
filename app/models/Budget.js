@@ -27,7 +27,6 @@ class Budget {
         try {
             connectDb.query('INSERT INTO budget SET ? ', [newBudget], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                     // throw createCustomError(`Something happened`, 500)
                 }
@@ -45,16 +44,13 @@ class Budget {
         try {
             connectDb.query(`SELECT * FROM budget WHERE id = ?`, [id], (err, res) => {
                 if (err) {
-                    console.log('Found error: ', err);
                     result(err, null);
                     return;
                 }
                 
                 if (res.length) {
-                    console.log('Found res: ', res)
                     return result(null, res)
                 } else {
-                    console.log("No found: ", res)
                     return result({code: 404}, null)
                 }
             })
@@ -70,7 +66,6 @@ class Budget {
         try {
             connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ? ORDER BY budget.created_time DESC`, [department], (err, res) => {
                 if (err) {
-                    console.log('Found error: ', err);
                     result(err, null);
                     return;
                 }
@@ -93,7 +88,7 @@ class Budget {
         try {
             connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ? AND account.account_type = ? ORDER BY budget.created_time DESC`, [department, account_type], (err, res) => {
                 if (err) {
-                    console.log('Found error: ', err);
+                    
                     result(err, null);
                     return;
                 }
@@ -116,7 +111,7 @@ class Budget {
         try {
             connectDb.query(`SELECT account.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId GROUP BY account.account_type`, (err, res) => {
                 if (err) {
-                    console.log('Found error: ', err);
+                    
                     result(err, null);
                     return;
                 }
@@ -137,7 +132,7 @@ class Budget {
         try {
             connectDb.query(`UPDATE budget SET january = ?, february = ?, march = ?, april = ?, may = ?, june = ?, july = ?, august = ?, sept = ?, october = ?, nov = ?, december = ?, estimated_budget = ?, actual_budget = ? WHERE id = ?`, [budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, id], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
+                    
                     result(err, null);
                     return 
                     // throw new createCustomError(err.message, 500)
@@ -149,7 +144,6 @@ class Budget {
                     return;
 
                 } else {
-                    console.log(`${res.affectedRows} updated budget: `);
                     result(null, { ...budget });
                     return 
                 }
@@ -165,7 +159,6 @@ class Budget {
         try {
             connectDb.query(`UPDATE budget SET status = ? WHERE id = ?`, [status, id], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     result(err, null);
                     return 
                     // throw new createCustomError(err.message, 500)
@@ -177,13 +170,11 @@ class Budget {
                     return;
 
                 } else {
-                    console.log(`${res.affectedRows} updated budget: `);
                     result(null, { status });
                     return 
                 }
             })
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -194,14 +185,12 @@ class Budget {
             connectDb.query(`DELETE FROM budget WHERE id = ?`, [id], (err, res) => {
                 if (err) {
                     console.log('Found error: ', err);
-                    result(err, null);
-                    return;
+                    return result(err, null);
+                
                 }
                 
                 if (res.affectedRows > 0) {
-                    console.log('Found deleted', res)
-                    result(null, res)
-                    return;
+                    return result(null, res)
                 } else {
                     return result({code: 404}, null)
                 }

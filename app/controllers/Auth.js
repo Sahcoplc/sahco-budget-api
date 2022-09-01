@@ -44,7 +44,6 @@ export const login = asyncWrapper(async (req, res) => {
         const password = comparePassword(pass_word, user[0].pass_word);
 
         password.then((isPassword) => {
-          console.log(isPassword);
           if (!isPassword) {
             res.status(400).json({
               message: "Invalid credentials",
@@ -66,7 +65,7 @@ export const login = asyncWrapper(async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(error)
+
     throw error;
   }
 });

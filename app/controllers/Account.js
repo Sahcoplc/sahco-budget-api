@@ -35,7 +35,6 @@ export const createAccount = asyncWrapper(async (req, res) => {
                     }
 
                     if (newAcc) {
-                        console.log(newAcc)
 
                         res.status(200).json({
                             message: "Account Creation Successful.",
@@ -110,7 +109,6 @@ export const updateAccount = asyncWrapper(async (req, res) => {
                     }
 
                     if (newUpdate) {
-                        console.log(newUpdate)
                         res.status(200).json({
                             message: "Account updated successfully.",
                             data: newUpdate,

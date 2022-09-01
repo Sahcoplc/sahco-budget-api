@@ -151,8 +151,7 @@ export const updateBudget = asyncWrapper(async (req, res) => {
                   success: 0,
                 });
             }
-            console.log('Budget to be updated: ', budget)
-            
+
             if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
 
                 res.status(400).json({
@@ -194,7 +193,7 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
                 });
             }
 
-            if(budget != null && budget.status === "APPROVED" || budget != null && budget.status === 'SUSPENDED') {
+            if(budget != null && budget[0].status === "APPROVED" || budget != null && budget[0].status === 'SUSPENDED') {
                 
                 throw new UnauthenticatedError("Not authorized to access this route");
 

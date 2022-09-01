@@ -14,14 +14,12 @@ class Account {
         try {
             connectDb.query('INSERT INTO account SET ? ', [newAccount], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                     // throw createCustomError(`Something happened`, 500)
                 }
                 return result(null, { id: res.insertId, ...newAccount });
             })
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -32,12 +30,10 @@ class Account {
         try {
             connectDb.query(`SELECT * FROM account WHERE account_type = ?`, [account_type], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                 } 
 
                 if (res.length === 0) {
-                    console.log(res.length, " Existing accounts");
                     return result({code: 404}, null);
                      
                 } else {
@@ -55,12 +51,10 @@ class Account {
         try {
             connectDb.query(`SELECT * FROM account WHERE account_category = ?`, [account_category], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                 } 
 
                 if (res.length === 0) {
-                    console.log(res.length, " Existing accounts");
                     return result({code: 404}, null);
                      
                 } else {
@@ -83,7 +77,6 @@ class Account {
         try {
             connectDb.query(query, (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                     // throw createCustomError(`Something happened`, 500)
                 }
@@ -106,7 +99,6 @@ class Account {
         try {
             connectDb.query(`UPDATE account SET start_date = ?, end_date = ? WHERE account_category = ?`, [status.start_date, status.end_date, account_category], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     return result(err, null);
                     // throw new createCustomError(err.message, 500)
                 } 
@@ -117,7 +109,6 @@ class Account {
                     return;
 
                 } else {
-                    console.log(`${res.affectedRows} updated accounts: `);
                     result(null, { ...status });
                     return 
                 }
