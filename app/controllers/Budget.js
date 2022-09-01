@@ -151,10 +151,14 @@ export const updateBudget = asyncWrapper(async (req, res) => {
                   success: 0,
                 });
             }
+            console.log('Budget to be updated: ', budget)
+            
+            if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
 
-            if(budget && budget.status === 'APPROVED' || budget && budget.status === 'SUSPENDED') {
-
-                throw new BadRequestError('Approved or suspended budget cannot be updated')
+                res.status(400).json({
+                    message: `Approved or suspended budget cannot be updated`,
+                    success: 0,
+                });
 
             } else {
                 Budget.updateById(id, data, (err, updates) => {
@@ -218,13 +222,13 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
 export const getAllBudget = asyncWrapper(async (req, res) => {
 
     const { account_type } = req.body;
-    
+
     if(!account_type) {
         throw new BadRequestError('No account type provided')
     }
 
     try {
-        await Budget.findAll(account_type, (err, budget) => {
+        await Budget.findAll((err, budget) => {
             if(err && err.code === 404) {
 
                 res.status(404).json({
@@ -239,6 +243,52 @@ export const getAllBudget = asyncWrapper(async (req, res) => {
                     message: "All budgets",
                     data: budget,
                     success: 1
+                })
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+})
+
+export const updateStatus = asyncWrapper(async (req, res) => {
+
+    if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const { id } = req.params;
+
+    const { status } = req.body;
+
+    if (!status || !id) {
+        throw new BadRequestError('No status provided')
+    }
+
+    try {
+        await Budget.findById(id, (err, budget) => {
+            if (err && err.code === 404) {
+                // throw createCustomError(`No user with id: ${userId}`, 404);
+                res.status(404).json({
+                  message: `No budget with id: ${id}`,
+                  success: 0,
+                });
+            }
+
+            if (budget) {
+                Budget.updateByStatus(id, status, (err, updates) => {
+                    if(err) {
+                        throw err
+                    }
+
+                    if(updates) {
+                        res.status(200).json({
+                            message: "Budget Status Updated Successfully",
+                            data: updates,
+                            success: 1
+                        })
+                    }
                 })
             }
         })
