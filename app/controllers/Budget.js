@@ -152,7 +152,11 @@ export const updateBudget = asyncWrapper(async (req, res) => {
                 });
             }
 
-            if(budget) {
+            if(budget && budget.status === 'APPROVED' || budget && budget.status === 'SUSPENDED') {
+
+                throw new BadRequestError('Approved or suspended budget cannot be updated')
+
+            } else {
                 Budget.updateById(id, data, (err, updates) => {
                     if(err) {
                         throw err
@@ -170,5 +174,75 @@ export const updateBudget = asyncWrapper(async (req, res) => {
         })
     } catch (error) {
         throw error;
+    }
+})
+
+export const deleteBudget = asyncWrapper(async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+        await Budget.findById(id, (err, budget) => {
+            if(err && err.code === 404) {
+                res.status(404).json({
+                    message: `No budget with id: ${id}`,
+                    success: 0,
+                });
+            }
+
+            if(budget != null && budget.status === "APPROVED" || budget != null && budget.status === 'SUSPENDED') {
+                
+                throw new UnauthenticatedError("Not authorized to access this route");
+
+            } else {
+                Budget.deleteById(id, (err, deleted) => {
+                    if (err && err.code === 404) {
+                        console.log(err)
+                    }
+
+                    if (deleted) {
+
+                        res.status(200).json({
+                            message: "Budget deleted Successfully",
+                            success: 1
+                        })
+                    }
+                })
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+})
+
+export const getAllBudget = asyncWrapper(async (req, res) => {
+
+    const { account_type } = req.body;
+    
+    if(!account_type) {
+        throw new BadRequestError('No account type provided')
+    }
+
+    try {
+        await Budget.findAll(account_type, (err, budget) => {
+            if(err && err.code === 404) {
+
+                res.status(404).json({
+                    message: `No budget records with account type: ${account_type}`,
+                    success: 0,
+                });
+            }
+
+            if(budget) {
+
+                res.status(200).json({
+                    message: "All budgets",
+                    data: budget,
+                    success: 1
+                })
+            }
+        })
+    } catch (error) {
+        throw error
     }
 })

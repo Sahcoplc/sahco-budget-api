@@ -51,8 +51,10 @@ class Budget {
                 }
                 
                 if (res.length) {
+                    console.log('Found res: ', res)
                     return result(null, res)
                 } else {
+                    console.log("No found: ", res)
                     return result({code: 404}, null)
                 }
             })
@@ -108,6 +110,27 @@ class Budget {
         }
     }
 
+    //Find all Budget
+    static findAll(account_type, result) {
+
+        try {
+            connectDb.query(`SELECT account.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE account.account_type = ?`, [account_type], (err, res) => {
+                if (err) {
+                    console.log('Found error: ', err);
+                    result(err, null);
+                    return;
+                }
+                
+                if (res.length) {
+                    return result(null, res)
+                } else {
+                    return result({code: 404}, null)
+                }
+            })
+        } catch (error) {
+            throw error
+        }
+    }
     static updateById(id, budget, result) {
 
         try {
@@ -147,7 +170,7 @@ class Budget {
                 }
                 
                 if (res.affectedRows > 0) {
-                    console.log('Found user', res)
+                    console.log('Found deleted', res)
                     result(null, res)
                     return;
                 } else {
