@@ -118,7 +118,7 @@ class Account {
 
                 } else {
                     console.log(`${res.affectedRows} updated accounts: `);
-                    result(null, { ...user });
+                    result(null, { ...status });
                     return 
                 }
             })

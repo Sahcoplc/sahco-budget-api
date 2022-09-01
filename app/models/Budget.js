@@ -85,10 +85,33 @@ class Budget {
         }
     }
 
+    //Find all budgets by account_type
+    static findByType(department, account_type, result) {
+
+        try {
+            connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ? AND account.account_type = ? ORDER BY budget.created_time DESC`, [department, account_type], (err, res) => {
+                if (err) {
+                    console.log('Found error: ', err);
+                    result(err, null);
+                    return;
+                }
+                
+                if (res.length) {
+                    return result(null, res)
+                } else {
+                    return result({code: 404}, null)
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
     static updateById(id, budget, result) {
 
         try {
-            connectDb.query(`UPDATE budget SET january = ?, february = ?, march = ?, april = ?, may = ?, june = ?, july = ?, august = ?, sept = ?, october = ?, nov = ? december = ?, estimated_budget = ?, actual_budget = ? WHERE id = ?`, [budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, id], (err, res) => {
+            connectDb.query(`UPDATE budget SET january = ?, february = ?, march = ?, april = ?, may = ?, june = ?, july = ?, august = ?, sept = ?, october = ?, nov = ?, december = ?, estimated_budget = ?, actual_budget = ? WHERE id = ?`, [budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, id], (err, res) => {
                 if (err) {
                     console.log('error: ', err);
                     result(err, null);
@@ -103,7 +126,7 @@ class Budget {
 
                 } else {
                     console.log(`${res.affectedRows} updated budget: `);
-                    result(null, { ...user });
+                    result(null, { ...budget });
                     return 
                 }
             })
