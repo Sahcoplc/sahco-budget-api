@@ -94,7 +94,6 @@ export const getUser = asyncWrapper(async (req, res) => {
         user.map((user) => {
           delete user.pass_word;
           delete user.otp;
-          delete user.otpVerificationId,
           delete user.otpExpiresIn
         });
 

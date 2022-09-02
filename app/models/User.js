@@ -17,6 +17,7 @@ class User {
     // Validate email
     static validateEmail(email) {
         // Return true if email is valid
+        // let domainRegex = /^\w+([-+.']\w+)*@?(sahcoplc.com|sahcoplc.com.ng)$/
         return testRegex(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, email);
     }
 
