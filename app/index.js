@@ -16,11 +16,11 @@ import notFound from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 
 // Import routes
-import homeRoutes from './routes/Home.js'
-import userRoutes from './routes/User.js'
-import authRoutes from './routes/Auth.js'
-import accountRoutes from './routes/Account.js'
-import budgetRoutes from './routes/Budget.js'
+import homeRoutes from '../app/routes/Home.js'
+import userRoutes from '../app/routes/User.js'
+import authRoutes from '../app/routes/Auth.js'
+import accountRoutes from '../app/routes/Account.js'
+import budgetRoutes from '../app/routes/Budget.js'
 
 const app = express();
 app.use(cors());
