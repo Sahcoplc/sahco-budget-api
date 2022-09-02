@@ -16,7 +16,7 @@ import notFound from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 
 // Import routes
-import homeRoutes from '../app/routes/Home.js'
+import homeRoutes from '../app/routes/home.js'
 import userRoutes from '../app/routes/User.js'
 import authRoutes from '../app/routes/Auth.js'
 import accountRoutes from '../app/routes/Account.js'
