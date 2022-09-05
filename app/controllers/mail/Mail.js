@@ -19,7 +19,7 @@ mailTransport.verify((error, success) => {
   if (error) {
     console.log("Mail transport error - " + error);
   } else {
-    console.log("Mail transport success");
+    console.log("Mail transport success - " + success);
   }
 });
 
