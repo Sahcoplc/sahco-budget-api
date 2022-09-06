@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-// import { generateHashString } from "../utils/encrypt.js";
 import { addHoursToDate } from "../utils/dateFunctions.js";
-// import NotFound from "../utils/customError.js";
 import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
@@ -142,6 +140,10 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
 export const verifyResetOtp = asyncWrapper(async (req, res) => {
   const { id, otp, pass_word } = req.body;
 
+  if(!(otp && id)) {
+    throw new BadRequestError('OTP code and user id required')
+  }
+
   try {
     await User.findOneById(id, (err, user) => {
 
@@ -153,7 +155,7 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
             });
         }
 
-        if(user && user[0].otp !== otp) {
+        if(user && user[0].otp !== (otp * 1)) {
 
             res.status(400).json({
                 message: "Invalid OTP Pin received",

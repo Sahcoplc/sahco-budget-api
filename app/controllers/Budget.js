@@ -12,14 +12,14 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, department, account_type, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    const estimated_budget = january + february + march + april + may + june + july + august + sept + october + nov + december;
+    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
     const data = {
         ...req.body,
         actual_budget: 0,
         status: "PENDING"
     }
     
-    if (accountId === 26 || accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30) {
+    if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
         console.log(accountId)
         data.estimated_budget = 0
     } else {
@@ -34,7 +34,11 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
                 Budget.createBudgetItem(newBud, (err, newBudget) => {
                     if (err) {
-                        throw err
+                        
+                        res.status(500).json({
+                            message: "Sorry we could not create your budget this time.",
+                            success: 0,
+                        });
                         // throw createCustomError('Sorry we could not create your budget this time', 500)
                     }
         
@@ -62,7 +66,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
 export const getUserBudget = asyncWrapper(async (req, res) => {
 
-    const { department } = req.body;
+    const { department } = req.query;
 
     if (!department) {
         throw new BadRequestError('No department provided')
@@ -129,14 +133,14 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    const estimated_budget = january + february + march + april + may + june + july + august + sept + october + nov + december;
+    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
     
     const data = {
         ...req.body,
         actual_budget: 0,
     }
     
-    if (accountId === 26 || accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30) {
+    if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
         data.estimated_budget = 0
     } else {
         data.estimated_budget = estimated_budget
@@ -162,7 +166,10 @@ export const updateBudget = asyncWrapper(async (req, res) => {
             } else {
                 Budget.updateById(id, data, (err, updates) => {
                     if(err) {
-                        throw err
+                        res.status(500).json({
+                            message: "Sorry we could not update your budget this time.",
+                            success: 0,
+                        });
                     }
 
                     if(updates) {
@@ -278,7 +285,10 @@ export const updateStatus = asyncWrapper(async (req, res) => {
             if (budget) {
                 Budget.updateByStatus(id, status, (err, updates) => {
                     if(err) {
-                        throw err
+                        res.status(500).json({
+                            message: "Sorry we could not update your budget this time.",
+                            success: 0,
+                        });
                     }
 
                     if(updates) {

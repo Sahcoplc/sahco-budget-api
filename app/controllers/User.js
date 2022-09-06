@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import { generateHashString } from "../utils/encrypt.js";
 // import { NotFoundError } from "../utils/customError.js";
 import Mail from "./mail/Mail.js";
+import Budget from "../models/Budget.js";
 
 export const createUser = asyncWrapper(async (req, res) => {
   if (req?.user?.role !== "ADMIN") {
@@ -229,18 +230,44 @@ export const getProfile = asyncWrapper(async (req, res) => {
       }
 
       if (user) {
-        user.map((user) => {
-          delete user.pass_word;
-          delete user.otp;
-          delete user.otpVerificationId,
-          delete user.otpExpiresIn
-        });
+        Budget.findByDepartment(user[0].department, (err, budget) => {
+          if(err || (err && err.code === 404)) {
 
-        res.status(200).json({
-          message: "User details",
-          data: user,
-          success: 1,
-        });
+            user.map((user) => {
+              delete user.pass_word;
+              delete user.otp;
+              delete user.otpVerificationId,
+              delete user.otpExpiresIn
+            });
+
+            res.status(200).json({
+              message: "User details",
+              data: user,
+              success: 1,
+            });
+          }
+
+          if (budget) {
+
+            user.map((user) => {
+              delete user.pass_word;
+              delete user.otp;
+              delete user.otpVerificationId,
+              delete user.otpExpiresIn
+            });
+
+            const currentUser = {
+              ...user[0],
+            }
+            currentUser.budget = budget
+  
+            res.status(200).json({
+              message: "User details",
+              data: currentUser,
+              success: 1,
+            });
+          }
+        })
       }
     });
   } catch (error) {
