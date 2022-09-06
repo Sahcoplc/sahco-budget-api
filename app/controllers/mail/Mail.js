@@ -58,7 +58,7 @@ class Mail {
       if (error) {
         console.log("Mail - ", error);
       }
-      console.log("Message sent: ");
+      console.log("Message sent: ", info);
       mailTransport.close();
     });
   }

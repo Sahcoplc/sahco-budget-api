@@ -12,7 +12,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, department, account_type, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    const estimated_budget = january + february + march + april + may + june + july + august + sept + october + nov + december;
+    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
     const data = {
         ...req.body,
         actual_budget: 0,
@@ -34,6 +34,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
                 Budget.createBudgetItem(newBud, (err, newBudget) => {
                     if (err) {
+                        
                         res.status(500).json({
                             message: "Sorry we could not create your budget this time.",
                             success: 0,
@@ -65,7 +66,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
 export const getUserBudget = asyncWrapper(async (req, res) => {
 
-    const { department } = req.body;
+    const { department } = req.query;
 
     if (!department) {
         throw new BadRequestError('No department provided')
@@ -132,7 +133,7 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    const estimated_budget = january + february + march + april + may + june + july + august + sept + october + nov + december;
+    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
     
     const data = {
         ...req.body,
