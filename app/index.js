@@ -23,7 +23,12 @@ import accountRoutes from './routes/Account.js'
 import budgetRoutes from './routes/Budget.js'
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+    origin: '*',
+    methods: "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS",
+    credentials: true
+};
+app.use(cors(corsOptions));
 app.use(morgan("tiny"));
 app.use(express.json());
 
