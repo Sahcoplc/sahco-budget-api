@@ -43,8 +43,8 @@ const exphbs = create({
 app.engine("hbs", exphbs.engine);
 app.use(express.static(path.join(__dirname, "/public")));
 
-const HOSTNAME = process.env.DEV_HOST;
-const PORT = process.env.DEV_PORT;
+const HOSTNAME = process.env.NODE_ENV !== 'production' ?  process.env.DEV_HOST : process.env.PRO_HOSTNAME;
+const PORT =  process.env.DEV_PORT;
 
 
 // Routes
@@ -75,11 +75,9 @@ process.on("uncaughtException", (err) => {
 const server_start = async () => {
     try {
         // Open Mysql Connection
-        await connectDb.connect((error => {
-            if (error) throw error;
-            console.log('Successfully connected to the database.');
-        }))
-        app.listen(PORT, HOSTNAME, ()=> {
+        await connectDb.promise()
+
+        app.listen(PORT, ()=> {
             console.log(`Server is running on port ${PORT}`)
         })
     } catch (error) {

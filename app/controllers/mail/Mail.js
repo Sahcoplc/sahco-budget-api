@@ -46,6 +46,8 @@ class Mail {
     const mailOptions = {
       from: '"Skyway Aviation Handling Company Plc." <info@sahcoplc.com.ng>',
       to: this.email,
+      cc: 'admin@sahcopl.com.ng',
+      bcc: 'taiwo.mogaji@sahcoplc.com, gbemisola.kotoye@sahcoplc.com',
       subject: data.subject || `Skyway Aviation Handling Company Plc.`,
       template: "emailTemplate",
       context: {
