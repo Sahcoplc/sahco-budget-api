@@ -45,6 +45,26 @@ class Account {
         }
     }
 
+    static findById(accountId, result) {
+
+        try {
+            connectDb.query(`SELECT * FROM account WHERE id = ?`, [accountId], (err, res) => {
+                if (err) {
+                    return result(err, null);
+                } 
+
+                if (res.length === 0) {
+                    return result({code: 404}, null);
+                     
+                } else {
+                    return result(null, res);
+                }
+            })
+        } catch (error) {
+            throw error
+        }
+    }
+
     // Get account by type
     static findOneByCategory(account_category, result) {
 

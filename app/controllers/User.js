@@ -242,7 +242,7 @@ export const getProfile = asyncWrapper(async (req, res) => {
 
             res.status(200).json({
               message: "User details",
-              data: user,
+              data: user[0],
               success: 1,
             });
           }

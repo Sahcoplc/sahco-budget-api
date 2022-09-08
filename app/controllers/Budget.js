@@ -2,7 +2,7 @@ import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import Budget from "../models/Budget.js";
-import { createCustomError } from "../utils/customError.js";
+import Account from '../models/Account.js'
 
 export const createBudget = asyncWrapper(async (req, res) => {
 
@@ -66,28 +66,27 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
 export const getUserBudget = asyncWrapper(async (req, res) => {
 
-    const { department } = req.query;
+    const { dept } = req?.user;
 
-    if (!department) {
+    if (!dept) {
         throw new BadRequestError('No department provided')
     }
 
     try {
-        await Budget.findByDepartment(department, (err, budget) => {
+        await Budget.findByDepartment(dept, (err, budget) => {
             // if (err) {
             //     throw createCustomError('Sorry we could not get your budget this time', 500)
             // }
 
             if(err && err.code === 404) {
                 res.status(404).json({
-                    message: `${department} has no budget records found`,
+                    message: `${dept} has no budget records found`,
                     success: 0,
                 });
             }
 
             if(budget) {
-                console.log(budget)
-
+    
                 res.status(200).json({
                     message: "Budget Details.",
                     data: budget,
@@ -115,11 +114,29 @@ export const getBudget = asyncWrapper(async (req, res) => {
             }
 
             if(budget) {
-                res.status(200).json({
-                    message: "Budget details",
-                    data: budget,
-                    success: 1,
-                });
+                Account.findById(budget[0].accountId, (err, acc) => {
+                    if (err && err.code === 404) {
+                        // throw createCustomError(`No user with id: ${userId}`, 404);
+                        res.status(404).json({
+                          message: `No budget account with id: ${id}`,
+                          success: 0,
+                        });
+                    }
+
+                    if(acc) {
+                        console.log(acc)
+                        const single = {
+                            ...budget[0],
+                            account: acc[0]
+                        }
+                        res.status(200).json({
+                            message: "Budget details",
+                            data: single,
+                            success: 1,
+                        });
+                    }
+                })
+                
             }
         })
     } catch (error) {
