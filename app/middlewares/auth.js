@@ -16,7 +16,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
     if (token) {
   
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const { id, email } = decoded;
+      const { id, email, dept } = decoded;
     
       await User.findOneByEmail(email, (err, user) => {
         if (err && err.code === 404) {
@@ -32,6 +32,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
           req.user = {
             id,
             email,
+            dept,
             role: user[0].role,
           };
         }

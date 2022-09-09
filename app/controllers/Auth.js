@@ -9,7 +9,7 @@ import { generateHashString } from "../utils/encrypt.js";
 
 const payload = (user) => {
   const token = jwt.sign(
-    { id: user.staff_id, email: user.staff_email },
+    { id: user.staff_id, email: user.staff_email, dept: user.department },
     process.env.JWT_SECRET,
     {
       expiresIn: "1d",
