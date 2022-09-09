@@ -99,6 +99,41 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
     }
 })
 
+export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
+
+    const { dept } = req.params;
+
+    if (!dept) {
+        throw new BadRequestError('No department provided')
+    }
+
+    try {
+        await Budget.findByDepartment(dept, (err, budget) => {
+            // if (err) {
+            //     throw createCustomError('Sorry we could not get your budget this time', 500)
+            // }
+
+            if(err && err.code === 404) {
+                res.status(404).json({
+                    message: `${dept} has no budget records found`,
+                    success: 0,
+                });
+            }
+
+            if(budget) {
+    
+                res.status(200).json({
+                    message: "Budget Details.",
+                    data: budget,
+                    success: 1,
+                });
+            }
+        })
+    } catch (error) {
+        throw error
+    }
+})
+
 export const getBudget = asyncWrapper(async (req, res) => {
 
     const { id } = req.params;
@@ -293,6 +328,9 @@ export const updateStatus = asyncWrapper(async (req, res) => {
 
     try {
         await Budget.findById(id, (err, budget) => {
+            if(err && err.code !== 404 || err && !err.code) {
+                console.log(err)
+            }
             if (err && err.code === 404) {
                 // throw createCustomError(`No user with id: ${userId}`, 404);
                 res.status(404).json({
