@@ -124,7 +124,6 @@ export const getBudget = asyncWrapper(async (req, res) => {
                     }
 
                     if(acc) {
-                        console.log(acc)
                         const single = {
                             ...budget[0],
                             account: acc[0]
@@ -150,6 +149,9 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
+    if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
+
+    }
     const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
     
     const data = {
@@ -246,9 +248,9 @@ export const getAllBudget = asyncWrapper(async (req, res) => {
 
     const { account_type } = req.body;
 
-    if(!account_type) {
-        throw new BadRequestError('No account type provided')
-    }
+    // if(!account_type) {
+    //     throw new BadRequestError('No account type provided')
+    // }
 
     try {
         await Budget.findAll((err, budget) => {
@@ -285,7 +287,7 @@ export const updateStatus = asyncWrapper(async (req, res) => {
 
     const { status } = req.body;
 
-    if (!status || !id) {
+    if (!status && !id) {
         throw new BadRequestError('No status provided')
     }
 
