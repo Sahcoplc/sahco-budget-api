@@ -12,56 +12,64 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, department, account_type, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
-    const data = {
-        ...req.body,
-        actual_budget: 0,
-        status: "PENDING"
-    }
-    
-    if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
-        console.log(accountId)
-        data.estimated_budget = 0
+    if (!accountId && !january && !february && !march && !april && !may && !june && !july && !august && !sept && !october && !nov && !december) {
+        throw new BadRequestError('Budget records required')
+
     } else {
-        data.estimated_budget = estimated_budget
-    }
 
-    try {
-        const newBud = new Budget(data)
-
-        await Budget.findByType(department, account_type, (err, result) => {
-            if(err && err.code === 404) {
-
-                Budget.createBudgetItem(newBud, (err, newBudget) => {
-                    if (err) {
-                        
-                        res.status(500).json({
-                            message: "Sorry we could not create your budget this time.",
-                            success: 0,
-                        });
-                        // throw createCustomError('Sorry we could not create your budget this time', 500)
-                    }
+        const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
+        const data = {
+            ...req.body,
+            actual_budget: 0,
+            status: "PENDING"
+        }
         
-                    if(newBudget) {
-                        res.status(200).json({
-                            message: "Budget Creation Successful.",
-                            data: newBudget,
-                            success: 1,
-                        });
-                    }
-                })
-            }
+        if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
+            console.log(accountId)
+            data.estimated_budget = 0
+        } else {
+            data.estimated_budget = estimated_budget
+        }
 
-            if(result) {
-                res.status(400).json({
-                    message: "A budget with this account already exist.",
-                    success: 0,
-                });
-            }
-        })
-    } catch (error) {
-        throw error
+
+        try {
+            const newBud = new Budget(data)
+    
+            await Budget.findByType(department, account_type, (err, result) => {
+                if(err && err.code === 404) {
+    
+                    Budget.createBudgetItem(newBud, (err, newBudget) => {
+                        if (err) {
+                            
+                            res.status(500).json({
+                                message: "Sorry we could not create your budget this time.",
+                                success: 0,
+                            });
+                            // throw createCustomError('Sorry we could not create your budget this time', 500)
+                        }
+            
+                        if(newBudget) {
+                            res.status(200).json({
+                                message: "Budget Creation Successful.",
+                                data: newBudget,
+                                success: 1,
+                            });
+                        }
+                    })
+                }
+    
+                if(result) {
+                    res.status(400).json({
+                        message: "A budget with this account already exist.",
+                        success: 0,
+                    });
+                }
+            })
+        } catch (error) {
+            throw error
+        }
     }
+
 })
 
 export const getUserBudget = asyncWrapper(async (req, res) => {
@@ -184,61 +192,71 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
+    let budgetData = {}
 
-    }
-    const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
-    
-    const data = {
-        ...req.body,
-        actual_budget: 0,
-    }
-    
-    if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
-        data.estimated_budget = 0
+    if (!accountId && !january && !february && !march && !april && !may && !june && !july && !august && !sept && !october && !nov && !december) {
+        throw new BadRequestError('Budget records required')
+
     } else {
-        data.estimated_budget = estimated_budget
+        
+        const estimated_budget = ( january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + ( october * 1) + (nov * 1) + (december * 1);
+    
+        const data = {
+            ...req.body,
+            actual_budget: 0,
+        }
+        
+        if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
+            data.estimated_budget = 0
+            budgetData = data
+        } else {
+            data.estimated_budget = estimated_budget
+            budgetData = data
+        }
+
+
+        try {
+            await Budget.findById(id, (err, budget) => {
+                if (err && err.code === 404) {
+                    // throw createCustomError(`No user with id: ${userId}`, 404);
+                    res.status(404).json({
+                      message: `No budget with id: ${id}`,
+                      success: 0,
+                    });
+                }
+    
+                if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
+    
+                    res.status(400).json({
+                        message: `Approved or suspended budget cannot be updated`,
+                        success: 0,
+                    });
+    
+                } else {
+                    Budget.updateById(id, budgetData, (err, updates) => {
+                        if(err) {
+                            res.status(500).json({
+                                message: "Sorry we could not update your budget this time.",
+                                success: 0,
+                            });
+                        }
+    
+                        if(updates) {
+                            res.status(200).json({
+                                message: "Budget Updated Successfully",
+                                data: updates,
+                                success: 1
+                            })
+                        }
+                    })
+                }
+            })
+        } catch (error) {
+            throw error;
+        }
     }
+    
 
-    try {
-        await Budget.findById(id, (err, budget) => {
-            if (err && err.code === 404) {
-                // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.status(404).json({
-                  message: `No budget with id: ${id}`,
-                  success: 0,
-                });
-            }
-
-            if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
-
-                res.status(400).json({
-                    message: `Approved or suspended budget cannot be updated`,
-                    success: 0,
-                });
-
-            } else {
-                Budget.updateById(id, data, (err, updates) => {
-                    if(err) {
-                        res.status(500).json({
-                            message: "Sorry we could not update your budget this time.",
-                            success: 0,
-                        });
-                    }
-
-                    if(updates) {
-                        res.status(200).json({
-                            message: "Budget Updated Successfully",
-                            data: updates,
-                            success: 1
-                        })
-                    }
-                })
-            }
-        })
-    } catch (error) {
-        throw error;
-    }
 })
 
 export const deleteBudget = asyncWrapper(async (req, res) => {
