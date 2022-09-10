@@ -24,8 +24,8 @@ import budgetRoutes from './routes/Budget.js'
 
 const app = express();
 const corsOptions = {
-    origin: '*',
-    methods: "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS",
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://www.sahcoplc.com.ng', 'https://sahcoplc-budget-react.vercel.app'],
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS'],
     credentials: true
 };
 app.use(cors(corsOptions));
