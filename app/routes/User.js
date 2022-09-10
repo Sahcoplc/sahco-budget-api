@@ -6,8 +6,8 @@ import { createUser, deleteUser, getProfile, getUser, getUsers, updatedUser } fr
 import authMiddleWare from '../middlewares/auth.js'
 import imageUpload from "../middlewares/uploads/imageUpload.js";
 
-router.post('/', authMiddleWare, createUser)
-router.get('/', authMiddleWare, getUsers)
+router.post('/new', authMiddleWare, createUser)
+router.get('/all', authMiddleWare, getUsers)
 router.get('/:id', authMiddleWare, getUser)
 router.patch('/:email', authMiddleWare, imageUpload.array('avatar'), updatedUser)
 router.delete('/:id', authMiddleWare, deleteUser)
