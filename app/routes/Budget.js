@@ -4,8 +4,8 @@ import authMiddleWare from '../middlewares/auth.js'
 
 const router = express.Router()
 
-router.post('/', authMiddleWare, createBudget)
-router.get('/', authMiddleWare, getUserBudget)
+router.post('/new', authMiddleWare, createBudget)
+router.get('/all', authMiddleWare, getUserBudget)
 router.get('/:id', authMiddleWare, getBudget)
 router.patch('/:id', authMiddleWare, updateBudget)
 router.delete('/:id', authMiddleWare, deleteBudget)

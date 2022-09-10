@@ -159,15 +159,14 @@ class Budget {
         try {
             connectDb.query(`UPDATE budget SET status = ? WHERE id = ?`, [status, id], (err, res) => {
                 if (err) {
-                    result(err, null);
-                    return 
+                    console.log('Query Error: ', err)
+                    return result(err, null);
                     // throw new createCustomError(err.message, 500)
                 } 
                 
                 if(res.affectedRows == 0) {
                     //not found User with the id
-                    result({code: 404}, null);
-                    return;
+                    return result({code: 404}, null);
 
                 } else {
                     result(null, { status });

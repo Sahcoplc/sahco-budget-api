@@ -346,7 +346,7 @@ export const updateStatus = asyncWrapper(async (req, res) => {
 
     try {
         await Budget.findById(id, (err, budget) => {
-            if(err && err.code !== 404 || err && !err.code) {
+            if((err && err.code !== 404) || (err && !err.code)) {
                 console.log(err)
             }
             if (err && err.code === 404) {
@@ -358,8 +358,10 @@ export const updateStatus = asyncWrapper(async (req, res) => {
             }
 
             if (budget) {
+                console.log('Found budget: ', budget)
                 Budget.updateByStatus(id, status, (err, updates) => {
                     if(err) {
+                        console.log('Error: ', err)
                         res.status(500).json({
                             message: "Sorry we could not update your budget this time.",
                             success: 0,
@@ -367,6 +369,7 @@ export const updateStatus = asyncWrapper(async (req, res) => {
                     }
 
                     if(updates) {
+                        console.log('Done: ', updates)
                         res.status(200).json({
                             message: "Budget Status Updated Successfully",
                             data: updates,
