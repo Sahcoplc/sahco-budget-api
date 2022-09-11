@@ -36,7 +36,7 @@ const corsOptions = {
 //     res.header("Access-Control-Allow-Credentials", "true");
 //     next();
 // });
-app.use(cors());
+
 app.use(morgan("tiny"));
 app.use(express.json());
 
@@ -54,6 +54,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 const HOSTNAME = process.env.NODE_ENV !== 'production' ?  process.env.DEV_HOST : process.env.PRO_HOSTNAME;
 let PORT =  process.env.PORT;
 
+app.use(cors());
 
 // Routes
 const apiPath = "/api";
@@ -61,7 +62,8 @@ app.use(apiPath + "/", homeRoutes);
 app.use(apiPath + '/auth', authRoutes)
 app.use(apiPath + '/users', userRoutes);
 app.use(apiPath + '/account', accountRoutes);
-app.use(apiPath + '/budget', budgetRoutes);
+app.use(cors());
+app.use(apiPath + '/sahcobudget', budgetRoutes);
 
 
 // Use middlewares
