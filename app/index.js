@@ -52,7 +52,7 @@ app.engine("hbs", exphbs.engine);
 app.use(express.static(path.join(__dirname, "/public")));
 
 const HOSTNAME = process.env.NODE_ENV !== 'production' ?  process.env.DEV_HOST : process.env.PRO_HOSTNAME;
-const PORT =  process.env.DEV_PORT;
+let PORT =  process.env.DEV_PORT;
 
 
 // Routes
@@ -85,6 +85,9 @@ const server_start = async () => {
         // Open Mysql Connection
         await connectDb.promise()
 
+        if (PORT == '' || PORT == null) {
+            PORT = 8002
+        }
         app.listen(PORT, ()=> {
             console.log(`Server is running on port ${PORT}`)
         })
