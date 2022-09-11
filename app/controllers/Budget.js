@@ -41,7 +41,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
                     Budget.createBudgetItem(newBud, (err, newBudget) => {
                         if (err) {
                             
-                            res.header("Access-Control-Allow-Origin", "*").status(500).json({
+                            res.status(500).json({
                                 message: "Sorry we could not create your budget this time.",
                                 success: 0,
                             });
@@ -49,7 +49,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
                         }
             
                         if(newBudget) {
-                            res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                            res.status(200).json({
                                 message: "Budget Creation Successful.",
                                 data: newBudget,
                                 success: 1,
@@ -59,7 +59,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
                 }
     
                 if(result) {
-                    res.header("Access-Control-Allow-Origin", "*").status(400).json({
+                    res.status(400).json({
                         message: "A budget with this account already exist.",
                         success: 0,
                     });
@@ -87,7 +87,7 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
             // }
 
             if(err && err.code === 404) {
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                     message: `${dept} has no budget records found`,
                     success: 0,
                 });
@@ -95,7 +95,7 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
 
             if(budget) {
     
-                res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                res.status(200).json({
                     message: "Budget Details.",
                     data: budget,
                     success: 1,
@@ -122,7 +122,7 @@ export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
             // }
 
             if(err && err.code === 404) {
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                     message: `${dept} has no budget records found`,
                     success: 0,
                 });
@@ -130,7 +130,7 @@ export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
 
             if(budget) {
     
-                res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                res.status(200).json({
                     message: "Budget Details.",
                     data: budget,
                     success: 1,
@@ -150,7 +150,7 @@ export const getBudget = asyncWrapper(async (req, res) => {
         await Budget.findById(id, (err, budget) => {
             if (err && err.code === 404) {
                 // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                   message: `No budget with id: ${id}`,
                   success: 0,
                 });
@@ -160,7 +160,7 @@ export const getBudget = asyncWrapper(async (req, res) => {
                 Account.findById(budget[0].accountId, (err, acc) => {
                     if (err && err.code === 404) {
                         // throw createCustomError(`No user with id: ${userId}`, 404);
-                        res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                        res.status(404).json({
                           message: `No budget account with id: ${id}`,
                           success: 0,
                         });
@@ -171,7 +171,7 @@ export const getBudget = asyncWrapper(async (req, res) => {
                             ...budget[0],
                             account: acc[0]
                         }
-                        res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                        res.status(200).json({
                             message: "Budget details",
                             data: single,
                             success: 1,
@@ -219,7 +219,7 @@ export const updateBudget = asyncWrapper(async (req, res) => {
             await Budget.findById(id, (err, budget) => {
                 if (err && err.code === 404) {
                     // throw createCustomError(`No user with id: ${userId}`, 404);
-                    res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                    res.status(404).json({
                       message: `No budget with id: ${id}`,
                       success: 0,
                     });
@@ -227,7 +227,7 @@ export const updateBudget = asyncWrapper(async (req, res) => {
     
                 if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
     
-                    res.header("Access-Control-Allow-Origin", "*").status(400).json({
+                    res.status(400).json({
                         message: `Approved or suspended budget cannot be updated`,
                         success: 0,
                     });
@@ -235,14 +235,14 @@ export const updateBudget = asyncWrapper(async (req, res) => {
                 } else {
                     Budget.updateById(id, budgetData, (err, updates) => {
                         if(err) {
-                            res.header("Access-Control-Allow-Origin", "*").status(500).json({
+                            res.status(500).json({
                                 message: "Sorry we could not update your budget this time.",
                                 success: 0,
                             });
                         }
     
                         if(updates) {
-                            res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                            res.status(200).json({
                                 message: "Budget Updated Successfully",
                                 data: updates,
                                 success: 1
@@ -266,7 +266,7 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
     try {
         await Budget.findById(id, (err, budget) => {
             if(err && err.code === 404) {
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                     message: `No budget with id: ${id}`,
                     success: 0,
                 });
@@ -284,7 +284,7 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
 
                     if (deleted) {
 
-                        res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                        res.status(200).json({
                             message: "Budget deleted Successfully",
                             success: 1
                         })
@@ -309,7 +309,7 @@ export const getAllBudget = asyncWrapper(async (req, res) => {
         await Budget.findAll((err, budget) => {
             if(err && err.code === 404) {
 
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                     message: `No budget records with account type: ${account_type}`,
                     success: 0,
                 });
@@ -317,7 +317,7 @@ export const getAllBudget = asyncWrapper(async (req, res) => {
 
             if(budget) {
 
-                res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                res.status(200).json({
                     message: "All budgets",
                     data: budget,
                     success: 1
@@ -351,7 +351,7 @@ export const updateStatus = asyncWrapper(async (req, res) => {
             }
             if (err && err.code === 404) {
                 // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.header("Access-Control-Allow-Origin", "*").status(404).json({
+                res.status(404).json({
                   message: `No budget with id: ${id}`,
                   success: 0,
                 });
@@ -369,7 +369,7 @@ export const updateStatus = asyncWrapper(async (req, res) => {
 
                     if(updates) {
     
-                        res.header("Access-Control-Allow-Origin", "*").status(200).json({
+                        res.status(200).json({
                             message: "Budget Status Updated Successfully",
                             data: updates,
                             success: 1
