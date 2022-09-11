@@ -52,7 +52,7 @@ app.engine("hbs", exphbs.engine);
 app.use(express.static(path.join(__dirname, "/public")));
 
 const HOSTNAME = process.env.NODE_ENV !== 'production' ?  process.env.DEV_HOST : process.env.PRO_HOSTNAME;
-let PORT =  process.env.DEV_PORT;
+let PORT =  process.env.PORT;
 
 
 // Routes
