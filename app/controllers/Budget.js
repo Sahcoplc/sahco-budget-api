@@ -41,7 +41,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
                     Budget.createBudgetItem(newBud, (err, newBudget) => {
                         if (err) {
                             
-                            res.status(500).json({
+                            res.header("Access-Control-Allow-Origin", "*").status(500).json({
                                 message: "Sorry we could not create your budget this time.",
                                 success: 0,
                             });
@@ -74,6 +74,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
 export const getUserBudget = asyncWrapper(async (req, res) => {
 
+    res.header("Access-Control-Allow-Origin", "*")
     const { dept } = req?.user;
 
     if (!dept) {
