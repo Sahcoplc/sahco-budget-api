@@ -18,27 +18,44 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const { id, email, dept } = decoded;
     
-      await User.findOneByEmail(email, (err, user) => {
-        if (err && err.code === 404) {
-          // throw new UnauthenticatedError("Not authorized to access this route");
-          res.status(401).json({
-            message: "Not authorized to access this route.",
-            success: 0,
-          });
-        }
+      const user = await User.findOneByEmail(email)
 
-        if (user) {
+      if(user.code && user.code === 404) {
+        throw new UnauthenticatedError("Not authorized to access this route");
+      }
 
-          req.user = {
-            id,
-            email,
-            dept,
-            role: user[0].role,
-          };
-        }
+      if (user) {
+        req.user = {
+          id,
+          email,
+          dept,
+          role: user.role,
+        };
+      }
+
+      return next();
+
+      // , (err, user) => {
+      //   if (err && err.code === 404) {
+      //     // throw new UnauthenticatedError("Not authorized to access this route");
+      //     res.status(401).json({
+      //       message: "Not authorized to access this route.",
+      //       success: 0,
+      //     });
+      //   }
+
+      //   if (user) {
+
+      //     req.user = {
+      //       id,
+      //       email,
+      //       dept,
+      //       role: user[0].role,
+      //     };
+      //   }
     
-        return next();
-      });
+      //   return next();
+      // });
     }
   }
 

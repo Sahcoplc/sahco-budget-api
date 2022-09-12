@@ -6,6 +6,7 @@ import BadRequestError from "../utils/errors/badRequest.js";
 import { comparePassword } from "../utils/decrypt.js";
 import Mail from "./mail/Mail.js";
 import { generateHashString } from "../utils/encrypt.js";
+import { createCustomError } from "../utils/customError.js";
 
 const payload = (user) => {
   const token = jwt.sign(
@@ -25,43 +26,78 @@ export const login = asyncWrapper(async (req, res) => {
   const { staff_email, pass_word } = req.body;
 
   try {
-    await User.findOneByEmail(staff_email, (err, user) => {
-      if (err && err.code === 404) {
-        res.status(404).json({
-          message: "User does not exist",
-          success: 0,
-        });
-        // throw new NotFound("User does not exist")
-      }
+    const user = await User.findOneByEmail(staff_email)
 
-      if (err && err.code === 400) {
-        throw new BadRequestError("A valid email is required");
-      }
+    if(user.code && user.code === 400) {
+      throw new BadRequestError("A valid email is required");
+    }
 
-      if (user) {
-        const password = comparePassword(pass_word, user[0].pass_word);
+    if(user) {
+      const password = comparePassword(pass_word, user.pass_word);
 
-        password.then((isPassword) => {
-          if (!isPassword) {
-            res.status(400).json({
-              message: "Invalid credentials",
-              success: 0,
-            });
-          } else {
-            const data = payload(user[0]);
+      password.then((isPassword) => {
+        if (isPassword) {
 
-            delete data.user.otp;
-            delete data.user.otpExpiresIn;
+          const data = payload(user);
 
-            res.status(200).json({
-              message: "Login Successful",
-              data: data,
-              success: 1,
-            });
-          }
-        });
-      }
-    });
+          delete data.user.otp;
+          delete data.user.otpExpiresIn;
+
+          res.status(200).json({
+            message: "Login Successful",
+            data: data,
+            success: 1,
+          });
+        } else {
+          res.status(400).json({
+            message: "Invalid credentials",
+            success: 0,
+          });
+        }
+
+      }).catch(err => {
+        console.log(err)
+      });
+    }
+
+
+    // await User.findOneByEmail(staff_email, (err, user) => {
+    //   if (err && err.code === 404) {
+    //     res.status(404).json({
+    //       message: "User does not exist",
+    //       success: 0,
+    //     });
+    //     // throw new NotFound("User does not exist")
+    //   }
+
+    //   if (err && err.code === 400) {
+    //     throw new BadRequestError("A valid email is required");
+    //   }
+
+    //   if (user) {
+    //     const password = comparePassword(pass_word, user[0].pass_word);
+
+    //     password.then((isPassword) => {
+    //       if (!isPassword) {
+    //         res.status(400).json({
+    //           message: "Invalid credentials",
+    //           success: 0,
+    //         });
+    //       } else {
+    //         const data = payload(user[0]);
+
+    //         delete data.user.otp;
+    //         delete data.user.otpExpiresIn;
+
+    //         res.status(200).json({
+    //           message: "Login Successful",
+    //           data: data,
+    //           success: 1,
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
   } catch (error) {
 
     throw error;
@@ -72,6 +108,24 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
   const { staff_email } = req.body;
 
   try {
+
+    const user = await User.findOneByEmail(staff_email)
+
+    if(user.code && user.code === 400) {
+      throw new BadRequestError("A valid email is required");
+    }
+
+    if (user) {
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        const otpExpiresIn = addHoursToDate(new Date(), 1);
+
+        const newUpdate = {
+          ...user,
+          otp,
+          otpExpiresIn,
+        };
+    }
+
     await User.findOneByEmail(staff_email, (err, user) => {
       if (err && err.code === 404) {
         res.status(404).json({

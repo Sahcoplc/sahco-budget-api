@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import util from 'util'
 dotenv.config();
 import { createPool } from 'mysql2';
 
@@ -10,5 +11,7 @@ const connectDb = createPool({
     database: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_DATABASE : process.env.PROD_DB_DATABASE,
     port: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_PORT : process.env.PROD_DB_PORT
 });
+
+connectDb.query = util.promisify(connectDb.query).bind(connectDb)
 
 export default connectDb;

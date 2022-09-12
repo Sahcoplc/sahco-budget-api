@@ -1,4 +1,5 @@
 import connectDb from "../db/connect.js";
+import {  SQL } from 'sql-template-strings';
 import { testRegex } from "../utils/regexFunctions.js";
 
 //constructor
@@ -15,55 +16,58 @@ class User {
     }
 
     // Validate email
-    static validateEmail(email) {
+    static validateEmail(email){
         // Return true if email is valid
         // let domainRegex = /^\w+([-+.']\w+)*@?(sahcoplc.com|sahcoplc.com.ng)$/
         return testRegex(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, email);
     }
 
     //Create a new user
-    static createNewAdmin(newAdmin, result) {
+    static createNewAdmin = async (newAdmin) => {
+
         try {
-            connectDb.query('INSERT INTO users SET ? ', [newAdmin], (err, res) => {
-                if (err) {
-                    console.log('error: ', err);
-                    return result(err, null);
-                    // throw createCustomError(`Something happened`, 500)
-                }
-                return result(null, { id: res.insertId, ...newAdmin });
-            })
+            const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, role, } = newAdmin
+
+            const query = SQL`INSERT INTO users SET staff_name = ${staff_name}, staff_email = ${staff_email}, staff_id = ${staff_id}, department = ${department}, gender = ${gender}, pass_word = ${pass_word}, avatar = ${avatar}, role = ${role}`;
+        
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            return {id: result.insertId, ...newAdmin}
+
         } catch (error) {
-            console.log(error);
-            throw error;
+            throw error
         }
+        
+
+        // try {
+        //     connectDb.query('INSERT INTO users SET ? ', [newAdmin], (err, res) => {
+        //         if (err) {
+        //             console.log('error: ', err);
+        //             return result(err, null);
+        //             // throw createCustomError(`Something happened`, 500)
+        //         }
+        //         return result(null, { id: res.insertId, ...newAdmin });
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        //     throw error;
+        // }
     }
 
     // Get user by email
-    static findOneByEmail(email, result) {
+    static findOneByEmail = async (email) => {
         const validatedEmail = this.validateEmail(email)
 
         if (validatedEmail) {
-            try {
-                connectDb.query(`SELECT * FROM users WHERE staff_email = ?`, [email], (err, res) => {
-                    if (err) {
-                        console.log('error: ', err);
-                        return result(err, null);
-                    } 
-                    
-                    if (res.length === 0) {
-                        console.log(res.length, " Existing users with same email");
-                        return result({code: 404}, null);
-                         
-                    } else {
-                        return result(null, res);
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-                throw error;
-            }
+
+            const query = SQL`SELECT * FROM users WHERE staff_email = ${email}`
+
+            const [result] = await connectDb.query(query).catch(err => { throw err });
+
+            return result
+
         } else {
-            return result({code: 400}, null);
+            return {code: 400};
         }
 
     }
@@ -143,34 +147,49 @@ class User {
     }
 
     // Update user by email
-    static updateOneByEmail(email, user, result) {
+    static updateOneByEmail = async (user) => {
         const validatedEmail = this.validateEmail(email)
 
-        if (validatedEmail) {
-            try {
-                connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.otp, user.otpExpiresIn, email], (err, res) => {
-                    if (err) {
-                        console.log('error: ', err);
-                        result(err, null);
-                        return 
-                        // throw new createCustomError(err.message, 500)
-                    } 
-                    
-                    if(res.affectedRows == 0) {
-                        //not found User with the id
-                        result({code: 404}, null);
-                        return;
+        const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, otp, otpExpiresIn} = user
 
-                    } else {
-                        console.log(`${res.affectedRows} updated user: `);
-                        result(null, { ...user });
-                        return 
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-                throw error;
+        if (validatedEmail) {
+
+            const query = $`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
+
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            if(result.affectedRows == 0) {
+                //not found User with the id
+                return {code: 404}
+
+            } else {
+                return {...user}
             }
+
+            // try {
+            //     connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.otp, user.otpExpiresIn, email], (err, res) => {
+            //         if (err) {
+            //             console.log('error: ', err);
+            //             result(err, null);
+            //             return 
+            //             // throw new createCustomError(err.message, 500)
+            //         } 
+                    
+            //         if(res.affectedRows == 0) {
+            //             //not found User with the id
+            //             result({code: 404}, null);
+            //             return;
+
+            //         } else {
+            //             console.log(`${res.affectedRows} updated user: `);
+            //             result(null, { ...user });
+            //             return 
+            //         }
+            //     })
+            // } catch (error) {
+            //     console.log(error);
+            //     throw error;
+            // }
         } else {
             return result({code: 400}, null);
         }

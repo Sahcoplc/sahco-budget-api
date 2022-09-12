@@ -8,67 +8,125 @@ import Mail from "./mail/Mail.js";
 import Budget from "../models/Budget.js";
 
 export const createUser = asyncWrapper(async (req, res) => {
-  if (req?.user?.role !== "ADMIN") {
-    throw new UnauthenticatedError("Not authorized to access this route");
-  }
-
-  const { staff_email, pass_word, role } = req.body;
-
-  if (!role) {
-    throw new BadRequestError("User role is required")
-  }
 
   try {
+    if (req?.user?.role !== "ADMIN") {
+      throw new UnauthenticatedError("Not authorized to access this route");
+    }
+  
+    const { staff_email, pass_word, role } = req.body;
+    console.log('Role: ', role)
+  
+    if (!role) {
+      throw new BadRequestError("User role is required")
+    }
     //Check for duplicates
-    await User.findOneByEmail(staff_email, (err, user) => {
+     const user = await User.findOneByEmail(staff_email)
+     console.log('Controller: ', user)
 
-      if (err && err.code === 400) {
+     if (user.code && user.code === 400) {
+
         throw new BadRequestError("A valid email is required");
-      }
-      
-      if (!err && user.length) {
-        // throw new BadRequestError("An account with this email already exists");
-        res.status(400).json({
-          message: "An account with this email already exists.",
-          success: 0,
-        });
-      }
 
-      if (err && err.code === 404) {
+    } else if (user && !user.code) {
+
+      throw new BadRequestError("An account with this email already exists");
+      // res.status(400).json({
+      //   message: "An account with this email already exists.",
+      //   success: 0,
+      // });
+    }
+    
+    if(!user) {
+
         const hashed = generateHashString(pass_word);
 
         hashed.then((hashedPassword) => {
           const newUser = new User({
+
             ...req.body,
             pass_word: hashedPassword,
+
           });
 
-          User.createNewAdmin(newUser, (err, user) => {
-            if (err) {
-              throw err;
-            }
 
-            if (user) {
+          const createdUser = User.createNewAdmin(newUser)
 
-                new Mail(newUser.staff_email).sendMail("REGISTRATION", {
+          if (createdUser) {
+            new Mail(newUser.staff_email).sendMail("REGISTRATION", {
 
-                    subject: "Welcome to Skyway Aviation Handling Co.",
-                    data: {
-                      name: newUser.staff_name,
-                      staff_id: newUser.staff_id
-                    },
-                })
+              subject: "Welcome to Skyway Aviation Handling Co.",
+              data: {
+                name: newUser.staff_name,
+                staff_id: newUser.staff_id
+              },
+            })
 
-                res.status(200).json({
-                  message: "User registration successful.",
-                  data: newUser,
-                  success: 1,
-                });
-            }
-          });
-        });
-      }
-    });
+            delete newUser.pass_word
+
+            res.status(200).json({
+              message: "User registration successful.",
+              data: newUser,
+              success: 1,
+            });
+
+          }
+
+        })
+
+    }
+     
+    
+    
+    // (err, user) => {
+
+      // if (err && err.code === 400) {
+      //   throw new BadRequestError("A valid email is required");
+      // }
+      
+      // if (user.length) {
+      //   // throw new BadRequestError("An account with this email already exists");
+      //   res.status(400).json({
+      //     message: "An account with this email already exists.",
+      //     success: 0,
+      //   });
+      // }
+
+      // if (err && err.code === 404) {
+      //   const hashed = generateHashString(pass_word);
+
+      //   hashed.then((hashedPassword) => {
+      //     const newUser = new User({
+      //       ...req.body,
+      //       pass_word: hashedPassword,
+      //     });
+
+      //     User.createNewAdmin(newUser, (err, user) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+
+      //       if (user) {
+
+      //           new Mail(newUser.staff_email).sendMail("REGISTRATION", {
+
+      //               subject: "Welcome to Skyway Aviation Handling Co.",
+      //               data: {
+      //                 name: newUser.staff_name,
+      //                 staff_id: newUser.staff_id
+      //               },
+      //           })
+
+      //           res.status(200).json({
+      //             message: "User registration successful.",
+      //             data: newUser,
+      //             success: 1,
+      //           });
+      //       }
+      //     });
+      //   });
+      // }
+    // });
   } catch (error) {
     throw error;
   }
