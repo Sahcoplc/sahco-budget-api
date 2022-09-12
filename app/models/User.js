@@ -73,77 +73,109 @@ class User {
     }
 
     //Get user by id
-    static findOneById(id, result) {
+    static findOneById = async (id) => {
 
-        try {
-            connectDb.query(`SELECT * FROM users WHERE id = ?`, [id], (err, res) => {
-                if (err) {
-                    console.log('Found error: ', err);
-                    result(err, null);
-                    return;
-                }
-                
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
-        } catch (error) {
-            console.log(error);
-            throw error;
+        const query = SQL`SELECT * FROM users WHERE id = ${id}`
+
+        const [result] = await connectDb.query(query).catch(err => { throw err });
+
+        if(result) {
+
+            return result
+
+        } else {
+            return {code: 404}
         }
+
+
+        // try {
+        //     connectDb.query(`SELECT * FROM users WHERE id = ?`, [id], (err, res) => {
+        //         if (err) {
+        //             console.log('Found error: ', err);
+        //             result(err, null);
+        //             return;
+        //         }
+                
+        //         if (res.length) {
+        //             return result(null, res)
+        //         } else {
+        //             return result({code: 404}, null)
+        //         }
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        //     throw error;
+        // }
     }
 
     // Get all users
-    static findAll(name, result) {
+    static findAll = async (name) => {
 
-        let query = "SELECT * FROM users";
+        let query = SQL`SELECT * FROM users`;
 
         if(name) {
-            query += ` WHERE staff_name LIKE '%${name}%'`;
+            query += SQL`WHERE staff_name LIKE '%${name}%'`;
+        }
+        const result = await connectDb.query(query).catch(err => { throw err });
+
+        if(result) {
+
+            return result
+
+        } else {
+            return {code: 404}
         }
 
-        try {
-            connectDb.query(query, (err, res) => {
-                if (err) {
-                    console.log('error: ', err);
-                    result(err, null);
-                    return 
-                } 
+        // try {
+        //     connectDb.query(query, (err, res) => {
+        //         if (err) {
+        //             console.log('error: ', err);
+        //             result(err, null);
+        //             return 
+        //         } 
 
-                result(null, res);
-                return
-            })
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+        //         result(null, res);
+        //         return
+        //     })
+        // } catch (error) {
+        //     console.log(error)
+        //     throw error;
+        // }
     }
 
     // Delete user by id
-    static deleteOneById(id, result) {
+    static deleteOneById = async (id) => {
 
-        try {
-            connectDb.query(`DELETE FROM users WHERE id = ?`, [id], (err, res) => {
-                if (err) {
-                    console.log('Found error: ', err);
-                    result(err, null);
-                    return;
-                }
-                
-                if (res.affectedRows > 0) {
-                    console.log('Found user', res)
-                    result(null, res)
-                    return;
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
-        } catch (error) {
-            console.log(error);
-            throw error;
+        const query = SQL`DELETE * FROM users WHERE id = ${id}`
+
+        const result = await connectDb.query(query).catch(err => { throw err });
+
+        if(result.affectedRows > 0) {
+            return result
+        } else {
+            return {code: 404}
         }
+
+        // try {
+        //     connectDb.query(`DELETE FROM users WHERE id = ?`, [id], (err, res) => {
+        //         if (err) {
+        //             console.log('Found error: ', err);
+        //             result(err, null);
+        //             return;
+        //         }
+                
+        //         if (res.affectedRows > 0) {
+        //             console.log('Found user', res)
+        //             result(null, res)
+        //             return;
+        //         } else {
+        //             return result({code: 404}, null)
+        //         }
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        //     throw error;
+        // }
     }
 
     // Update user by email
@@ -154,7 +186,7 @@ class User {
 
         if (validatedEmail) {
 
-            const query = $`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
+            const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
 
             const result = await connectDb.query(query).catch(err => { throw err })
 
@@ -166,32 +198,8 @@ class User {
                 return {...user}
             }
 
-            // try {
-            //     connectDb.query(`UPDATE users SET staff_name = ?, department = ?, gender = ?, avatar = ?, otp = ?, otpExpiresIn = ? WHERE staff_email = ?`, [user.staff_name, user.department, user.gender, user.avatar, user.otp, user.otpExpiresIn, email], (err, res) => {
-            //         if (err) {
-            //             console.log('error: ', err);
-            //             result(err, null);
-            //             return 
-            //             // throw new createCustomError(err.message, 500)
-            //         } 
-                    
-            //         if(res.affectedRows == 0) {
-            //             //not found User with the id
-            //             result({code: 404}, null);
-            //             return;
-
-            //         } else {
-            //             console.log(`${res.affectedRows} updated user: `);
-            //             result(null, { ...user });
-            //             return 
-            //         }
-            //     })
-            // } catch (error) {
-            //     console.log(error);
-            //     throw error;
-            // }
         } else {
-            return result({code: 400}, null);
+            return {code: 400};
         }
     }
 }
