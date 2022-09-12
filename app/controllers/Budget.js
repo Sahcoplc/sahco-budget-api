@@ -36,6 +36,12 @@ export const createBudget = asyncWrapper(async (req, res) => {
             const newBud = new Budget(data)
     
             await Budget.findByType(department, account_type, (err, result) => {
+                if (err && !err.code) {
+                    res.status(500).json({
+                        message: "Sorry we could not create your budget this time.",
+                        success: 0,
+                    })
+                }
                 if(err && err.code === 404) {
     
                     Budget.createBudgetItem(newBud, (err, newBudget) => {
@@ -117,15 +123,19 @@ export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
 
     try {
         await Budget.findByDepartment(dept, (err, budget) => {
-            // if (err) {
-            //     throw createCustomError('Sorry we could not get your budget this time', 500)
-            // }
 
             if(err && err.code === 404) {
                 res.status(404).json({
                     message: `${dept} has no budget records found`,
                     success: 0,
                 });
+            } else if (err) {
+
+                res.status(500).json({
+                    message: `Sorry we could not create your budget this time.`,
+                    success: 0,
+                });
+
             }
 
             if(budget) {

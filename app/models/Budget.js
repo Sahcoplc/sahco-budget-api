@@ -87,8 +87,7 @@ class Budget {
             connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ? AND account.account_type = ? ORDER BY budget.created_time DESC`, [department, account_type], (err, res) => {
                 if (err) {
                     
-                    result(err, null);
-                    return;
+                    return result(err, null);
                 }
                 
                 if (res.length) {
