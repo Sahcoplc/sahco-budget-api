@@ -130,9 +130,9 @@ export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
                     success: 0,
                 });
             } else if (err) {
-
+                console.log('Database error: ', err)
                 res.status(500).json({
-                    message: `Sorry we could not create your budget this time.`,
+                    message: `Sorry we could not get your budget this time.`,
                     success: 0,
                 });
 
