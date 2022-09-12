@@ -23,20 +23,13 @@ import accountRoutes from './routes/Account.js'
 import budgetRoutes from './routes/Budget.js'
 
 const app = express();
-const corsOptions = {
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://www.sahcoplc.com.ng', 'https://sahcoplc-budget-react.vercel.app'],
-    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS'],
-    credentials: true
-};
+// const corsOptions = {
+//     origin: ['http://localhost:3000', 'http://localhost:3001', 'https://www.sahcoplc.com.ng', 'https://sahcoplc-budget-react.vercel.app'],
+//     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS'],
+//     credentials: true
+// };
 
-// app.use(function(req, res, next) {
-//     res.set("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-//     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, UPDATE, PUT, PATCH, OPTIONS, HEAD");
-//     res.header("Access-Control-Allow-Credentials", "true");
-//     next();
-// });
-
+app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
 
@@ -52,9 +45,7 @@ app.engine("hbs", exphbs.engine);
 app.use(express.static(path.join(__dirname, "/public")));
 
 const HOSTNAME = process.env.NODE_ENV !== 'production' ?  process.env.DEV_HOST : process.env.PRO_HOSTNAME;
-let PORT =  process.env.PORT;
-
-app.use(cors());
+let PORT =  process.env.PORT || process.env.DEV_PORT;
 
 // Routes
 const apiPath = "/api";
@@ -62,7 +53,6 @@ app.use(apiPath + "/", homeRoutes);
 app.use(apiPath + '/auth', authRoutes)
 app.use(apiPath + '/users', userRoutes);
 app.use(apiPath + '/account', accountRoutes);
-app.use(cors());
 app.use(apiPath + '/sahcobudget', budgetRoutes);
 
 
