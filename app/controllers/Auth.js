@@ -27,6 +27,7 @@ export const login = asyncWrapper(async (req, res) => {
 
   try {
     const user = await User.findOneByEmail(staff_email)
+    console.log('Controller: ', user)
 
     if(user && user.code === 400) {
       throw new BadRequestError("A valid email is required");

@@ -50,7 +50,7 @@ class User {
             const query = SQL`SELECT * FROM users WHERE staff_email = ${email}`
 
             const [result] = await connectDb.query(query).catch(err => { throw err });
-
+            console.log('Data: ', result)
             return result
 
         } else {
