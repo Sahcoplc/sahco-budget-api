@@ -109,7 +109,7 @@ class Budget {
     static findAll = async () => {
 
         try {
-            const query = SQL`SELECT budget.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId GROUP BY account.account_type`;
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId GROUP BY account.id, account.account_category, account.account_type`;
             
             const result = await connectDb.query(query).catch(err => { throw err })
             
