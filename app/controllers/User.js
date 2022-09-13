@@ -21,6 +21,7 @@ export const createUser = asyncWrapper(async (req, res) => {
     }
     //Check for duplicates
      const user = await User.findOneByEmail(staff_email)
+     console.log('Control: ', user)
 
     if (user && user.code === 400) {
 
