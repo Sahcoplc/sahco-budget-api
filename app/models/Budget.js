@@ -1,4 +1,5 @@
 import connectDb from "../db/connect.js";
+import { SQL } from "sql-template-strings";
 
 class Budget {
     constructor(budget){
@@ -22,16 +23,18 @@ class Budget {
         this.status = budget.status;
     }
 
-    static createBudgetItem(newBudget, result) {
+    static createBudgetItem = async (newBudget) => {
 
         try {
-            connectDb.query('INSERT INTO budget SET ? ', [newBudget], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                    // throw createCustomError(`Something happened`, 500)
-                }
-                return result(null, { id: res.insertId, ...newBudget });
-            })
+
+            const {userId, department, january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = newBudget
+
+            const query = SQL`INSERT INTO budget SET userId = ${userId}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
+            
+            const result = connectDb.query(query).catch(err => { throw err })
+
+            return {id: result.insertId, ...newBudget}
+            
         } catch (error) {
             console.log(error);
             throw error;
@@ -60,20 +63,19 @@ class Budget {
     }
 
     // Find all budgets by department -- used by staff/department
-    static findByDepartment(department, result) {
+    static findByDepartment = async (department) => {
 
         try {
-            connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ? ORDER BY budget.created_time DESC`, [department], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                }
-                
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
+
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} ORDER BY budget.created_time DESC`;
+            
+            const result = connectDb.query(query).catch(err => { throw err })
+            
+            if (result) {
+                return result
+            } else {
+                return {code: 404}
+            }
         } catch (error) {
             console.log(error);
             throw error;

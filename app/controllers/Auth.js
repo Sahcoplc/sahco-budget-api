@@ -193,10 +193,10 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
     const user = await User.findOneById(id)
 
     if(user.code && user.code === 404) {
-      throw createCustomError(`No user with id: ${id}`, 404)
-    }
 
-    if(user && user.otp !== (otp * 1)) {
+      throw createCustomError(`No user with id: ${id}`, 404)
+
+    } else if(user && user.otp !== (otp * 1)) {
 
       throw new BadRequestError("Invalid OTP Pin received");
 
@@ -235,77 +235,9 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
               message: "Password Updated Successfully",
               data: newUser,
               success: 1,
-                });
+            });
         }
     });
-
-    // await User.findOneById(id, (err, user) => {
-
-    //     if (err && err.code === 404) {
-    //         // throw createCustomError(`No user with id: ${userId}`, 404);
-    //         res.status(404).json({
-    //             message: `No user with id: ${id}`,
-    //             success: 0,
-    //         });
-    //     }
-
-    //     if(user && user[0].otp !== (otp * 1)) {
-
-    //         res.status(400).json({
-    //             message: "Invalid OTP Pin received",
-    //             success: 0,
-    //         });
-
-    //        // throw new BadRequestError("Invalid OTP Pin received");
-
-    //     } else if (user && new Date(user[0].otpExpiresIn) < new Date()) {
-    //         res.status(400).json({
-    //             message: "OTP expired",
-    //             success: 0,
-    //         });
-            
-    //         // throw new BadRequestError("OTP expired");
-
-    //     } else {
-          
-    //       const hashed = generateHashString(pass_word);
-
-    //       hashed.then((hashedPassword) => {
-
-    //         const updatedUser = {
-    //             ...user[0],
-    //             pass_word: hashedPassword,
-    //             otp: 0,
-    //             otpExpiresIn: addHoursToDate(new Date(), 0.5),
-    //         };
-
-
-    //         User.updateOneByEmail(user[0].staff_email, updatedUser, (err, newUser) => {
-              
-    //             if (err && err.code === 404) {
-    //                 res.status(404).json({
-    //                     message: "User does not exist",
-    //                     success: 0,
-    //                 });
-    //             }
-    
-    //             if (newUser) {
-    //                 delete newUser.pass_word;
-    //                 delete newUser.otp;
-    //                 delete newUser.otpExpiresIn;
-    //                 delete newUser.otpVerificationId
-
-                    
-    //                 res.status(200).json({
-    //                     message: "Password Updated Successfully",
-    //                     data: newUser,
-    //                     success: 1,
-    //                 });
-    //             }
-    //         });
-    //       })
-    //     }
-    // });
     }
   } catch (error) {
     throw error;

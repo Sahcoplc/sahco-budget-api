@@ -1,5 +1,6 @@
 import connectDb from "../db/connect.js";
 import {  SQL } from 'sql-template-strings';
+import sql, { empty, join } from 'sql-template-tag';
 import { testRegex } from "../utils/regexFunctions.js";
 
 //constructor
@@ -38,20 +39,6 @@ class User {
             throw error
         }
         
-
-        // try {
-        //     connectDb.query('INSERT INTO users SET ? ', [newAdmin], (err, res) => {
-        //         if (err) {
-        //             console.log('error: ', err);
-        //             return result(err, null);
-        //             // throw createCustomError(`Something happened`, 500)
-        //         }
-        //         return result(null, { id: res.insertId, ...newAdmin });
-        //     })
-        // } catch (error) {
-        //     console.log(error);
-        //     throw error;
-        // }
     }
 
     // Get user by email
@@ -78,7 +65,7 @@ class User {
         const query = SQL`SELECT * FROM users WHERE id = ${id}`
 
         const [result] = await connectDb.query(query).catch(err => { throw err });
-
+        console.log('Data: ', result)
         if(result) {
 
             return result
@@ -86,38 +73,18 @@ class User {
         } else {
             return {code: 404}
         }
-
-
-        // try {
-        //     connectDb.query(`SELECT * FROM users WHERE id = ?`, [id], (err, res) => {
-        //         if (err) {
-        //             console.log('Found error: ', err);
-        //             result(err, null);
-        //             return;
-        //         }
-                
-        //         if (res.length) {
-        //             return result(null, res)
-        //         } else {
-        //             return result({code: 404}, null)
-        //         }
-        //     })
-        // } catch (error) {
-        //     console.log(error);
-        //     throw error;
-        // }
     }
 
     // Get all users
     static findAll = async (name) => {
 
-        let query = SQL`SELECT * FROM users`;
+        let query = `SELECT * FROM users`;
 
         if(name) {
-            query += SQL`WHERE staff_name LIKE '%${name}%'`;
+            query += ` WHERE staff_name LIKE '%${name}%'`;
         }
         const result = await connectDb.query(query).catch(err => { throw err });
-
+    
         if(result) {
 
             return result
@@ -125,28 +92,12 @@ class User {
         } else {
             return {code: 404}
         }
-
-        // try {
-        //     connectDb.query(query, (err, res) => {
-        //         if (err) {
-        //             console.log('error: ', err);
-        //             result(err, null);
-        //             return 
-        //         } 
-
-        //         result(null, res);
-        //         return
-        //     })
-        // } catch (error) {
-        //     console.log(error)
-        //     throw error;
-        // }
     }
 
     // Delete user by id
     static deleteOneById = async (id) => {
 
-        const query = SQL`DELETE * FROM users WHERE id = ${id}`
+        const query = SQL`DELETE FROM users WHERE id = ${id}`
 
         const result = await connectDb.query(query).catch(err => { throw err });
 
@@ -180,9 +131,10 @@ class User {
 
     // Update user by email
     static updateOneByEmail = async (user) => {
-        const validatedEmail = this.validateEmail(email)
-
+        
         const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, otp, otpExpiresIn} = user
+        
+        const validatedEmail = this.validateEmail(staff_email)
 
         if (validatedEmail) {
 

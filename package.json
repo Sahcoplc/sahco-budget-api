@@ -32,6 +32,7 @@
     "nodemailer-express-handlebars": "^5.0.0",
     "nodemon": "^2.0.19",
     "sql-template-strings": "^2.2.2",
+    "sql-template-tag": "^5.0.3",
     "util": "^0.12.4"
   }
 }

@@ -9,7 +9,7 @@ import imageUpload from "../middlewares/uploads/imageUpload.js";
 router.post('/new', authMiddleWare, createUser)
 router.get('/all', authMiddleWare, getUsers)
 router.get('/:id', authMiddleWare, getUser)
-router.patch('/:email', authMiddleWare, imageUpload.array('avatar'), updatedUser)
+router.patch('/update', authMiddleWare, imageUpload.array('avatar'), updatedUser)
 router.delete('/:id', authMiddleWare, deleteUser)
 
 //Logged in user
