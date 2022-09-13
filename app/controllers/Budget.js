@@ -13,7 +13,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, department, account_type, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    if (!accountId && !january && !february && !march && !april && !may && !june && !july && !august && !sept && !october && !nov && !december) {
+    if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
         throw new BadRequestError('Budget records required')
 
     } else {
@@ -40,7 +40,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
             console.log('Control: ', budget)
             
             if(budget) {
-                throw new BadRequestError('A budget with this account already exist.')
+                throw new BadRequestError('A budget with this account type already exist.')
             }
 
             if (budget && budget.code === 404) {
