@@ -43,18 +43,30 @@ class User {
 
     // Get user by email
     static findOneByEmail = async (email) => {
-        const validatedEmail = this.validateEmail(email)
 
-        if (validatedEmail) {
+        try {
+            
+            const validatedEmail = this.validateEmail(email)
+    
+            if (validatedEmail) {
+    
+                const query = SQL`SELECT * FROM users WHERE staff_email = ${email}`
+    
+                const [result] = await connectDb.query(query).catch(err => { throw err });
+                console.log('Data: ', result)
+                
+                if (result) {
 
-            const query = SQL`SELECT * FROM users WHERE staff_email = ${email}`
-
-            const [result] = await connectDb.query(query).catch(err => { throw err });
-            console.log('Data: ', result)
-            return result
-
-        } else {
-            return {code: 400};
+                    return result
+                } else {
+                    return {code: 404}
+                }
+    
+            } else {
+                return {code: 400};
+            }
+        } catch (error) {
+            throw error
         }
 
     }
@@ -62,49 +74,64 @@ class User {
     //Get user by id
     static findOneById = async (id) => {
 
-        const query = SQL`SELECT * FROM users WHERE id = ${id}`
-
-        const [result] = await connectDb.query(query).catch(err => { throw err });
-        
-        if(result) {
-
-            return result
-
-        } else {
-            return {code: 404}
+        try {
+            const query = SQL`SELECT * FROM users WHERE id = ${id}`
+    
+            const [result] = await connectDb.query(query).catch(err => { throw err });
+            
+            if(result) {
+    
+                return result
+    
+            } else {
+                return {code: 404}
+            }
+        } catch (error) {
+            throw error
         }
     }
 
     // Get all users
     static findAll = async (name) => {
 
-        let query = `SELECT * FROM users`;
-
-        if(name) {
-            query += ` WHERE staff_name LIKE '%${name}%'`;
-        }
-        const result = await connectDb.query(query).catch(err => { throw err });
+        try {
+            
+            let query = `SELECT * FROM users`;
     
-        if(result) {
-
-            return result
-
-        } else {
-            return {code: 404}
+            if(name) {
+                query += ` WHERE staff_name LIKE '%${name}%'`;
+            }
+            const result = await connectDb.query(query).catch(err => { throw err });
+        
+            if(result) {
+    
+                return result
+    
+            } else {
+                return {code: 404}
+            }
+        } catch (error) {
+            throw error
         }
     }
 
     // Delete user by id
     static deleteOneById = async (id) => {
 
-        const query = SQL`DELETE FROM users WHERE id = ${id}`
+        try {
+            
+            const query = SQL`DELETE FROM users WHERE id = ${id}`
+    
+            const result = await connectDb.query(query).catch(err => { throw err });
+    
+            if(result.affectedRows > 0) {
+                return result
+            } else {
+                return {code: 404}
+            }
 
-        const result = await connectDb.query(query).catch(err => { throw err });
-
-        if(result.affectedRows > 0) {
-            return result
-        } else {
-            return {code: 404}
+        } catch (error) {
+            throw error
         }
 
     }
@@ -112,26 +139,31 @@ class User {
     // Update user by email
     static updateOneByEmail = async (user) => {
         
-        const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, otp, otpExpiresIn} = user
-        
-        const validatedEmail = this.validateEmail(staff_email)
-
-        if (validatedEmail) {
-
-            const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
-
-            const result = await connectDb.query(query).catch(err => { throw err })
-
-            if(result.affectedRows == 0) {
-                //not found User with the id
-                return {code: 404}
-
+        try {
+            
+            const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, otp, otpExpiresIn} = user
+            
+            const validatedEmail = this.validateEmail(staff_email)
+    
+            if (validatedEmail) {
+    
+                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
+    
+                const result = await connectDb.query(query).catch(err => { throw err })
+    
+                if(result.affectedRows == 0) {
+                    //not found User with the id
+                    return {code: 404}
+    
+                } else {
+                    return {...user}
+                }
+    
             } else {
-                return {...user}
+                return {code: 400};
             }
-
-        } else {
-            return {code: 400};
+        } catch (error) {
+            throw error
         }
     }
 }
