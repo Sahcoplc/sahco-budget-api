@@ -27,7 +27,6 @@ export const login = asyncWrapper(async (req, res) => {
 
   try {
     const user = await User.findOneByEmail(staff_email)
-    console.log('Controller: ', user)
 
     if(user && user.code === 400) {
       throw new BadRequestError("A valid email is required");
@@ -36,7 +35,7 @@ export const login = asyncWrapper(async (req, res) => {
     if(user && user.code === 404) {
       throw createCustomError('User does not exist', 404)
     }
-    
+
     if(user) {
       const password = comparePassword(pass_word, user.pass_word);
 
