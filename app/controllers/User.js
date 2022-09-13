@@ -34,11 +34,11 @@ export const createUser = asyncWrapper(async (req, res) => {
       throw new BadRequestError("An account with this email already exists");
     }
     
-    if(!user) {
+    if(user && user.code === 404) {
 
         const hashed = generateHashString(pass_word);
 
-        hashed.then((hashedPassword) => {
+        hashed.then( async (hashedPassword) => {
           const newUser = new User({
 
             ...req.body,
@@ -47,7 +47,7 @@ export const createUser = asyncWrapper(async (req, res) => {
           });
 
 
-          const createdUser = User.createNewAdmin(newUser)
+          const createdUser = await User.createNewAdmin(newUser)
 
           if (createdUser) {
             new Mail(newUser.staff_email).sendMail("REGISTRATION", {
