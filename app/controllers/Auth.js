@@ -28,7 +28,7 @@ export const login = asyncWrapper(async (req, res) => {
   try {
     const user = await User.findOneByEmail(staff_email)
 
-    if(user.code && user.code === 400) {
+    if(user && user.code === 400) {
       throw new BadRequestError("A valid email is required");
     }
 
@@ -73,7 +73,7 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
 
     const user = await User.findOneByEmail(staff_email)
 
-    if(user.code && user.code === 400) {
+    if(user && user.code === 400) {
       throw new BadRequestError("A valid email is required");
     }
 
@@ -89,7 +89,7 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
 
         const result = User.updateOneByEmail(newUpdate);
 
-        if(result.code && result.code === 404) {
+        if(result && result.code === 404) {
             throw createCustomError("User does not exist", 404)
         }
 
@@ -114,67 +114,6 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
         }
     }
 
-
-    // await User.findOneByEmail(staff_email, (err, user) => {
-    //   if (err && err.code === 404) {
-    //     res.status(404).json({
-    //       message: "User does not exist",
-    //       success: 0,
-    //     });
-    //   }
-
-    //   if (err && err.code === 400) {
-    //     throw new BadRequestError("A valid email is required");
-    //   }
-
-    //   if (user) {
-    //     const otp = Math.floor(100000 + Math.random() * 900000);
-    //     const otpExpiresIn = addHoursToDate(new Date(), 1);
-
-    //     const newUpdate = {
-    //       ...user[0],
-    //       otp,
-    //       otpExpiresIn,
-    //     };
-
-    //     User.updateOneByEmail(user[0].staff_email, newUpdate, (err, updatedUser) => {
-
-    //         if (err && err.code === 404) {
-
-    //           res.status(404).json({
-    //             message: "User does not exist",
-    //             success: 0,
-    //           });
-    //         }
-
-    //         // if (err && err.kind === 'A valid email is required') {
-    //         //     throw new BadRequestError("A valid email is required");
-    //         // }
-
-    //         if (updatedUser) {
-
-    //           new Mail(updatedUser.staff_email).sendMail("FORGET_PASSWORD", {
-    //             subject: "RESET PASSWORD",
-    //             data: {
-    //               name: updatedUser.staff_name,
-    //               otp: otp,
-    //               id: user.id,
-    //             },
-    //           });
-
-    //           res.status(200).json({
-    //             message: "OTP Sent Successfully.",
-    //             data: {
-    //               id: updatedUser.id,
-    //               email: updatedUser.staff_email,
-    //             },
-    //             success: 1,
-    //           });
-    //         }
-    //       }
-    //     );
-    //   }
-    // });
   } catch (error) {
     throw error;
   }
