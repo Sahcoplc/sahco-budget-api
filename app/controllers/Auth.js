@@ -33,6 +33,10 @@ export const login = asyncWrapper(async (req, res) => {
       throw new BadRequestError("A valid email is required");
     }
 
+    if(user && user.code === 404) {
+      throw createCustomError('User does not exist', 404)
+    }
+    
     if(user) {
       const password = comparePassword(pass_word, user.pass_word);
 
