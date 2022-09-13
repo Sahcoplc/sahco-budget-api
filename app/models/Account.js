@@ -1,3 +1,4 @@
+import SQL from "sql-template-strings";
 import connectDb from "../db/connect.js";
 
 class Account {
@@ -9,104 +10,105 @@ class Account {
     }
 
     // Insert a new account 
-    static createNewAccount(newAccount, result) {
+    static createNewAccount = async (newAccount) => {
 
         try {
-            connectDb.query('INSERT INTO account SET ? ', [newAccount], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                    // throw createCustomError(`Something happened`, 500)
-                }
-                return result(null, { id: res.insertId, ...newAccount });
-            })
+            const { account_category, account_type, start_date, end_date} = newAccount;
+
+            const query = SQL`INSERT INTO account SET account_type = ${account_type}, account_category = ${account_category}, start_date = ${start_date}, end_date = ${end_date}`
+            
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            return {id: result.insertId, ...newAccount}
+
         } catch (error) {
             throw error;
         }
     }
 
     // Get account by type
-    static findOne(account_type, result) {
+    static findOne = async (account_type) => {
 
         try {
-            connectDb.query(`SELECT * FROM account WHERE account_type = ?`, [account_type], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                } 
+            const query = SQL`SELECT * FROM account WHERE account_type = ${account_type}`
 
-                if (res.length === 0) {
-                    return result({code: 404}, null);
-                     
-                } else {
-                    return result(null, res);
-                }
-            })
+            const [result] = await connectDb.query(query).catch(err => { throw err })
+
+            if(result) {
+                return result
+    
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
             throw error
         }
     }
 
-    static findById(accountId, result) {
+    static findById = async (accountId) => {
 
         try {
-            connectDb.query(`SELECT * FROM account WHERE id = ?`, [accountId], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                } 
 
-                if (res.length === 0) {
-                    return result({code: 404}, null);
-                     
-                } else {
-                    return result(null, res);
-                }
-            })
+            const query = SQL`SELECT * FROM account WHERE id = ${accountId}`
+
+            const [result] = await connectDb.query(query).catch(err => { throw err })
+
+            if(result) {
+
+                return result
+    
+            } else {
+                return {code: 404}
+            }
         } catch (error) {
             throw error
         }
     }
 
     // Get account by type
-    static findOneByCategory(account_category, result) {
+    static findByCategory = async (account_category) => {
 
         try {
-            connectDb.query(`SELECT * FROM account WHERE account_category = ?`, [account_category], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                } 
 
-                if (res.length === 0) {
-                    return result({code: 404}, null);
-                     
-                } else {
-                    return result(null, res);
-                }
-            })
+            const query = SQL`SELECT * FROM account WHERE account_category = ${account_category}`
+
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            if(result) {
+
+                return result
+    
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
             throw error
         }
     }
 
     //Get all account
-    static findAll(account_category, result) {
-        let query = "SELECT * FROM account";
-
-        if(account_category) {
-            query += ` WHERE account_category LIKE '%${account_category}%'`;
-        }
+    static findAll = async (account_category) => {
 
         try {
-            connectDb.query(query, (err, res) => {
-                if (err) {
-                    return result(err, null);
-                    // throw createCustomError(`Something happened`, 500)
-                }
 
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
+            let query = "SELECT * FROM account";
+
+            if(account_category) {
+                query += ` WHERE account_category LIKE '%${account_category}%'`;
+            }
+
+            const result = await connectDb.query(query).catch(err => { throw err });
+    
+            if(result) {
+
+                return result
+
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
             console.log(error);
             throw error;
@@ -114,27 +116,27 @@ class Account {
     }
 
     //Update account date
-    static updateByCategory(account_category, status, result) {
+    static updateByCategory = async (status) => {
 
         try {
-            connectDb.query(`UPDATE account SET start_date = ?, end_date = ? WHERE account_category = ?`, [status.start_date, status.end_date, account_category], (err, res) => {
-                if (err) {
-                    return result(err, null);
-                    // throw new createCustomError(err.message, 500)
-                } 
+            
+            const { start_date, end_date, account_category } = status
+            
+            const query = SQL`UPDATE account SET start_date = ${start_date}, end_date = ${end_date} WHERE account_category = ${account_category}`
+            
+            const result = await connectDb.query(query).catch(err => { throw err })
 
-                if(res.affectedRows == 0) {
-                    //not found User with the id
-                    result({code: 404}, null);
-                    return;
+            if(result.affectedRows == 0) {
+                //not found User with the id
+                return {code: 404}
 
-                } else {
-                    result(null, { ...status });
-                    return 
-                }
-            })
+            } else {
+
+                return {...status}
+            }
+        
         } catch (error) {
-            throw err
+            throw error
         }
     }
 }

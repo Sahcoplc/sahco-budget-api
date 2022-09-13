@@ -3,6 +3,7 @@ import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import Budget from "../models/Budget.js";
 import Account from '../models/Account.js'
+import { createCustomError } from "../utils/customError.js";
 
 export const createBudget = asyncWrapper(async (req, res) => {
 
@@ -35,42 +36,24 @@ export const createBudget = asyncWrapper(async (req, res) => {
         try {
             const newBud = new Budget(data)
     
-            await Budget.findByType(department, account_type, (err, result) => {
-                if (err && !err.code) {
-                    res.status(500).json({
-                        message: "Sorry we could not create your budget this time.",
-                        success: 0,
-                    })
-                }
-                if(err && err.code === 404) {
-    
-                    Budget.createBudgetItem(newBud, (err, newBudget) => {
-                        if (err) {
-                            
-                            res.status(500).json({
-                                message: "Sorry we could not create your budget this time.",
-                                success: 0,
-                            });
-                            // throw createCustomError('Sorry we could not create your budget this time', 500)
-                        }
+            const budget = await Budget.findByType(department, account_type)
+
             
-                        if(newBudget) {
-                            res.status(200).json({
-                                message: "Budget Creation Successful.",
-                                data: newBudget,
-                                success: 1,
-                            });
-                        }
-                    })
-                }
-    
-                if(result) {
-                    res.status(400).json({
-                        message: "A budget with this account already exist.",
-                        success: 0,
+            if(budget) {
+                throw new BadRequestError('A budget with this account already exist.')
+            }
+
+            if (budget && budget.code === 404) {
+                const newBudget = await Budget.createBudgetItem(newBud)
+
+                if(newBudget) {
+                    res.status(200).json({
+                        message: "Budget Creation Successful.",
+                        data: newBudget,
+                        success: 1,
                     });
                 }
-            })
+            }
         } catch (error) {
             throw error
         }
@@ -87,27 +70,22 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
     }
 
     try {
-        await Budget.findByDepartment(dept, (err, budget) => {
-            // if (err) {
-            //     throw createCustomError('Sorry we could not get your budget this time', 500)
-            // }
 
-            if(err && err.code === 404) {
-                res.status(404).json({
-                    message: `${dept} has no budget records found`,
-                    success: 0,
-                });
-            }
+        const budget = await Budget.findByDepartment(dept)
 
-            if(budget) {
-    
-                res.status(200).json({
-                    message: "Budget Details.",
-                    data: budget,
-                    success: 1,
-                });
-            }
-        })
+        if(budget && budget.code === 404) {
+            throw createCustomError( `${dept} has no budget records found`, 404)
+        }
+
+        if (budget) {
+
+            res.status(200).json({
+                message: "Budget Details.",
+                data: budget,
+                success: 1,
+            });
+        }
+
     } catch (error) {
         throw error
     }
@@ -122,31 +100,21 @@ export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
     }
 
     try {
-        await Budget.findByDepartment(dept, (err, budget) => {
+        const budget = await Budget.findByDepartment(dept)
 
-            if(err && err.code === 404) {
-                res.status(404).json({
-                    message: `${dept} has no budget records found`,
-                    success: 0,
-                });
-            } else if (err) {
-                console.log('Database error: ', err)
-                res.status(500).json({
-                    message: `Sorry we could not get your budget this time.`,
-                    success: 0,
-                });
+        if(budget && budget.code === 404) {
+            throw createCustomError( `${dept} has no budget records found`, 404)
+        }
 
-            }
-
-            if(budget) {
+        if(budget) {
     
-                res.status(200).json({
-                    message: "Budget Details.",
-                    data: budget,
-                    success: 1,
-                });
-            }
-        })
+            res.status(200).json({
+                message: "Budget Details.",
+                data: budget,
+                success: 1,
+            });
+        }
+       
     } catch (error) {
         throw error
     }
@@ -157,40 +125,36 @@ export const getBudget = asyncWrapper(async (req, res) => {
     const { id } = req.params;
 
     try {
-        await Budget.findById(id, (err, budget) => {
-            if (err && err.code === 404) {
-                // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.status(404).json({
-                  message: `No budget with id: ${id}`,
-                  success: 0,
+
+        const budget = await Budget.findById(id)
+
+        if(budget && budget.code === 404) {
+            throw createCustomError( `No budget with id: ${id}`, 404)
+        }
+
+        if(budget) {
+            const acc = await Account.findById(budget.accountId)
+
+            if(acc && acc.code === 404) {
+
+                throw createCustomError( `No budget account with id: ${id}`, 404)
+            }
+
+            if (acc) {
+                const single = {
+                    ...budget,
+                    account: acc
+                }
+
+                res.status(200).json({
+                    message: "Budget details",
+                    data: single,
+                    success: 1,
                 });
             }
 
-            if(budget) {
-                Account.findById(budget[0].accountId, (err, acc) => {
-                    if (err && err.code === 404) {
-                        // throw createCustomError(`No user with id: ${userId}`, 404);
-                        res.status(404).json({
-                          message: `No budget account with id: ${id}`,
-                          success: 0,
-                        });
-                    }
+        }
 
-                    if(acc) {
-                        const single = {
-                            ...budget[0],
-                            account: acc[0]
-                        }
-                        res.status(200).json({
-                            message: "Budget details",
-                            data: single,
-                            success: 1,
-                        });
-                    }
-                })
-                
-            }
-        })
     } catch (error) {
         throw error
     }
@@ -226,41 +190,46 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
 
         try {
-            await Budget.findById(id, (err, budget) => {
-                if (err && err.code === 404) {
-                    // throw createCustomError(`No user with id: ${userId}`, 404);
-                    res.status(404).json({
-                      message: `No budget with id: ${id}`,
-                      success: 0,
-                    });
+
+            const budget = await Budget.findById(id)
+
+            if(budget && budget.code === 404) {
+                throw createCustomError( `No budget with id: ${id}`, 404)
+            }
+
+            if(budget && budget.status === 'APPROVED' || budget && budget.status === 'SUSPENDED') {
+
+                throw new BadRequestError(`Approved or suspended budget cannot be updated`)
+
+            } else {
+                
+                const acc = Account.findById(budget.accountId)
+
+                if(acc && acc.code === 404) {
+                    throw createCustomError( `No budget account with id: ${budget.accountId}`, 404)
                 }
-    
-                if(budget && budget[0].status === 'APPROVED' || budget && budget[0].status === 'SUSPENDED') {
-    
-                    res.status(400).json({
-                        message: `Approved or suspended budget cannot be updated`,
-                        success: 0,
-                    });
-    
+
+                if(acc && new Date(acc.end_date) < new Date()) {
+
+                    throw new BadRequestError(`Budget submission has expired`)
+
                 } else {
-                    Budget.updateById(id, budgetData, (err, updates) => {
-                        if(err) {
-                            res.status(500).json({
-                                message: "Sorry we could not update your budget this time.",
-                                success: 0,
-                            });
-                        }
-    
-                        if(updates) {
-                            res.status(200).json({
-                                message: "Budget Updated Successfully",
-                                data: updates,
-                                success: 1
-                            })
-                        }
-                    })
+                    const update = await Budget.updateById(id)
+
+                    if(update && update.code === 404) {
+                        throw createCustomError( `No budget with id: ${id}`, 404)
+                    }
+
+                    if(update) {
+                        res.status(200).json({
+                            message: "Budget Updated Successfully",
+                            data: update,
+                            success: 1
+                        })
+                    }
                 }
-            })
+            }
+
         } catch (error) {
             throw error;
         }
@@ -274,34 +243,46 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
     const { id } = req.params;
 
     try {
-        await Budget.findById(id, (err, budget) => {
-            if(err && err.code === 404) {
-                res.status(404).json({
-                    message: `No budget with id: ${id}`,
-                    success: 0,
-                });
+
+        const budget = await Budget.findById(id)
+
+        if(budget && budget.code === 404) {
+            throw createCustomError( `No budget with id: ${id}`, 404)
+        }
+
+        if(budget && budget.status === "APPROVED" || budget && budget.status === 'SUSPENDED') {
+                
+            throw new UnauthenticatedError("Not authorized to access this route");
+
+        } else {
+            const acc = Account.findById(budget.accountId)
+
+            if(acc && acc.code === 404) {
+                throw createCustomError( `No budget account with id: ${budget.accountId}`, 404)
             }
 
-            if(budget != null && budget[0].status === "APPROVED" || budget != null && budget[0].status === 'SUSPENDED') {
-                
-                throw new UnauthenticatedError("Not authorized to access this route");
+            if(acc && new Date(acc.end_date) < new Date()) {
+
+                throw new BadRequestError(`Access to delete budget has expired`)
 
             } else {
-                Budget.deleteById(id, (err, deleted) => {
-                    if (err && err.code === 404) {
-                        console.log(err)
-                    }
 
-                    if (deleted) {
+                const deleted = await Budget.deleteById(id)
 
-                        res.status(200).json({
-                            message: "Budget deleted Successfully",
-                            success: 1
-                        })
-                    }
-                })
+                if(deleted && deleted.code === 404) {
+                    throw createCustomError( `No budget with id: ${id}`, 404)
+                }
+
+                if(deleted) {
+                    res.status(200).json({
+                        message: "Budget Deleted Successfully",
+                        data: update,
+                        success: 1
+                    })
+                }
             }
-        })
+        }
+       
     } catch (error) {
         throw error
     }
@@ -311,29 +292,22 @@ export const getAllBudget = asyncWrapper(async (req, res) => {
 
     const { account_type } = req.body;
 
-    // if(!account_type) {
-    //     throw new BadRequestError('No account type provided')
-    // }
-
     try {
-        await Budget.findAll((err, budget) => {
-            if(err && err.code === 404) {
+        const budget = await Budget.findAll()
 
-                res.status(404).json({
-                    message: `No budget records with account type: ${account_type}`,
-                    success: 0,
-                });
-            }
+        if(budget && budget.code === 404) {
+            throw createCustomError( `No budget records with account type: ${account_type}`, 404)
+        }
 
-            if(budget) {
+        if (budget) {
 
-                res.status(200).json({
-                    message: "All budgets",
-                    data: budget,
-                    success: 1
-                })
-            }
-        })
+            res.status(200).json({
+                message: "All budgets",
+                data: budget,
+                success: 1
+            })
+        }
+        
     } catch (error) {
         throw error
     }
@@ -355,39 +329,30 @@ export const updateStatus = asyncWrapper(async (req, res) => {
     }
 
     try {
-        await Budget.findById(id, (err, budget) => {
-            if((err && err.code !== 404) || (err && !err.code)) {
-                console.log(err)
-            }
-            if (err && err.code === 404) {
-                // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.status(404).json({
-                  message: `No budget with id: ${id}`,
-                  success: 0,
-                });
+
+        const budget = await Budget.findById(id)
+
+        if(budget && budget.code === 404) {
+
+            throw createCustomError( `No budget with id: ${id}`, 404)
+        }
+
+        if (budget) {
+            const status = await Budget.updateById(id)
+
+            if(status && status.code === 404) {
+                throw createCustomError( `No budget with id: ${id}`, 404)
             }
 
-            if (budget) {
-                Budget.updateByStatus(id, status, (err, updates) => {
-                    if(err) {
-                        console.log('Error: ', err)
-                        res.status(500).json({
-                            message: "Sorry we could not update your budget this time.",
-                            success: 0,
-                        });
-                    }
-
-                    if(updates) {
-    
-                        res.status(200).json({
-                            message: "Budget Status Updated Successfully",
-                            data: updates,
-                            success: 1
-                        })
-                    }
+            if (status) {
+                res.status(200).json({
+                    message: "Budget Status Updated Successfully",
+                    data: updates,
+                    success: 1
                 })
             }
-        })
+        }
+        
     } catch (error) {
         throw error
     }

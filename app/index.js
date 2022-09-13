@@ -53,7 +53,7 @@ app.use(apiPath + "/", homeRoutes);
 app.use(apiPath + '/auth', authRoutes)
 app.use(apiPath + '/users', userRoutes);
 app.use(apiPath + '/account', accountRoutes);
-app.use(apiPath + '/sahcobudget', budgetRoutes);
+app.use(apiPath + '/budget', budgetRoutes);
 
 
 // Use middlewares

@@ -31,7 +31,7 @@ class Budget {
 
             const query = SQL`INSERT INTO budget SET userId = ${userId}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
             
-            const result = connectDb.query(query).catch(err => { throw err })
+            const result = await connectDb.query(query).catch(err => { throw err })
 
             return {id: result.insertId, ...newBudget}
             
@@ -42,22 +42,23 @@ class Budget {
     }
 
     //Find a budget by Id -- Used by staff
-    static findById(id, result) {
+    static findById = async (id) => {
 
         try {
-            connectDb.query(`SELECT * FROM budget WHERE id = ?`, [id], (err, res) => {
-                if (err) {
-                    return result(err, null); 
-                }
-                
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
+
+            const query = SQL`SELECT * FROM budget WHERE id = ${id}`
+
+            const [result] = await connectDb.query(query).catch(err => { throw err })
+
+            if(result) {
+
+                return result
+    
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -69,7 +70,7 @@ class Budget {
 
             const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} ORDER BY budget.created_time DESC`;
             
-            const result = connectDb.query(query).catch(err => { throw err })
+            const result = await connectDb.query(query).catch(err => { throw err })
             
             if (result) {
                 return result
@@ -83,21 +84,21 @@ class Budget {
     }
 
     //Find all budgets by account_type
-    static findByType(department, account_type, result) {
+    static findByType = async (department, account_type) => {
 
         try {
-            connectDb.query(`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ? AND account.account_type = ? ORDER BY budget.created_time DESC`, [department, account_type], (err, res) => {
-                if (err) {
-                    
-                    return result(err, null);
-                }
-                
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ${department} AND account.account_type = ${account_type} ORDER BY budget.created_time DESC`
+            
+            const result = await connectDb.query(query).catch(err => { throw err })
+            
+            if (result) {
+
+                return result
+
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
             console.log(error);
             throw error;
@@ -105,96 +106,92 @@ class Budget {
     }
 
     //Find all Budget
-    static findAll(result) {
+    static findAll = async () => {
 
         try {
-            connectDb.query(`SELECT account.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId GROUP BY account.account_type`, (err, res) => {
-                if (err) {
-                    
-                    result(err, null);
-                    return;
-                }
-                
-                if (res.length) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, SUM(budget.january) AS janSum, SUM(budget.february) AS febSum, SUM(budget.march) AS marSum, SUM(budget.april) AS aprSum, SUM(budget.may) AS maySum, SUM(budget.june) AS junSum, SUM(budget.july) AS julSum, SUM(budget.august) AS augSum, SUM(budget.sept) AS septSum, SUM(budget.october) AS octSum, SUM(budget.nov) AS novSum, SUM(budget.december) AS decSum, SUM(budget.estimated_budget) AS estimatedSum, SUM(budget.actual_budget) AS actualSum FROM account RIGHT JOIN budget ON account.id = budget.accountId GROUP BY account.account_type`;
+            
+            const result = await connectDb.query(query).catch(err => { throw err })
+            
+            if (result) {
+
+                return result
+
+            } else {
+                return {code: 404}
+            }
+
         } catch (error) {
             throw error
         }
     }
 
-    static updateById(id, budget, result) {
+    static updateById = async (id, budget) => {
 
         try {
-            connectDb.query(`UPDATE budget SET january = ?, february = ?, march = ?, april = ?, may = ?, june = ?, july = ?, august = ?, sept = ?, october = ?, nov = ?, december = ?, estimated_budget = ?, actual_budget = ? WHERE id = ?`, [budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, id], (err, res) => {
-                if (err) {
-                    
-                    result(err, null);
-                    return 
-                    // throw new createCustomError(err.message, 500)
-                } 
-                
-                if(res.affectedRows == 0) {
-                    //not found User with the id
-                    result({code: 404}, null);
-                    return;
 
-                } else {
-                    result(null, { ...budget });
-                    return 
-                }
-            })
+            const {january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget, status} = budget
+
+            const query = SQL`UPDATE budget SET january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}, status = ${status} WHERE id = ${id}`
+            
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            if(result.affectedRows == 0) {
+                //not found User with the id
+                return {code: 404}
+
+            } else {
+                return {...budget}
+            }
+            
         } catch (error) {
             console.log(error);
             throw error;
         }
     }
 
-    static updateByStatus(id, status, result) {
+    // static updateByStatus = async (id, status) => {
+
+    //     try {
+
+    //         const query = SQL`UPDATE budget SET status = ${status} WHERE id = ${id}`
+            
+    //         const result = await connectDb.query(query).catch(err => { throw err })
+
+    //         if(result.affectedRows == 0) {
+    //             //not found User with the id
+    //             return {code: 404}
+
+    //         } else {
+    //             return {status}
+    //         }
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }
+
+    static deleteById = async (id) => {
 
         try {
-            connectDb.query(`UPDATE budget SET status = ? WHERE id = ?`, [status, id], (err, res) => {
-                if (err) {
-                    console.log('Query Error: ', err)
-                    return result(err, null);
-                    // throw new createCustomError(err.message, 500)
-                } 
-                
-                if(res.affectedRows == 0) {
-                    //not found User with the id
-                    return result({code: 404}, null);
 
-                } else {
-                    result(null, { status });
-                    return 
-                }
-            })
+            const query = SQL`DELETE FROM budget WHERE id = ${id}`
+
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            
+            if(result.affectedRows > 0) {
+
+                return result
+
+            } else {
+
+                return {code: 404}
+            }
+
         } catch (error) {
-            throw error;
-        }
-    }
 
-    static deleteById(id, result) {
-
-        try {
-            connectDb.query(`DELETE FROM budget WHERE id = ?`, [id], (err, res) => {
-                if (err) {
-                    console.log('Found error: ', err);
-                    return result(err, null);
-                
-                }
-                
-                if (res.affectedRows > 0) {
-                    return result(null, res)
-                } else {
-                    return result({code: 404}, null)
-                }
-            })
-        } catch (error) {
             console.log(error);
+
             throw error;
         }
     }

@@ -224,7 +224,7 @@ export const getProfile = asyncWrapper(async (req, res) => {
     }
 
     if(user) {
-        const budget = Budget.findByDepartment(user.department)
+        const budget = await Budget.findByDepartment(user.department)
 
         if (budget.code === 404) {
           delete user.pass_word;

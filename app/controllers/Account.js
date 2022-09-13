@@ -2,6 +2,7 @@ import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import Account from "../models/Account.js";
+import { createCustomError } from "../utils/customError.js";
 
 export const createAccount = asyncWrapper(async (req, res) => {
 
@@ -16,35 +17,29 @@ export const createAccount = asyncWrapper(async (req, res) => {
     }
 
     try {
-        await Account.findOne(account_type, (err, acc) => {
 
-            if(acc.length) {
-                res.status(400).json({
-                    message: "An account with this type already exists.",
-                    success: 0,
+        const account = await Account.findOne(account_type)
+
+        if(!account.code) {
+            
+            throw new BadRequestError('An account with this type already exists.')
+        }
+
+        if (account && account.code === 404) {
+            const newAcc = new Account(req.body)
+
+            const result = await Account.createNewAccount(newAcc)
+
+            if (result) {
+
+                res.status(200).json({
+                    message: "Account Creation Successful.",
+                    data: result,
+                    success: 1,
                 });
-                // throw new BadRequestError('An account with this type already exists.')
             }
+        }
 
-            if (err && err.code === 404) {
-                const newAcc = new Account(req.body)
-                
-                Account.createNewAccount(newAcc, (err, newAcc) => {
-                    if (err) {
-                        throw err;
-                    }
-
-                    if (newAcc) {
-
-                        res.status(200).json({
-                            message: "Account Creation Successful.",
-                            data: newAcc,
-                            success: 1,
-                        });
-                    }
-                })
-            }
-        })
     } catch (error) {
         throw error
     }
@@ -56,22 +51,20 @@ export const getAccount = asyncWrapper(async (req, res) => {
     const category = req.query.category;
 
     try {
-        await Account.findAll(category, (err, acc) => {
-            if (err && err.code === 404) {
-                res.status(404).json({
-                    message: "Account does not exist",
-                    success: 0,
-                })
-            }
+        const account = await Account.findAll(category)
 
-            if (acc) {
-                res.status(200).json({
-                    message: "Budget Account Details.",
-                    data: acc,
-                    success: 1
-                })
-            }
-        })
+        if (account && account.code === 404) {
+            throw createCustomError('Account does not exist', 404)
+        }
+
+        if(account) {
+            res.status(200).json({
+                message: "Budget Account Details.",
+                data: account,
+                success: 1
+            })
+        }
+        
     } catch (error) {
         throw error
     }
@@ -83,41 +76,38 @@ export const updateAccount = asyncWrapper(async (req, res) => {
         throw new UnauthenticatedError("Not authorized to access this route");
     }
 
-    const { account_category } = req.body;
+    const { account_category, start_date, end_date } = req.body;
 
-    if(!account_category) {
+    if(!(account_category && start_date && end_date)) {
         throw new BadRequestError("Account fields are required");
     }
 
     try {
-        await Account.findOneByCategory(account_category, (err, acc) => {
-            if (err && err.code === 404) {
-                // throw createCustomError(`No user with id: ${userId}`, 404);
-                res.status(404).json({
-                  message: `No account with category: ${account_category}`,
-                  success: 0,
-                });
-            }
 
-            if (acc) {
-                Account.updateByCategory(account_category, req.body, (err, newUpdate) => {
-                    if (err && err.code === 404) {
-                        res.status(404).json({
-                          message: "Account does not exist",
-                          success: 0,
-                        });
-                    }
+        const account = await Account.findByCategory(account_category, req.body)
 
-                    if (newUpdate) {
-                        res.status(200).json({
-                            message: "Account updated successfully.",
-                            data: newUpdate,
-                            success: 1
-                        })
-                    }
+        if(account && account.code === 404) {
+
+            throw createCustomError(`No account with category: ${account_category}`, 404);
+        }
+
+        if (account) {
+            const updates = await Account.updateByCategory(req.body)
+
+            if(updates && updates.code === 404) {
+
+                throw createCustomError(`Account does not exist`, 404);
+            } 
+
+            if (updates) {
+                res.status(200).json({
+                    message: "Account updated successfully.",
+                    data: updates,
+                    success: 1
                 })
             }
-        })
+        }
+        
     } catch (error) {
         throw error
     }

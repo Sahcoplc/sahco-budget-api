@@ -65,7 +65,7 @@ class User {
         const query = SQL`SELECT * FROM users WHERE id = ${id}`
 
         const [result] = await connectDb.query(query).catch(err => { throw err });
-        console.log('Data: ', result)
+        
         if(result) {
 
             return result
@@ -107,26 +107,6 @@ class User {
             return {code: 404}
         }
 
-        // try {
-        //     connectDb.query(`DELETE FROM users WHERE id = ?`, [id], (err, res) => {
-        //         if (err) {
-        //             console.log('Found error: ', err);
-        //             result(err, null);
-        //             return;
-        //         }
-                
-        //         if (res.affectedRows > 0) {
-        //             console.log('Found user', res)
-        //             result(null, res)
-        //             return;
-        //         } else {
-        //             return result({code: 404}, null)
-        //         }
-        //     })
-        // } catch (error) {
-        //     console.log(error);
-        //     throw error;
-        // }
     }
 
     // Update user by email
