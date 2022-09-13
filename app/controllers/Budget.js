@@ -37,7 +37,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
             const newBud = new Budget(data)
     
             const budget = await Budget.findByType(department, account_type)
-
+            console.log('Control: ', budget)
             
             if(budget) {
                 throw new BadRequestError('A budget with this account already exist.')

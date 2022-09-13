@@ -33,8 +33,6 @@ class User {
         
             const result = await connectDb.query(query).catch(err => { throw err })
 
-            console.log('Data: ', result)
-
             return {id: result.insertId, ...newAdmin}
 
         } catch (error) {
@@ -56,7 +54,6 @@ class User {
     
                 const [result] = await connectDb.query(query).catch(err => { throw err });
                 
-                console.log('Data found: ', result)
                 if (result) {
 
                     return result

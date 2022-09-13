@@ -71,7 +71,7 @@ class Budget {
             const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} ORDER BY budget.created_time DESC`;
             
             const result = await connectDb.query(query).catch(err => { throw err })
-            
+
             if (result) {
                 return result
             } else {
@@ -87,10 +87,10 @@ class Budget {
     static findByType = async (department, account_type) => {
 
         try {
-            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE department = ${department} AND account.account_type = ${account_type} ORDER BY budget.created_time DESC`
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} AND account.account_type = ${account_type} ORDER BY budget.created_time DESC`
             
             const result = await connectDb.query(query).catch(err => { throw err })
-            
+            console.log('Data found: ', result)
             if (result) {
 
                 return result
