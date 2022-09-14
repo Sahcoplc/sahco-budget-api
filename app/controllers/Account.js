@@ -12,7 +12,7 @@ export const createAccount = asyncWrapper(async (req, res) => {
 
     const { account_type, account_category } = req.body;
 
-    if(!account_type && !account_category) {
+    if(!(account_type && account_category)) {
         throw new BadRequestError("Account fields are required");
     }
 
@@ -44,7 +44,6 @@ export const createAccount = asyncWrapper(async (req, res) => {
         throw error
     }
 })
-
 
 export const getAccount = asyncWrapper(async (req, res) => {
 
@@ -108,6 +107,34 @@ export const updateAccount = asyncWrapper(async (req, res) => {
             }
         }
         
+    } catch (error) {
+        throw error
+    }
+})
+
+export const getAccountById = asyncWrapper(async (req, res) => {
+
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const { id } = req.params
+
+    try {
+        const account = await Account.findById(id)
+
+        if (account && account.code === 404) {
+            throw createCustomError('Account does not exist', 404)
+        }
+
+        if(account) {
+            res.status(200).json({
+                message: "Budget Account Details.",
+                data: account,
+                success: 1
+            })
+        }
+
     } catch (error) {
         throw error
     }
