@@ -77,8 +77,8 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
             throw createCustomError( `${dept} has no budget records found`, 404)
         }
 
-        if (budget && !budget.code) {
-
+        if (budget.length !== 0 && !budget.code) {
+            console.log('Response: ', budget)
             res.status(200).json({
                 message: "Budget Details.",
                 data: budget,

@@ -27,9 +27,9 @@ class Budget {
 
         try {
 
-            const {userId, department, january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = newBudget
+            const {userId, accountId, account_type, account_category, department, january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = newBudget
 
-            const query = SQL`INSERT INTO budget SET userId = ${userId}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
+            const query = SQL`INSERT INTO budget SET userId = ${userId}, accountId = ${accountId}, account_category = ${account_category}, account_type = ${account_type}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
             
             const result = await connectDb.query(query).catch(err => { throw err })
 
