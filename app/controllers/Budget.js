@@ -37,7 +37,6 @@ export const createBudget = asyncWrapper(async (req, res) => {
             const newBud = new Budget(data)
     
             const budget = await Budget.findByType(department, account_type)
-            console.log('Control: ', budget)
             
             if(budget && !budget.code) {
                 throw new BadRequestError('A budget with this account type already exist.')
@@ -72,6 +71,7 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
     try {
 
         const budget = await Budget.findByDepartment(dept)
+        console.log('Control: ', budget)
 
         if(budget && budget.code === 404) {
             throw createCustomError( `${dept} has no budget records found`, 404)
@@ -91,6 +91,7 @@ export const getUserBudget = asyncWrapper(async (req, res) => {
     }
 })
 
+//Admin to fetch department budget
 export const getUserBudgetByDept = asyncWrapper(async (req, res) => {
 
     const { dept } = req.params;
