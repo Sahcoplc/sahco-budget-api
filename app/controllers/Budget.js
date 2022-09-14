@@ -43,14 +43,32 @@ export const createBudget = asyncWrapper(async (req, res) => {
             }
 
             if (budget && budget.code === 404) {
-                const newBudget = await Budget.createBudgetItem(newBud)
+                const acc = await Account.findById(accountId)
 
-                if(newBudget) {
-                    res.status(200).json({
-                        message: "Budget Creation Successful.",
-                        data: newBudget,
-                        success: 1,
-                    });
+                if(acc && acc.code === 404) {
+
+                    throw createCustomError( `No budget account with id: ${accountId}`, 404)
+                }
+
+                if(acc && new Date(acc.end_date) < new Date()) {
+
+                    throw new BadRequestError(`Budget submission date has expired`)
+
+                } else if(acc && new Date(acc.start_date) > new Date()) {
+
+                    throw new BadRequestError(`Budget submission is yet to commence`)
+
+                } else {
+
+                    const newBudget = await Budget.createBudgetItem(newBud)
+    
+                    if(newBudget) {
+                        res.status(200).json({
+                            message: "Budget Creation Successful.",
+                            data: newBudget,
+                            success: 1,
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -128,6 +146,7 @@ export const getBudget = asyncWrapper(async (req, res) => {
     try {
 
         const budget = await Budget.findById(id)
+        console.log('Control: ', budget)
 
         if(budget && budget.code === 404) {
             throw createCustomError( `No budget with id: ${id}`, 404)
@@ -167,9 +186,8 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
     const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
 
-    let budgetData = {}
 
-    if (!accountId && !january && !february && !march && !april && !may && !june && !july && !august && !sept && !october && !nov && !december) {
+    if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
         throw new BadRequestError('Budget records required')
 
     } else {
@@ -183,10 +201,10 @@ export const updateBudget = asyncWrapper(async (req, res) => {
         
         if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
             data.estimated_budget = 0
-            budgetData = data
+            
         } else {
             data.estimated_budget = estimated_budget
-            budgetData = data
+            
         }
 
 
@@ -204,18 +222,19 @@ export const updateBudget = asyncWrapper(async (req, res) => {
 
             } else {
                 
-                const acc = Account.findById(budget.accountId)
+                const acc = await Account.findById(budget.accountId)
 
+                console.log('Control Acc: ', acc)
                 if(acc && acc.code === 404) {
                     throw createCustomError( `No budget account with id: ${budget.accountId}`, 404)
                 }
 
                 if(acc && new Date(acc.end_date) < new Date()) {
 
-                    throw new BadRequestError(`Budget submission has expired`)
+                    throw new BadRequestError(`Access to update budget has expired`)
 
                 } else {
-                    const update = await Budget.updateById(id)
+                    const update = await Budget.updateById(id, data)
 
                     if(update && update.code === 404) {
                         throw createCustomError( `No budget with id: ${id}`, 404)
@@ -253,10 +272,10 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
 
         if(budget && budget.status === "APPROVED" || budget && budget.status === 'SUSPENDED') {
                 
-            throw new UnauthenticatedError("Not authorized to access this route");
+            throw new UnauthenticatedError("Approved or suspended budget cannot be deleted.");
 
         } else {
-            const acc = Account.findById(budget.accountId)
+            const acc = await Account.findById(budget.accountId)
 
             if(acc && acc.code === 404) {
                 throw createCustomError( `No budget account with id: ${budget.accountId}`, 404)
@@ -277,7 +296,7 @@ export const deleteBudget = asyncWrapper(async (req, res) => {
                 if(deleted) {
                     res.status(200).json({
                         message: "Budget Deleted Successfully",
-                        data: update,
+                        data: deleted,
                         success: 1
                     })
                 }
@@ -332,20 +351,22 @@ export const updateStatus = asyncWrapper(async (req, res) => {
     try {
 
         const budget = await Budget.findById(id)
-
+        
         if(budget && budget.code === 404) {
 
             throw createCustomError( `No budget with id: ${id}`, 404)
         }
 
-        if (budget) {
-            const status = await Budget.updateById(id)
+        if (budget && !budget.code) {
 
-            if(status && status.code === 404) {
+            const updates = await Budget.updateByStatus(id, status)
+
+            if(updates && updates.code === 404) {
                 throw createCustomError( `No budget with id: ${id}`, 404)
             }
+            
+            if (updates && !updates.code) {
 
-            if (status) {
                 res.status(200).json({
                     message: "Budget Status Updated Successfully",
                     data: updates,

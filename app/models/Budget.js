@@ -27,9 +27,9 @@ class Budget {
 
         try {
 
-            const {userId, accountId, account_type, account_category, department, january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = newBudget
+            const {userId, accountId, department, january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = newBudget
 
-            const query = SQL`INSERT INTO budget SET userId = ${userId}, accountId = ${accountId}, account_category = ${account_category}, account_type = ${account_type}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
+            const query = SQL`INSERT INTO budget SET userId = ${userId}, accountId = ${accountId}, department = ${department}, january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}`;            
             
             const result = await connectDb.query(query).catch(err => { throw err })
 
@@ -46,7 +46,7 @@ class Budget {
 
         try {
 
-            const query = SQL`SELECT * FROM budget WHERE id = ${id}`
+            const query = SQL`SELECT users.id, users.staff_name, users.staff_email, users.staff_id, budget.id, budget.accountId, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM users RIGHT JOIN budget ON users.id = budget.userId WHERE budget.id = ${id} ORDER BY budget.created_time DESC`;
 
             const [result] = await connectDb.query(query).catch(err => { throw err })
 
@@ -68,10 +68,10 @@ class Budget {
 
         try {
 
-            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} ORDER BY budget.created_time DESC`;
+            const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.id, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} ORDER BY budget.created_time DESC`;
             
             const result = await connectDb.query(query).catch(err => { throw err })
-            console.log('Data: ', result)
+            
             if (result) {
                 return result
             } else {
@@ -90,7 +90,7 @@ class Budget {
             const query = SQL`SELECT account.id, account.account_category, account.account_type, budget.department, budget.january, budget.february, budget.march, budget.april, budget.may, budget.june, budget.july, budget.august, budget.sept, budget.october, budget.nov, budget.december, budget.estimated_budget, budget.actual_budget, budget.status FROM account RIGHT JOIN budget ON account.id = budget.accountId WHERE budget.department = ${department} AND account.account_type = ${account_type} ORDER BY budget.created_time DESC`
             
             const [result] = await connectDb.query(query).catch(err => { throw err })
-            console.log('Data found: ', result)
+            
             if (result) {
 
                 return result
@@ -130,9 +130,9 @@ class Budget {
 
         try {
 
-            const {january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget, status} = budget
+            const {january, february, march, april, may, june, july, august, sept, october, nov, december, estimated_budget, actual_budget} = budget
 
-            const query = SQL`UPDATE budget SET january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget}, status = ${status} WHERE id = ${id}`
+            const query = SQL`UPDATE budget SET january = ${january}, february = ${february}, march = ${march}, april = ${april}, may = ${may}, june = ${june}, july = ${july}, august = ${august}, sept = ${sept}, october = ${october}, nov = ${nov}, december = ${december}, estimated_budget = ${estimated_budget}, actual_budget = ${actual_budget} WHERE id = ${id}`
             
             const result = await connectDb.query(query).catch(err => { throw err })
 
@@ -150,25 +150,27 @@ class Budget {
         }
     }
 
-    // static updateByStatus = async (id, status) => {
+    static updateByStatus = async (id, status) => {
 
-    //     try {
+        try {
 
-    //         const query = SQL`UPDATE budget SET status = ${status} WHERE id = ${id}`
+            const query = SQL`UPDATE budget SET status = ${status} WHERE id = ${id}`
             
-    //         const result = await connectDb.query(query).catch(err => { throw err })
+            const result = await connectDb.query(query).catch(err => { throw err })
 
-    //         if(result.affectedRows == 0) {
-    //             //not found User with the id
-    //             return {code: 404}
+            if(result.affectedRows == 0) {
+                //not found User with the id
+                return {code: 404}
 
-    //         } else {
-    //             return {status}
-    //         }
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
+            } else {
+                return status
+            }
+            
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 
     static deleteById = async (id) => {
 
