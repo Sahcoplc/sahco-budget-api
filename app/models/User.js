@@ -140,13 +140,43 @@ class User {
         
         try {
             
-            const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, otp, otpExpiresIn} = user
+            const {staff_email, staff_id, staff_name, department, gender, avatar} = user
             
             const validatedEmail = this.validateEmail(staff_email)
     
             if (validatedEmail) {
     
-                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, pass_word = ${pass_word}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn} WHERE staff_email = ${staff_email}`;
+                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, department = ${department}, gender = ${gender}, avatar = ${avatar} WHERE staff_email = ${staff_email}`;
+    
+                const result = await connectDb.query(query).catch(err => { throw err })
+    
+                if(result.affectedRows == 0) {
+                    //not found User with the id
+                    return {code: 404}
+    
+                } else {
+                    return {...user}
+                }
+    
+            } else {
+                return {code: 400};
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    static updateOneByPassword = async (user) => {
+        
+        try {
+            
+            const {staff_name, staff_email, staff_id, department, gender, avatar, otp, pass_word, otpExpiresIn } = user
+            
+            const validatedEmail = this.validateEmail(staff_email)
+    
+            if (validatedEmail) {
+    
+                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, department = ${department}, gender = ${gender}, avatar = ${avatar}, otp = ${otp}, otpExpiresIn = ${otpExpiresIn}, pass_word = ${pass_word} WHERE staff_email = ${staff_email}`;
     
                 const result = await connectDb.query(query).catch(err => { throw err })
     

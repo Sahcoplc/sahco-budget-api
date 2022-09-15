@@ -36,7 +36,7 @@ export const login = asyncWrapper(async (req, res) => {
       throw createCustomError('User does not exist', 404)
     }
 
-    if(user) {
+    if(user && !user.code) {
       const password = comparePassword(pass_word, user.pass_word);
 
       password.then((isPassword) => {
@@ -91,7 +91,7 @@ export const sendResetOtp = asyncWrapper(async (req, res) => {
           otpExpiresIn,
         };
 
-        const result = User.updateOneByEmail(newUpdate);
+        const result = User.updateOneByPassword(newUpdate);
 
         if(result && result.code === 404) {
             throw createCustomError("User does not exist", 404)
@@ -134,7 +134,7 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
   try {
 
     const user = await User.findOneById(id)
-
+   console.log('Found user: ', user)
     if(user.code && user.code === 404) {
 
       throw createCustomError(`No user with id: ${id}`, 404)
@@ -161,7 +161,8 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
         };
 
 
-        const newUser = User.updateOneByEmail(updatedUser.staff_email);
+        const newUser = User.updateOneByPassword(updatedUser);
+        console.log('Reset: ', newUser)
           
         if(newUser.code && newUser.code === 404) {
             throw new BadRequestError('User does not exist')

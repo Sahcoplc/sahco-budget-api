@@ -147,10 +147,6 @@ export const updatedUser = asyncWrapper(async (req, res) => {
 
   const email = req?.user?.email
 
-  if (req?.user?.role !== "USER") {
-    throw new UnauthenticatedError("Not authorized to access this route");
-  }
-
   const { path } = req.files[0];
 
   const updateUser = {
