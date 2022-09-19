@@ -139,6 +139,28 @@ class Account {
             throw error
         }
     }
+
+    //Delete account
+    static deleteById = async (accountId) => {
+
+        try {
+
+            const query = SQL`DELETE FROM account WHERE id = ${accountId}`
+
+            const result = await connectDb.query(query).catch(err => { throw err })
+
+            if(result.affectedRows > 0) {
+
+                return result
+
+            } else {
+
+                return {code: 404}
+            }
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default Account;

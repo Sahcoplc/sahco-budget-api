@@ -139,3 +139,30 @@ export const getAccountById = asyncWrapper(async (req, res) => {
         throw error
     }
 })
+
+export const deleteAccount = asyncWrapper(async (req, res) => {
+
+    if (req?.user?.role !== "ADMIN") {
+        throw new UnauthenticatedError("Not authorized to access this route");
+    }
+
+    const { id } = req.params
+
+    try {
+        const account = await Account.deleteById(id)
+
+        if (account && account.code === 404) {
+            throw createCustomError('Account does not exist', 404)
+        }
+
+        if(result.affectedRows > 0 && !account.code) {
+            res.status(200).json({
+                message: "Budget Account Deleted Successfully.",
+                success: 1
+            })
+        }
+
+    } catch (error) {
+        throw error
+    }
+})
