@@ -155,7 +155,7 @@ export const deleteAccount = asyncWrapper(async (req, res) => {
             throw createCustomError('Account does not exist', 404)
         }
 
-        if(result.affectedRows > 0 && !account.code) {
+        if(account.affectedRows > 0 && !account.code) {
             res.status(200).json({
                 message: "Budget Account Deleted Successfully.",
                 success: 1
