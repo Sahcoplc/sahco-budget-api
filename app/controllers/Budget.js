@@ -25,7 +25,7 @@ export const createBudget = asyncWrapper(async (req, res) => {
             status: "PENDING"
         }
         
-        if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
+        if (accountId * 1 === 27 || accountId * 1 === 28 || accountId * 1 === 29 || accountId * 1 === 30 || accountId * 1 === 31) {
             console.log(accountId)
             data.estimated_budget = 0
         } else {
@@ -199,7 +199,7 @@ export const updateBudget = asyncWrapper(async (req, res) => {
             actual_budget: 0,
         }
         
-        if (accountId === 27 || accountId === 28 || accountId === 29 || accountId === 30 || accountId === 31) {
+        if (accountId * 1 === 27 || accountId * 1 === 28 || accountId * 1 === 29 || accountId * 1 === 30 || accountId * 1 === 31) {
             data.estimated_budget = 0
             
         } else {
