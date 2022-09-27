@@ -20,13 +20,11 @@ export const createUser = asyncWrapper(async (req, res) => {
       throw new BadRequestError("User role is required")
     }
     //Check for duplicates
-     const user = await User.findOneByEmail(staff_email)
-     console.log('Control: ', user)
+    const user = await User.findOneByEmail(staff_email)
 
     if (user && user.code === 400) {
 
-        throw new BadRequestError("A valid email is required");
-
+      throw new BadRequestError("A valid email is required");
     }
     
     if (user && !user.code) {
@@ -49,13 +47,18 @@ export const createUser = asyncWrapper(async (req, res) => {
 
           const createdUser = await User.createNewAdmin(newUser)
 
+          if (createUser && createUser.code === 400) {
+
+            throw new BadRequestError("A valid SAHCO PLC email is required");
+          }
+
           if (createdUser) {
             new Mail(newUser.staff_email).sendMail("REGISTRATION", {
 
               subject: "Welcome to Skyway Aviation Handling Co.",
               data: {
                 name: newUser.staff_name,
-                staff_id: newUser.staff_id
+                password: pass_word
               },
             })
 

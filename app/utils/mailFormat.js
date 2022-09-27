@@ -29,13 +29,13 @@ class MailFormat {
       title: "Welcome to Skyway Aviation Handling Company Plc.",
       greeting: `Hello ${data.name}`,
       mainMsg: `Our team is excited to have you and your department join us. 
-        Your default password is Pass@${data.staff_id}. 
+        Your default password is ${data.password}. 
         Kindly login and start by changing your default password.`,
       // callToActionText: "Click link to Verify account",
       // callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc.",
-      headerImg: "",
+      headerImg: "https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png",
       // finalRemarkMsg: `You have 1 hour to verify your account.
       // If the button above does not take you to email verification, click
       // the link below to continue.`,
@@ -69,7 +69,7 @@ class MailFormat {
       callToActionLink: `/forgot_password`,
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc. Team",
-      headerImg: "",
+      headerImg: "https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png",
       finalRemarkMsg: `Your have 1 hour to provide the 6-digit otp before it expires.`,
       finalRemarkLink: ``,
     };
@@ -85,7 +85,7 @@ class MailFormat {
       callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc.",
-      headerImg: "",
+      headerImg: "https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png",
       finalRemarkMsg: `You have 1 hour to verify your account.
       If the button above does not take you to email verification, click
       the link below to continue.`,
@@ -102,7 +102,7 @@ class MailFormat {
       callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc.",
-      headerImg: "",
+      headerImg: "https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png",
       finalRemarkMsg: `You have 1 hour to verify your account.
       If the button above does not take you to email verification, click
       the link below to continue.`,

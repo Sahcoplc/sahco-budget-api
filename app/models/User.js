@@ -19,8 +19,14 @@ class User {
     // Validate email
     static validateEmail(email){
         // Return true if email is valid
-        // let domainRegex = /^\w+([-+.']\w+)*@?(sahcoplc.com|sahcoplc.com.ng)$/
         return testRegex(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, email);
+    }
+
+    static validateDomain(email) {
+        // Return true if email is valid
+        // let domainRegex = /^\w+([-+.']\w+)*@?(sahcoplc.com|sahcoplc.com.ng)$/
+
+        return testRegex(/^\w+([-+.']\w+)*@?(sahcoplc.com|sahcoplc.com.ng)$/, email)
     }
 
     //Create a new user
@@ -29,11 +35,20 @@ class User {
         try {
             const {staff_email, staff_id, staff_name, department, gender, pass_word, avatar, role, } = newAdmin
 
-            const query = SQL`INSERT INTO users SET staff_name = ${staff_name}, staff_email = ${staff_email}, staff_id = ${staff_id}, department = ${department}, gender = ${gender}, pass_word = ${pass_word}, avatar = ${avatar}, role = ${role}`;
-        
-            const result = await connectDb.query(query).catch(err => { throw err })
+            const validatedEmail = this.validateDomain(staff_email)
 
-            return {id: result.insertId, ...newAdmin}
+            if(validatedEmail) {
+
+                const query = SQL`INSERT INTO users SET staff_name = ${staff_name}, staff_email = ${staff_email}, staff_id = ${staff_id}, department = ${department}, gender = ${gender}, pass_word = ${pass_word}, avatar = ${avatar}, role = ${role}`;
+            
+                const result = await connectDb.query(query).catch(err => { throw err })
+    
+                return {id: result.insertId, ...newAdmin}
+
+            } else {
+
+                return {code: 400};
+            }
 
         } catch (error) {
             throw error
