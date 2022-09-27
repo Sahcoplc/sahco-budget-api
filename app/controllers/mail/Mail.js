@@ -6,13 +6,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const mailTransport = nodemailer.createTransport({
-  host: process.env.PROD_MAIL_HOST,
-  port: process.env.PROD_MAIL_PORT,
-  secure: true,
+  host: process.env.SENDINBLUE_HOST,
+  port: process.env.SENDINBLUE_PORT,
   auth: {
-    user: process.env.PROD_MAIL_USER,
-    pass: process.env.PROD_MAIL_PASS,
-  },
+    user: process.env.SENDINBLUE_USER,
+    pass: process.env.SENDINBLUE_PASS
+  }
 });
 
 mailTransport.verify((error, success) => {

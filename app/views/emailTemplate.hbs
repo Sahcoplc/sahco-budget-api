@@ -1,12 +1,14 @@
 
      <div class="container" id="main">
-        {{#if headerImg}}<img src={{headerImg}} alt="header"/>{{/if}}
+        <div style="width: 100%; height: 400px; background-color: #fff; display: block;">
+          {{#if headerImg}}<img src={{headerImg}} alt="header" style="object-fit: contain; width: 30%; height: 100%;"/>{{/if}}
+        </div>
         <h4>{{greeting}},</h4>
         <div class="container content">
           <p>
             {{mainMsg}}
           </p>
-          {{#if callToActionText}} <a href="#{{callToActionLink}}" id="call-to-action" style="color: #ffffff;">{{callToActionText}}</a>{{/if}}
+          {{#if callToActionText}} <p id="call-to-action" style="color: #ffffff;">{{callToActionText}}</p>{{/if}}
         </div>
         <div class="container final-remarks">
          {{#if finalRemarkMsg}} <p>
