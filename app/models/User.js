@@ -140,13 +140,13 @@ class User {
         
         try {
             
-            const {staff_email, staff_id, staff_name, department, gender, avatar} = user
+            const {staff_email, staff_id, staff_name, department, gender, avatar, updated_time} = user
             
             const validatedEmail = this.validateEmail(staff_email)
     
             if (validatedEmail) {
     
-                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, department = ${department}, gender = ${gender}, avatar = ${avatar} WHERE staff_email = ${staff_email}`;
+                const query = SQL`UPDATE users SET staff_name = ${staff_name}, staff_id = ${staff_id}, staff_email = ${staff_email}, department = ${department}, gender = ${gender}, avatar = ${avatar}, updated_time = ${updated_time} WHERE staff_email = ${staff_email}`;
     
                 const result = await connectDb.query(query).catch(err => { throw err })
     

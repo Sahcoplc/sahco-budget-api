@@ -130,6 +130,10 @@ export const getUsers = asyncWrapper(async (req, res) => {
         delete user.otp;
         delete user.otpVerificationId,
         delete user.otpExpiresIn
+
+        if(user.staff_email === 'tukkudarta@vusra.com' || user.staff_email === 'gkotoye@gmail.com') {
+          delete user.id
+        }
       });
 
       res.status(200).json({
@@ -153,6 +157,7 @@ export const updatedUser = asyncWrapper(async (req, res) => {
     ...req.body,
     staff_email: email,
     avatar: path,
+    updated_time: new Date()
   };
 
   try {
