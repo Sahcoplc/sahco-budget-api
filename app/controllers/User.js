@@ -52,9 +52,7 @@ export const createUser = asyncWrapper(async (req, res) => {
               message: "A valid SAHCO PLC email is required.",
               success: 0,
             });
-          }
-
-          if (createdUser) {
+          } else if (createdUser) {
             new Mail(newUser.staff_email).sendMail("REGISTRATION", {
 
               subject: "Welcome to Skyway Aviation Handling Co.",
