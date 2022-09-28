@@ -48,8 +48,10 @@ export const createUser = asyncWrapper(async (req, res) => {
           const createdUser = await User.createNewAdmin(newUser)
 
           if (createdUser && createdUser.code === 400) {
-
-            throw new BadRequestError("A valid SAHCO PLC email is required");
+            res.status(400).json({
+              message: "A valid SAHCO PLC email is required.",
+              success: 0,
+            });
           }
 
           if (createdUser) {
