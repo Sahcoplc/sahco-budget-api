@@ -47,12 +47,12 @@ export const createUser = asyncWrapper(async (req, res) => {
 
           const createdUser = await User.createNewAdmin(newUser)
 
-          if (createUser && createUser.code === 400) {
+          if (createdUser && createdUser.code === 400) {
 
             throw new BadRequestError("A valid SAHCO PLC email is required");
           }
 
-          if (createdUser && !createdUser.code) {
+          if (createdUser) {
             new Mail(newUser.staff_email).sendMail("REGISTRATION", {
 
               subject: "Welcome to Skyway Aviation Handling Co.",
