@@ -113,15 +113,12 @@ export const getUser = asyncWrapper(async (req, res) => {
 });
 
 export const getUsers = asyncWrapper(async (req, res) => {
-  if (req?.user?.role !== "ADMIN") {
-    throw new UnauthenticatedError("Not authorized to access this route");
-  }
 
-  const name = req.query.staff_name;
+  const {name, department} = req.query;
 
   try {
 
-    const users = await User.findAll(name)
+    const users = await User.findAll(name, department)
 
     if(users && users.code === 404) {
       throw createCustomError('Some error occured while retrieving users.', 404)

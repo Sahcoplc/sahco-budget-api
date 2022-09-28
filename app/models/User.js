@@ -106,7 +106,7 @@ class User {
     }
 
     // Get all users
-    static findAll = async (name) => {
+    static findAll = async (name, department) => {
 
         try {
             
@@ -114,7 +114,11 @@ class User {
     
             if(name) {
                 query += ` WHERE staff_name LIKE '%${name}%'`;
+                
+            } else if (department) {
+                query += ` WHERE department LIKE '%${department}%'`;
             }
+
             const result = await connectDb.query(query).catch(err => { throw err });
         
             if(result) {
