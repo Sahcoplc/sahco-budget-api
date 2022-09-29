@@ -31,8 +31,8 @@ class MailFormat {
       mainMsg: `Our team is excited to have you and your department join us. 
         Your default password is ${data.password}. 
         Kindly login and start by changing your default password.`,
-      // callToActionText: "Click link to Verify account",
-      // callToActionLink: `/account/email_verification?tk=${data.token}&id=${data.id}`,
+      callToActionText: "Click link to visit budget website",
+      callToActionLink: 'https://sahcoplc.com.ng',
       signature: "Best Regards",
       senderName: "Skyway Aviation Handling Company Plc.",
       headerImg: "https://sahcoplc.com/wp-content/uploads/2019/06/sifax-sahco-logo-brand-2.png",
