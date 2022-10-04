@@ -37,7 +37,8 @@
     "sib-api-v3-sdk": "^8.4.2",
     "sql-template-strings": "^2.2.2",
     "sql-template-tag": "^5.0.3",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "vm2": "^3.9.11"
   },
   "devDependencies": {
     "semantic-release": "^19.0.5"
@@ -64,13 +65,19 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      ["@semantic-release/npm", {
-        "npmPublish": false,
-        "tarballDir": "dist"
-      }],
-      ["@semantic-release/github", {
-        "assets": "dist/*.tgz"
-      }]
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false,
+          "tarballDir": "dist"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": "dist/*.tgz"
+        }
+      ]
     ]
   }
 }
