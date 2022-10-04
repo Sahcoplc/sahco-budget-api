@@ -2,6 +2,7 @@
   "name": "sahco-budget-api",
   "version": "0.0.0-development",
   "description": "SAHCO PLC Budget Management App REST API",
+  "private": "true",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -59,6 +60,17 @@
         "name": "alpha",
         "prerelease": true
       }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      ["@semantic-release/npm", {
+        "npmPublish": false,
+        "tarballDir": "dist"
+      }],
+      ["@semantic-release/github", {
+        "assets": "dist/*.tgz"
+      }]
     ]
   }
 }
