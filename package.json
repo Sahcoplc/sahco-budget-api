@@ -14,6 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cloudinary": "^1.30.1",
@@ -64,6 +66,7 @@
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",
+      "@semantic-release/changelog",
       "@semantic-release/release-notes-generator",
       [
         "@semantic-release/npm",
@@ -72,6 +75,7 @@
           "tarballDir": "dist"
         }
       ],
+      "@semantic-release/git",
       [
         "@semantic-release/github",
         {
