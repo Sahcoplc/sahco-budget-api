@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.0.3...v1.0.4) (2022-10-05)
+
+
+### Bug Fixes
+
+* edit package.json ([87d2d1e](https://github.com/Sahcoplc/sahco-budget-api/commit/87d2d1ef52a6331364a522cb01efbfe4cf2a87f8))
+
 ## [1.0.3](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.0.2...v1.0.3) (2022-10-05)
 
 
