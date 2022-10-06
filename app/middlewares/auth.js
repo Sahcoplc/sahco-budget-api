@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import User from "../models/User.js";
 import asyncWrapper from "./async.js";
+import AppDataSource from "../db/connect.js";
 
 const authMiddleware = asyncWrapper(async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -18,8 +19,10 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const { id, email, dept } = decoded;
     
-      const user = await User.findOneByEmail(email)
+      // const user = await User.findOneByEmail(email)
+      const user = await AppDataSource.manager.findOneBy(User, {staff_email: email})
 
+      console.log('Middleware ORM: ', user)
       if(user.code && user.code === 404) {
         throw new UnauthenticatedError("Not authorized to access this route");
       }
@@ -34,28 +37,6 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       }
 
       return next();
-
-      // , (err, user) => {
-      //   if (err && err.code === 404) {
-      //     // throw new UnauthenticatedError("Not authorized to access this route");
-      //     res.status(401).json({
-      //       message: "Not authorized to access this route.",
-      //       success: 0,
-      //     });
-      //   }
-
-      //   if (user) {
-
-      //     req.user = {
-      //       id,
-      //       email,
-      //       dept,
-      //       role: user[0].role,
-      //     };
-      //   }
-    
-      //   return next();
-      // });
     }
   }
 

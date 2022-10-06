@@ -1,3 +1,6 @@
+// // ORM
+// import "reflect-metadata"
+
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config('.');
@@ -7,9 +10,10 @@ import cors from "cors";
 import path from "path";
 import { create } from "express-handlebars";
 import { __dirname } from "./__Globals.js";
+import helmet from "helmet";
 
-// Connect to DB
-import connectDb from "./db/connect.js";
+// Connect to DB with TypeORM
+import AppDataSource from "./db/connect.js";
 
 // Middlewares
 import notFound from "./middlewares/notFound.js";
@@ -32,6 +36,7 @@ const app = express();
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(helmet())
 
 // Handlebars setup
 app.set("view engine", "hbs");
@@ -75,7 +80,14 @@ process.on("uncaughtException", (err) => {
 const server_start = async () => {
     try {
         // Open Mysql Connection
-        await connectDb.promise()
+        // await connectDb.promise()
+
+        AppDataSource.initialize()
+        .then(() => {
+                // here you can start to work with your database
+                console.log('Database initialized')
+        })
+        .catch((error) => console.log(error))
 
         if (PORT == '' || PORT == null) {
             PORT = 8002
