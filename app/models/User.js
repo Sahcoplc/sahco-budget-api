@@ -2,7 +2,6 @@
 // import {  SQL } from 'sql-template-strings';
 // import { testRegex } from "../utils/regexFunctions.js";
 import { EntitySchema } from "typeorm";
-import { isEmail } from 'class-validator'
 
 //constructor
 // class User {
@@ -229,7 +228,7 @@ const User = new EntitySchema({
         username: {
             type: "varchar",
             unique: true,
-            nullable: false,
+            nullable: true,
         },
         staff_name: {
             type: "varchar",
@@ -257,6 +256,7 @@ const User = new EntitySchema({
         },
         avatar: {
             type: "text",
+            nullable: true
         },
         role: {
             type: "enum",
@@ -265,12 +265,15 @@ const User = new EntitySchema({
         },
         otp: {
             type: "int",
+            nullable: true
         },
         otpExpiresIn: {
-            type: "datetime"
+            type: "datetime",
+            nullable: true
         },
         last_loginAt: {
             type: "datetime",
+            nullable: true
         },
         created_time: {
             createDate: true

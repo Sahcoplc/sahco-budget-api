@@ -33,10 +33,10 @@ const app = express();
 //     credentials: true
 // };
 
+app.use(helmet())
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
-app.use(helmet())
 
 // Handlebars setup
 app.set("view engine", "hbs");
