@@ -1,4 +1,4 @@
-// import asyncWrapper from "../middlewares/async.js";
+import asyncWrapper from "../middlewares/async.js";
 // import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 // import User from "../models/User.js";
@@ -273,43 +273,69 @@ class UsersController {
     this.userService = new UsersService()
   }
 
-  createUser = async (req, res) => {
-    const { staff_email } = req.body
+  createUser = asyncWrapper(async (req, res) => {
 
-    const foundUser = await this.userService.findEmail({staff_email: staff_email})
-    console.log(foundUser)
-    if(foundUser) {
-
-      throw new BadRequestError('User already exist')
-
-    } else {
-
-      const user = await this.userService.create(req.body)
+    try {
+      
+      const { staff_email } = req.body
   
-      if (user) {
-        res.status(200).json({
-          message: "User Created Successfully.",
-          data: user,
-          success: 1
+      const foundUser = await this.userService.findEmail(staff_email)
+  
+      if(foundUser) {
+  
+        res.status(400).json({
+          message: "User already exists",
+          success: 0
         })
+  
+      } else {
+  
+        const user = await this.userService.create(req.body)
+    
+        if (user) {
+          res.status(200).json({
+            message: "User Created Successfully.",
+            data: user,
+            success: 1
+          })
+        }
       }
+    } catch (error) {
+      throw error
     }
-  }
+  })
 
-  findUser = async (req, res) => {
-    const { id } = req.params
-    await this.userService.findOne({id: id})
-  }
+  findUser = asyncWrapper(async (req, res) => {
+    try {
+      
+      const { id } = req.params
+      await this.userService.findOne({id: id})
 
-  findUsers = async (req, res) => {
-    const users = await this.userService.findAll()
+    } catch (error) {
+      throw error
+    }
+  })
 
-    res.status(200).json({
-      message: "Users",
-      data: users,
-      success: 1
-    })
-  }
+  findUsers = asyncWrapper(async (req, res) => {
+
+    try {
+      
+      const users = await this.userService.findAll()
+  
+      res.status(200).json({
+        message: "Users",
+        data: users,
+        success: 1
+      })
+
+    } catch (error) {
+      throw error
+    }
+  })
+
+  deleteUser = asyncWrapper(async (req, res) => {
+
+  })
 }
 
 export default UsersController;

@@ -1,4 +1,3 @@
-import { Repository } from "typeorm";
 import AppDataSource from "../db/connect.js";
 import User from "../models/User.js";
 
@@ -8,30 +7,69 @@ class UsersService {
     }
 
     create = async (body) => {
-        const user = this.repo.create({...body})
+        try {
 
-        return await this.repo.save(user)
+            const user = this.repo.create({...body})
+
+            return await this.repo.save(user)
+
+        } catch(err) {
+
+            throw error
+        }
+
     }
 
     findOne = async (id) => {
+        try {
+            
+            const user = await this.repo.findOne({id: id})
+    
+            return user;
 
-        const user = await this.repo.findOne({id: id})
+        } catch (error) {
 
-        return user;
+            throw error
+        }
     }
 
     findEmail = async (email) => {
-        const user = await this.repo.findOne({staff_email: email})
+        try {
 
-        console.log(user)
-        return user;
+            const user = await this.repo.findOneBy({staff_email: email})
+
+            return user;
+
+        } catch(err) {
+
+            throw error
+        }
+
     }
 
     findAll = async () => {
-        const users = await this.repo.find()
+        try {
+            
+            const users = await this.repo.find()
+    
+            return users;
 
-        console.log(users)
-        return users;
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+    removeOne = async (id) => {
+        try {
+            const user = await this.repo.delete({id: id})
+
+            return user;
+
+        } catch (error) {
+
+            throw error
+        }
     }
 }
 
