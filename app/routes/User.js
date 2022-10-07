@@ -21,6 +21,7 @@ const userControl = new UsersController()
 router.post('/new', userControl.createUser)
 router.get('/all', userControl.findUsers)
 router.get('/:id', userControl.findUser)
+router.delete('/:id', userControl.deleteUser)
 
 
 export default router;

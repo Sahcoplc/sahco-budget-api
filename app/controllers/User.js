@@ -335,6 +335,43 @@ class UsersController {
 
   deleteUser = asyncWrapper(async (req, res) => {
 
+    const { id } = req.params
+
+    try {
+
+      const user = await this.userService.removeOne(id)
+
+      console.log('Control: ', user)
+
+      if (user.affected) {
+        res.status(200).json({
+          message: "User deleted successfully",
+          success: 1
+        })
+
+      } else {
+
+        res.status(404).json({
+          message: "User not found",
+          success: 0
+        })
+
+      }
+    } catch (error) {
+
+      throw error
+    }
+  })
+
+  updateUser = asyncWrapper(async (req, res) => {
+    try {
+      const user = await this.userService.updateOne(req.body)
+
+    } catch (error) {
+
+      throw error
+
+    }
   })
 }
 

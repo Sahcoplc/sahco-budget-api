@@ -15,7 +15,7 @@ class UsersService {
 
         } catch(err) {
 
-            throw error
+            throw err
         }
 
     }
@@ -42,7 +42,7 @@ class UsersService {
 
         } catch(err) {
 
-            throw error
+            throw err
         }
 
     }
@@ -63,8 +63,30 @@ class UsersService {
     removeOne = async (id) => {
         try {
             const user = await this.repo.delete({id: id})
-
+            console.log('Service: ', user)
             return user;
+
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+    updateOne = async (id, updates) => {
+
+        try {
+            
+            const user = await this.repo.findOneBy({id: id})
+
+            user.avatar = updates.avatar
+            user.department = updates.department
+            user.gender = updates.gender;
+            user.otp = updates.otp
+            user.otpExpiresIn = updates.otpExpiresIn
+            user.pass_word = updates.pass_word
+            user.username = updates.username
+
+            await this.repo.save(user)
 
         } catch (error) {
 
