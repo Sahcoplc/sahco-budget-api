@@ -21,6 +21,7 @@ const userControl = new UsersController()
 router.post('/new', userControl.createUser)
 router.get('/all', userControl.findUsers)
 router.get('/:id', userControl.findUser)
+router.patch('/update', imageUpload.array('avatar'), userControl.updateUser)
 router.delete('/:id', userControl.deleteUser)
 
 

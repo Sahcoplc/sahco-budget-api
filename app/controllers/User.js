@@ -277,29 +277,16 @@ class UsersController {
 
     try {
       
-      const { staff_email } = req.body
+      const user = await this.userService.create(req.body)
   
-      const foundUser = await this.userService.findEmail(staff_email)
-  
-      if(foundUser) {
-  
-        res.status(400).json({
-          message: "User already exists",
-          success: 0
+      if (user) {
+        res.status(200).json({
+          message: "User Created Successfully.",
+          data: user,
+          success: 1
         })
-  
-      } else {
-  
-        const user = await this.userService.create(req.body)
-    
-        if (user) {
-          res.status(200).json({
-            message: "User Created Successfully.",
-            data: user,
-            success: 1
-          })
-        }
       }
+
     } catch (error) {
       throw error
     }
@@ -341,22 +328,14 @@ class UsersController {
 
       const user = await this.userService.removeOne(id)
 
-      console.log('Control: ', user)
-
       if (user.affected) {
         res.status(200).json({
           message: "User deleted successfully",
           success: 1
         })
 
-      } else {
+      } 
 
-        res.status(404).json({
-          message: "User not found",
-          success: 0
-        })
-
-      }
     } catch (error) {
 
       throw error
@@ -364,9 +343,28 @@ class UsersController {
   })
 
   updateUser = asyncWrapper(async (req, res) => {
-    try {
-      const user = await this.userService.updateOne(req.body)
 
+    try {
+      const {id, email} = req?.user?.email
+      const { path } = req?.files[0];
+
+      const updateUser = {
+        ...req.body,
+        id,
+        staff_email: email,
+        avatar: path,
+        updated_time: new Date()
+      };
+
+      const user = await this.userService.updateOne(id, updateUser)
+
+      if(user) {
+        res.status(200).json({
+          message: "User Updated Successfully.",
+          data: user,
+          success: 1
+        })
+      } 
     } catch (error) {
 
       throw error

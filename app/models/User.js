@@ -281,7 +281,7 @@ const User = new EntitySchema({
         updated_time: {
             updateDate: true,
         }
-    },
+    }
 })
 
 export default User;
