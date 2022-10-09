@@ -32,6 +32,12 @@ class UsersService {
         try {
             
             const user = await this.repo.findOne({id: id})
+
+            if(found) {
+
+                throw new BadRequest('User does not exist')
+                
+            }
     
             return user;
 
@@ -45,6 +51,12 @@ class UsersService {
         try {
 
             const user = await this.repo.findOneBy({staff_email})
+
+            if(found) {
+
+                throw new BadRequest('No account exists with this email')
+                
+            }
 
             return user;
 
@@ -73,6 +85,7 @@ class UsersService {
             const user = await this.findOne(id)
 
             if(!user) {
+
                 throw new BadRequest('User does not exist');
             }
     
@@ -90,6 +103,7 @@ class UsersService {
             const user = await this.findOne(id)
 
             if(!user) {
+                
                 throw new BadRequest('User does not exist');
             }
 

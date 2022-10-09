@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import User from "../models/User.js";
 import asyncWrapper from "./async.js";
-import AppDataSource from "../db/connect.js";
+import UsersService from '../services/User.service.js'
 
 const authMiddleware = asyncWrapper(async (req, res, next) => {
   const authHeader = req.headers.authorization;
+  const userService = new UsersService();
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new UnauthenticatedError("No token provided");
@@ -19,11 +19,12 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const { id, email, dept } = decoded;
     
-      // const user = await User.findOneByEmail(email)
-      const user = await AppDataSource.manager.findOneBy(User, {staff_email: email})
+      const user = await userService.findEmail(email)
 
       console.log('Middleware ORM: ', user)
-      if(user.code && user.code === 404) {
+
+      if(!user) {
+
         throw new UnauthenticatedError("Not authorized to access this route");
       }
 

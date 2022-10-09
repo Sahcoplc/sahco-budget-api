@@ -1,6 +1,5 @@
 import asyncWrapper from "../middlewares/async.js";
 // import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import BadRequestError from "../utils/errors/badRequest.js";
 // import User from "../models/User.js";
 // import { generateHashString } from "../utils/encrypt.js";
 // import Mail from "./mail/Mail.js";
@@ -296,7 +295,14 @@ class UsersController {
     try {
       
       const { id } = req.params
-      await this.userService.findOne({id: id})
+
+      const user = await this.userService.findOne({id: id})
+
+      res.status(200).json({
+        message: "User Details.",
+        data: user,
+        success: 1
+      })
 
     } catch (error) {
       throw error
@@ -346,6 +352,7 @@ class UsersController {
 
     try {
       const {id, email} = req?.user?.email
+
       const { path } = req?.files[0];
 
       const updateUser = {
