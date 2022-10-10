@@ -2,11 +2,19 @@ import AppDataSource from "../db/connect.js";
 import User from "../models/User.js";
 import BadRequest from "../utils/errors/badRequest.js";
 
+/**
+ * @type Class
+ */
 class UsersService {
     constructor() {
         this.repo = AppDataSource.getRepository(User)
     }
 
+    /**
+     * Create a new user
+     * @param body - User Entity
+     * @return User
+     */
     create = async (body) => {
         try {
             const found = await this.findEmail(body.email)
@@ -27,6 +35,12 @@ class UsersService {
         }
 
     }
+
+      /**
+     * @typedef - Create a new user
+     * @param body - User Entity
+     * @return User
+     */
 
     findOne = async (id) => {
         try {

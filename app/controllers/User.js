@@ -1,6 +1,5 @@
 import asyncWrapper from "../middlewares/async.js";
 // import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-// import User from "../models/User.js";
 // import { generateHashString } from "../utils/encrypt.js";
 // import Mail from "./mail/Mail.js";
 // import Budget from "../models/Budget.js";
@@ -265,7 +264,21 @@ import UsersService from "../services/User.service.js";
 //   }
 // })
 
+/**
+ * The user controller which has some functions to handle user requests.
+ * @typedef {Object} UsersController
+ * @property {User} createUser - Creates the new user.
+ * @property {User} findUser - Finds a particular user.
+ * @property {User} findUsers - Gets all users.
+ * @property {User} deleteUser - Removes a user.
+ * @property {User} updateUser - Updates a user.
+ */
 
+/**
+ * @class 
+ * @param {...UsersController} UsersController - One to three {@link UsersController} objects
+ * containing all three components of the User controller.
+ */ 
 class UsersController {
   userService;
   constructor() {
