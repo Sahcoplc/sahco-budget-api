@@ -1,7 +1,8 @@
+import AuthService from "../services/Auth.service.js";
 import asyncWrapper from "../middlewares/async.js";
 // import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 // import { generateHashString } from "../utils/encrypt.js";
-// import Mail from "./mail/Mail.js";
+import Mail from "./mail/Mail.js";
 // import Budget from "../models/Budget.js";
 // import { createCustomError } from "../utils/customError.js";
 
@@ -280,18 +281,42 @@ import UsersService from "../services/User.service.js";
  * containing all three components of the User controller.
  */ 
 class UsersController {
+
   userService;
+  authService;
+
   constructor() {
     this.userService = new UsersService()
+    this.authService = new AuthService()
   }
 
   createUser = asyncWrapper(async (req, res) => {
 
     try {
-      
-      const user = await this.userService.create(req.body)
-  
+
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
+
+      const user = await this.authService.signUp(req.body)
+
       if (user) {
+
+        new Mail(user.staff_email).sendMail("REGISTRATION", {
+
+          subject: "Welcome to Skyway Aviation Handling Co.",
+          data: {
+            name: user.staff_name,
+            password: req.pass_word
+          },
+        })
+
+        delete user.pass_word
+        delete user.otp
+        delete user.otpExpiresIn
+
         res.status(200).json({
           message: "User Created Successfully.",
           data: user,
@@ -306,7 +331,12 @@ class UsersController {
 
   findUser = asyncWrapper(async (req, res) => {
     try {
-      
+       
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
       const { id } = req.params
 
       const user = await this.userService.findOne({id: id})
@@ -325,7 +355,13 @@ class UsersController {
   findUsers = asyncWrapper(async (req, res) => {
 
     try {
-      
+
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
+
       const users = await this.userService.findAll()
   
       res.status(200).json({
@@ -344,6 +380,12 @@ class UsersController {
     const { id } = req.params
 
     try {
+
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
 
       const user = await this.userService.removeOne(id)
 
@@ -364,7 +406,8 @@ class UsersController {
   updateUser = asyncWrapper(async (req, res) => {
 
     try {
-      const {id, email} = req?.user?.email
+
+      const { id, email } = req?.user
 
       const { path } = req?.files[0];
 

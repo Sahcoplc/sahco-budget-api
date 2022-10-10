@@ -1,3 +1,4 @@
+import { createCustomError } from "../utils/customError.js";
 import AppDataSource from "../db/connect.js";
 import User from "../models/User.js";
 import BadRequest from "../utils/errors/badRequest.js";
@@ -14,11 +15,13 @@ class UsersService {
      * Create a new user
      * @param body - User Entity
      * @return User
-     */
-    create = async (body) => {
-        try {
-            const found = await this.findEmail(body.email)
+    */
 
+    create = async (body) => {
+
+        try {
+            const found = await this.findEmail(body.staff_email)
+        
             if(found) {
 
                 throw new BadRequest('An account already exists with this email')
@@ -36,11 +39,10 @@ class UsersService {
 
     }
 
-      /**
-     * @typedef - Create a new user
-     * @param body - User Entity
+    /**
+     * @param id - User id
      * @return User
-     */
+    */
 
     findOne = async (id) => {
         try {
@@ -61,16 +63,15 @@ class UsersService {
         }
     }
 
+    /**
+     * @param staff_email - User email
+     * @return User
+    */
+
     findEmail = async (staff_email) => {
         try {
 
             const user = await this.repo.findOneBy({staff_email})
-
-            if(found) {
-
-                throw new BadRequest('No account exists with this email')
-                
-            }
 
             return user;
 
@@ -80,6 +81,10 @@ class UsersService {
         }
 
     }
+
+    /**
+     * @return Users[]
+    */
 
     findAll = async () => {
         try {
@@ -118,7 +123,7 @@ class UsersService {
 
             if(!user) {
                 
-                throw new BadRequest('User does not exist');
+                throw createCustomError('User does not exist', 404);
             }
 
             Object.assign(user, updates)

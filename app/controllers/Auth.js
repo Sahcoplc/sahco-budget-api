@@ -7,68 +7,69 @@ import { comparePassword } from "../utils/decrypt.js";
 import Mail from "./mail/Mail.js";
 import { generateHashString } from "../utils/encrypt.js";
 import { createCustomError } from "../utils/customError.js";
+import AuthService from "../services/Auth.service.js";
 
-const payload = (user) => {
-  const token = jwt.sign(
-    { id: user.staff_id, email: user.staff_email, dept: user.department },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1d",
-      issuer: "SAHCO PLC",
-    }
-  );
+// const payload = (user) => {
+//   const token = jwt.sign(
+//     { id: user.staff_id, email: user.staff_email, dept: user.department },
+//     process.env.JWT_SECRET,
+//     {
+//       expiresIn: "1d",
+//       issuer: "SAHCO PLC",
+//     }
+//   );
 
-  delete user.pass_word;
-  return { user, token: token };
-};
+//   delete user.pass_word;
+//   return { user, token: token };
+// };
 
-export const login = asyncWrapper(async (req, res) => {
-  const { staff_email, pass_word } = req.body;
+// export const login = asyncWrapper(async (req, res) => {
+//   const { staff_email, pass_word } = req.body;
 
-  try {
-    const user = await User.findOneByEmail(staff_email)
+//   try {
+//     const user = await User.findOneByEmail(staff_email)
 
-    if(user && user.code === 400) {
-      throw new BadRequestError("A valid email is required");
-    }
+//     if(user && user.code === 400) {
+//       throw new BadRequestError("A valid email is required");
+//     }
 
-    if(user && user.code === 404) {
-      throw createCustomError('User does not exist', 404)
-    }
+//     if(user && user.code === 404) {
+//       throw createCustomError('User does not exist', 404)
+//     }
 
-    if(user && !user.code) {
-      const password = comparePassword(pass_word, user.pass_word);
+//     if(user && !user.code) {
+//       const password = comparePassword(pass_word, user.pass_word);
 
-      password.then((isPassword) => {
-        if (isPassword) {
+//       password.then((isPassword) => {
+//         if (isPassword) {
 
-          const data = payload(user);
+//           const data = payload(user);
 
-          delete data.user.otp;
-          delete data.user.otpExpiresIn;
+//           delete data.user.otp;
+//           delete data.user.otpExpiresIn;
 
-          res.status(200).json({
-            message: "Login Successful",
-            data: data,
-            success: 1,
-          });
-        } else {
-          res.status(400).json({
-            message: "Invalid credentials",
-            success: 0,
-          });
-        }
+//           res.status(200).json({
+//             message: "Login Successful",
+//             data: data,
+//             success: 1,
+//           });
+//         } else {
+//           res.status(400).json({
+//             message: "Invalid credentials",
+//             success: 0,
+//           });
+//         }
 
-      }).catch(err => {
-        console.log(err)
-      });
-    }
+//       }).catch(err => {
+//         console.log(err)
+//       });
+//     }
 
-  } catch (error) {
+//   } catch (error) {
 
-    throw error;
-  }
-});
+//     throw error;
+//   }
+// });
 
 export const sendResetOtp = asyncWrapper(async (req, res) => {
   const { staff_email } = req.body;
@@ -187,3 +188,42 @@ export const verifyResetOtp = asyncWrapper(async (req, res) => {
     throw error;
   }
 });
+
+class AuthController {
+
+  constructor() {
+    this.authService = new AuthService()
+  }
+
+  login = asyncWrapper(async (req, res) => {
+
+    try {
+
+      const user = await this.authService.signIn(req.body)
+
+      if (user) {
+
+        res.status(200).json({
+          message: "Login Successful",
+          data: user,
+          success: 1,
+        });
+
+      } else {
+
+        throw new BadRequestError("Invalid credentials");
+
+      }
+    } catch (error) {
+
+      throw error
+
+    }
+  })
+
+  requestOtp = asyncWrapper(async (req, res) => {
+
+  })
+
+}
+export default AuthController;
