@@ -5,6 +5,12 @@ import { generateHashString } from "../utils/encrypt.js";
 import BadRequest from "../utils/errors/badRequest.js";
 import UsersService from "./User.service.js";
 
+/**
+ * @class AuthService
+ * @roperty payload - Creates token
+ * @property signIn - Verifies a user 
+ * @property signUp
+ */
 class AuthService {
 
     constructor() {
@@ -14,7 +20,7 @@ class AuthService {
     payload = (user) => {
 
         const token = jwt.sign(
-            { id: user.id, email: user.staff_email, dept: user.department },
+            { id: user.staff_id, email: user.staff_email, dept: user.department },
             process.env.JWT_SECRET,
             {
               expiresIn: "30d",
