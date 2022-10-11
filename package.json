@@ -1,6 +1,6 @@
 {
   "name": "sahco-budget-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "SAHCO PLC Budget Management App REST API",
   "private": "true",
   "main": "index.js",
