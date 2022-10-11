@@ -10,10 +10,10 @@ import { createCustomError } from "../utils/customError.js";
 
 const payload = (user) => {
   const token = jwt.sign(
-    { id: user.staff_id, email: user.staff_email, dept: user.department },
+    { id: user.id, email: user.staff_email, dept: user.department },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "15d",
       issuer: "SAHCO PLC",
     }
   );
@@ -37,31 +37,28 @@ export const login = asyncWrapper(async (req, res) => {
     }
 
     if(user && !user.code) {
-      const password = comparePassword(pass_word, user.pass_word);
+      const password = await comparePassword(pass_word, user.pass_word);
 
-      password.then((isPassword) => {
-        if (isPassword) {
+      if (password) {
 
-          const data = payload(user);
+        const data = payload(user);
 
-          delete data.user.otp;
-          delete data.user.otpExpiresIn;
+        delete data.user.otp;
+        delete data.user.otpExpiresIn;
 
-          res.status(200).json({
-            message: "Login Successful",
-            data: data,
-            success: 1,
-          });
-        } else {
-          res.status(400).json({
-            message: "Invalid credentials",
-            success: 0,
-          });
-        }
+        res.status(200).json({
+          message: "Login Successful",
+          data: data,
+          success: 1,
 
-      }).catch(err => {
-        console.log(err)
-      });
+        });
+
+      } else {
+        res.status(400).json({
+          message: "Invalid credentials",
+          success: 0,
+        });
+      }
     }
 
   } catch (error) {

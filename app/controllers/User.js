@@ -34,45 +34,40 @@ export const createUser = asyncWrapper(async (req, res) => {
     
     if(user && user.code === 404) {
 
-        const hashed = generateHashString(pass_word);
+      const hashed = await generateHashString(pass_word);
 
-        hashed.then( async (hashedPassword) => {
-          const newUser = new User({
+      const newUser = new User({
+        ...req.body,
+        pass_word: hashed,
 
-            ...req.body,
-            pass_word: hashedPassword,
+      });
 
+      const createdUser = await User.createNewAdmin(newUser)
+
+      if (createdUser && createdUser.code === 400) {
+          res.status(400).json({
+            message: "A valid SAHCO PLC email is required.",
+            success: 0,
+          });
+      } else if (createdUser) {
+          new Mail(newUser.staff_email).sendMail("REGISTRATION", {
+
+            subject: "Welcome to Skyway Aviation Handling Co.",
+            data: {
+              name: newUser.staff_name,
+              password: pass_word
+            },
+          })
+
+          delete newUser.pass_word
+
+          res.status(200).json({
+            message: "User registration successful.",
+            data: newUser,
+            success: 1,
           });
 
-
-          const createdUser = await User.createNewAdmin(newUser)
-
-          if (createdUser && createdUser.code === 400) {
-            res.status(400).json({
-              message: "A valid SAHCO PLC email is required.",
-              success: 0,
-            });
-          } else if (createdUser) {
-            new Mail(newUser.staff_email).sendMail("REGISTRATION", {
-
-              subject: "Welcome to Skyway Aviation Handling Co.",
-              data: {
-                name: newUser.staff_name,
-                password: pass_word
-              },
-            })
-
-            delete newUser.pass_word
-
-            res.status(200).json({
-              message: "User registration successful.",
-              data: newUser,
-              success: 1,
-            });
-
-          }
-
-        })
+      }
 
     }
      
@@ -131,7 +126,7 @@ export const getUsers = asyncWrapper(async (req, res) => {
         delete user.otpVerificationId,
         delete user.otpExpiresIn
 
-        if(user.staff_email === 'tukkudarta@vusra.com' || user.staff_email === 'gkotoye@gmail.com') {
+        if(user.staff_email === 'rakkoyespa@vusra.com' || user.staff_email === 'lestecolta@vusra.com') {
           delete user.id
         }
       });
