@@ -1,152 +1,11 @@
 import AuthService from "../services/Auth.service.js";
 import asyncWrapper from "../middlewares/async.js";
-// import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-// import { generateHashString } from "../utils/encrypt.js";
 import Mail from "./mail/Mail.js";
 // import Budget from "../models/Budget.js";
 // import { createCustomError } from "../utils/customError.js";
 
 import UsersService from "../services/User.service.js";
-
-// export const createUser = asyncWrapper(async (req, res) => {
-
-//   try {
-//     if (req?.user?.role !== "ADMIN") {
-//       throw new UnauthenticatedError("Not authorized to access this route");
-//     }
-  
-//     const { staff_email, pass_word, role } = req.body;
-  
-//     if (!role) {
-//       throw new BadRequestError("User role is required")
-//     }
-//     //Check for duplicates
-//     const user = await User.findOneByEmail(staff_email)
-
-//     if (user && user.code === 400) {
-
-//       throw new BadRequestError("A valid email is required");
-//     }
-    
-//     if (user && !user.code) {
-
-//       throw new BadRequestError("An account with this email already exists");
-//     }
-    
-//     if(user && user.code === 404) {
-
-//         const hashed = generateHashString(pass_word);
-
-//         hashed.then( async (hashedPassword) => {
-//           const newUser = new User({
-
-//             ...req.body,
-//             pass_word: hashedPassword,
-
-//           });
-
-
-//           const createdUser = await User.createNewAdmin(newUser)
-
-//           if (createdUser && createdUser.code === 400) {
-//             res.status(400).json({
-//               message: "A valid SAHCO PLC email is required.",
-//               success: 0,
-//             });
-//           } else if (createdUser) {
-//             new Mail(newUser.staff_email).sendMail("REGISTRATION", {
-
-//               subject: "Welcome to Skyway Aviation Handling Co.",
-//               data: {
-//                 name: newUser.staff_name,
-//                 password: pass_word
-//               },
-//             })
-
-//             delete newUser.pass_word
-
-//             res.status(200).json({
-//               message: "User registration successful.",
-//               data: newUser,
-//               success: 1,
-//             });
-
-//           }
-
-//         })
-
-//     }
-     
-//   } catch (error) {
-//     throw error;
-//   }
-// });
-
-// export const getUser = asyncWrapper(async (req, res) => {
-//   if (req?.user?.role !== "ADMIN") {
-//     throw new UnauthenticatedError("Not authorized to access this route");
-//   }
-
-//   const userId = req.params.id;
-
-//   try {
-//     const user = await User.findOneById(userId)
-
-//     if(user && user.code === 404) {
-//       throw createCustomError(`No user with id: ${userId}`, 404);
-//     }
-
-//     if(user) {
-//       delete user.pass_word;
-//       delete user.otp;
-//       delete user.otpExpiresIn
-
-//       res.status(200).json({
-//         message: "User details",
-//         data: user,
-//         success: 1,
-//       });
-
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// });
-
-// export const getUsers = asyncWrapper(async (req, res) => {
-
-//   const {name, department} = req.query;
-
-//   try {
-
-//     const users = await User.findAll(name, department)
-
-//     if(users && users.code === 404) {
-//       throw createCustomError('Some error occured while retrieving users.', 404)
-//     }
-
-//     if (users) {
-//       users.map((user) => {
-//         delete user.pass_word;
-//         delete user.otp;
-//         delete user.otpVerificationId,
-//         delete user.otpExpiresIn
-
-//         if(user.staff_email === 'tukkudarta@vusra.com' || user.staff_email === 'gkotoye@gmail.com') {
-//           delete user.id
-//         }
-//       });
-
-//       res.status(200).json({
-//         message: "Users",
-//         data: users,
-//         success: 1,
-//       });
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// });
+import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 
 // export const updatedUser = asyncWrapper(async (req, res) => {
 
@@ -182,31 +41,6 @@ import UsersService from "../services/User.service.js";
 
 //   } catch (error) {
 //     throw error
-//   }
-// });
-
-// export const deleteUser = asyncWrapper(async (req, res) => {
-//   if (req?.user?.role !== "ADMIN") {
-//     throw new UnauthenticatedError("Not authorized to access this route");
-//   }
-
-//   const userId = req.params.id;
-
-//   try {
-//     const user = await User.deleteOneById(userId)
-
-//     if(user && user.code === 404) {
-//       throw createCustomError(`No user found with id: ${userId}`, 404)
-//     }
-
-//     if(user) {
-//       res.status(200).json({
-//         message: 'User Deleted Successfully',
-//         success: 1,
-//       });
-//     }
-//   } catch (error) {
-//     throw error;
 //   }
 // });
 
@@ -339,7 +173,7 @@ class UsersController {
       }
       const { id } = req.params
 
-      const user = await this.userService.findOne({id: id})
+      const user = await this.userService.findOne(id)
 
       res.status(200).json({
         message: "User Details.",

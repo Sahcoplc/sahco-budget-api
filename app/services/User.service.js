@@ -47,14 +47,18 @@ class UsersService {
     findOne = async (id) => {
         try {
             
-            const user = await this.repo.findOne({id: id})
+            const user = await this.repo.findOneBy({id: id})
 
-            if(found) {
+            if(!user) {
 
                 throw new BadRequest('User does not exist')
                 
             }
-    
+
+            delete user.pass_word
+            delete user.otp
+            delete user.otpExpiresIn
+
             return user;
 
         } catch (error) {
@@ -91,6 +95,13 @@ class UsersService {
             
             const users = await this.repo.find()
     
+            users.map(user => {
+
+                delete user.pass_word
+                delete user.otp
+                delete user.otpExpiresIn
+                
+            })
             return users;
 
         } catch (error) {
