@@ -52,7 +52,6 @@ class UsersService {
             if(!user) {
 
                 throw new BadRequest('User does not exist')
-                
             }
 
             delete user.pass_word
@@ -138,8 +137,6 @@ class UsersService {
             }
 
             Object.assign(user, updates)
-
-            // const user = await this.repo.update(id, {avatar: updates.avatar, department: updates.department, gender: updates.gender, otp: updates.otp, otpExpiresIn: updates.otpExpiresIn, pass_word: updates.pass_word, username: updates.username})
 
             return await this.repo.save(user)
 

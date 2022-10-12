@@ -1,65 +1,9 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import { addHoursToDate } from "../utils/dateFunctions.js";
 import asyncWrapper from "../middlewares/async.js";
 import BadRequestError from "../utils/errors/badRequest.js";
-import { comparePassword } from "../utils/decrypt.js";
 import Mail from "./mail/Mail.js";
 import { generateHashString } from "../utils/encrypt.js";
 import { createCustomError } from "../utils/customError.js";
 import AuthService from "../services/Auth.service.js";
-
-//   delete user.pass_word;
-//   return { user, token: token };
-// };
-
-// export const login = asyncWrapper(async (req, res) => {
-//   const { staff_email, pass_word } = req.body;
-
-//   try {
-//     const user = await User.findOneByEmail(staff_email)
-
-//     if(user && user.code === 400) {
-//       throw new BadRequestError("A valid email is required");
-//     }
-
-//     if(user && user.code === 404) {
-//       throw createCustomError('User does not exist', 404)
-//     }
-
-//     if(user && !user.code) {
-//       const password = comparePassword(pass_word, user.pass_word);
-
-//       password.then((isPassword) => {
-//         if (isPassword) {
-
-//           const data = payload(user);
-
-//           delete data.user.otp;
-//           delete data.user.otpExpiresIn;
-
-//           res.status(200).json({
-//             message: "Login Successful",
-//             data: data,
-//             success: 1,
-//           });
-//         } else {
-//           res.status(400).json({
-//             message: "Invalid credentials",
-//             success: 0,
-//           });
-//         }
-
-//       }).catch(err => {
-//         console.log(err)
-//       });
-//     }
-
-//   } catch (error) {
-
-//     throw error;
-//   }
-// });
 
 // export const sendResetOtp = asyncWrapper(async (req, res) => {
 //   const { staff_email } = req.body;
@@ -212,6 +156,63 @@ class AuthController {
   })
 
   requestOtp = asyncWrapper(async (req, res) => {
+
+    try {
+
+      const { staff_email } = req.body
+
+      const user = await this.authService.requestOtp(staff_email)
+
+      if(user) {
+        new Mail(user.staff_email).sendMail("FORGET_PASSWORD", {
+          subject: "RESET PASSWORD",
+          data: {
+            name: user.staff_name,
+            otp: user.otp,
+            id: user.id,
+          },
+        });
+
+        res.status(200).json({
+          message: "OTP Sent Successfully.",
+          data: {
+            id: user.id,
+            email: user.staff_email,
+          },
+          success: 1,
+        });
+      }
+
+    } catch (error) {
+
+      throw error
+
+    }
+  })
+
+  verifyOtp = asyncWrapper(async (req, res) => {
+
+    const { id, otp, pass_word } = req.body;
+
+    if(!(otp && id)) {
+
+      throw new BadRequestError('OTP code and user id required')
+
+    }
+
+    const user = await this.authService.verifyOTP(id, otp, pass_word)
+
+    if (user) {
+      delete user.pass_word
+      delete user.otp;
+      delete user.otpExpiresIn;
+
+      res.status(200).json({
+        message: "Password Updated Successfully",
+        data: user,
+        success: 1,
+      });
+    }
 
   })
 

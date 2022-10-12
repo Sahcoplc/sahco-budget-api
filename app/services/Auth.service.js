@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { addHoursToDate } from "../utils/dateFunctions.js";
 import { createCustomError } from "../utils/customError.js";
 import { comparePassword } from "../utils/decrypt.js";
 import { generateHashString } from "../utils/encrypt.js";
@@ -20,7 +21,7 @@ class AuthService {
     payload = (user) => {
 
         const token = jwt.sign(
-            { id: user.staff_id, email: user.staff_email, dept: user.department },
+            { id: user.id, email: user.staff_email, dept: user.department },
             process.env.JWT_SECRET,
             {
               expiresIn: "30d",
@@ -54,9 +55,9 @@ class AuthService {
 
                 return data
 
-            } else {
-                return null
             }
+
+            return null
 
         } catch (error) {
 
@@ -85,6 +86,77 @@ class AuthService {
             const createdUser = await this.userService.create(newUser)
 
             return createdUser;
+
+        } catch (error) {
+
+            throw error
+
+        }
+    }
+
+    requestOtp = async (email) => {
+
+        try {
+           
+            const found = await this.userService.findEmail(email)
+
+            if(found) {
+
+                const otp = Math.floor(100000 + Math.random() * 900000);
+                const otpExpiresIn = addHoursToDate(new Date(), 1);
+
+                const newUpdate = {
+                    ...found,
+                    otp,
+                    otpExpiresIn,
+                };
+
+                const user = await this.userService.updateOne(found.id, newUpdate)
+
+                return user
+            }
+
+            throw createCustomError('User does not exist', 404)
+
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+    verifyOTP = async (id, otp, pass_word) => {
+
+        try {
+            
+            const found = await this.userService.findOne(id)
+
+            if(!found) {
+
+                throw createCustomError(`No user with id: ${id}`, 404)
+
+            } else if(found && found.otp !== parseInt(otp)) {
+
+                throw new BadRequest("Invalid OTP Pin received");
+
+            } else if (found && new Date(found.otpExpiresIn) < new Date()) {
+
+                throw new BadRequest("OTP Pin expired");
+        
+            } else {
+
+                const hashed = await generateHashString(pass_word);
+
+                const updatedUser = {
+                    ...found,
+                    pass_word: hashed,
+                    otp: 0,
+                    otpExpiresIn: addHoursToDate(new Date(), 0.5),
+                };
+
+                const user = await this.userService.updateOne(found.id, updatedUser)
+
+                return user;
+            }
 
         } catch (error) {
 

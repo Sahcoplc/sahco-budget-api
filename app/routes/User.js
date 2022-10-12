@@ -3,7 +3,6 @@ import UsersController from "../controllers/User.js";
 
 const router = express.Router()
 
-// import { createUser, deleteUser, getProfile, getUser, getUsers, updatedUser } from "../controllers/User.js";
 import authMiddleWare from '../middlewares/auth.js'
 import imageUpload from "../middlewares/uploads/imageUpload.js";
 
