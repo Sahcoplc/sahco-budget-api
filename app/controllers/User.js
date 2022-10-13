@@ -123,7 +123,7 @@ class UsersController {
     this.userService = new UsersService()
     this.authService = new AuthService()
   }
-
+  
   createUser = asyncWrapper(async (req, res) => {
 
     try {

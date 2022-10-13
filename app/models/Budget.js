@@ -1,6 +1,3 @@
-// import connectDb from "../db/connect.js";
-// import { SQL } from "sql-template-strings";
-
 import { EntitySchema } from "typeorm";
 
 // class Budget {
@@ -202,13 +199,17 @@ import { EntitySchema } from "typeorm";
 // }
 
 const Budget = new EntitySchema({
-    name: "Budgets", // Will use table name `category` as default behaviour.
+    name: "Budgets",
     tableName: "budgets",
     columns: {
         id: {
             primary: true,
             type: "int",
             generated: true,
+        },
+        account: {
+            type: "int",
+            
         },
         department: {
             type: "varchar",

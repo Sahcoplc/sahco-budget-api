@@ -1,6 +1,3 @@
-// import SQL from "sql-template-strings";
-// import connectDb from "../db/connect.js";
-
 import { EntitySchema } from "typeorm";
 
 // class Account {

@@ -12,9 +12,9 @@ class UsersService {
     }
 
     /**
-     * Create a new user
-     * @param body - User Entity
-     * @return User
+     * * create - Create a new user and call all hooks attached
+     * @param {User} body - User Entity
+     * @return {User} User
     */
 
     create = async (body) => {
@@ -41,7 +41,7 @@ class UsersService {
 
     /**
      * @param id - User id
-     * @return User
+     * @return {Object} User
     */
 
     findOne = async (id) => {
@@ -67,8 +67,9 @@ class UsersService {
     }
 
     /**
+     * * findEmail - Get a user by email
      * @param staff_email - User email
-     * @return User
+     * @return {Object} User
     */
 
     findEmail = async (staff_email) => {
@@ -86,7 +87,8 @@ class UsersService {
     }
 
     /**
-     * @return Users[]
+     * * findAll - Gets all users
+     * @return {Array<User>} users[]
     */
 
     findAll = async () => {
@@ -109,6 +111,11 @@ class UsersService {
         }
     }
 
+    /**
+     * * removeOne - Removes a user and all hooks attached to it
+     * @param {User} id 
+     * @returns {Object}
+     */
     removeOne = async (id) => {
         try {
             const user = await this.findOne(id)
@@ -126,6 +133,12 @@ class UsersService {
         }
     }
 
+    /**
+     * * UpdateOne - Updates user information 
+     * @param {User} id -  User id to identify user
+     * @param {*} updates - User information to be updated
+     * @returns {Object} user
+     */
     updateOne = async (id, updates) => {
 
         try {

@@ -3,9 +3,6 @@ import express from "express";
 
 const router = express.Router()
 
-// router.post('/request-otp', sendResetOtp)
-// router.post('/verify-otp', verifyResetOtp)
-
 const authcontroller = new AuthController()
 
 router.post('/login', authcontroller.login)

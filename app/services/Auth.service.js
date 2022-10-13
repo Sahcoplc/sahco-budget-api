@@ -18,6 +18,11 @@ class AuthService {
         this.userService = new UsersService()
     }
 
+    /**
+     * 
+     * @param {User} user 
+     * @returns {Object} user, token
+     */
     payload = (user) => {
 
         const token = jwt.sign(
