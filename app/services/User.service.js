@@ -117,6 +117,7 @@ class UsersService {
      * @returns {Object}
      */
     removeOne = async (id) => {
+        
         try {
             const user = await this.findOne(id)
 

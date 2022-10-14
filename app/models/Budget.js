@@ -209,7 +209,6 @@ const Budget = new EntitySchema({
         },
         account: {
             type: "int",
-            
         },
         department: {
             type: "varchar",

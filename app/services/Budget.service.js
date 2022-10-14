@@ -1,7 +1,10 @@
 import { createCustomError } from "../utils/customError.js";
 import AppDataSource from "../db/connect.js";
-import Budget from "models/Budget.js";
+import Budget from "../models/Budget.js";
 import BadRequest from "../utils/errors/badRequest.js";
+import AccountService from "./Account.service.js";
+import UnauthenticatedError from "../utils/errors/unauthenticated.js";
+import Account from "../models/Account.js";
 
 /**
  * @type Class
@@ -10,6 +13,8 @@ import BadRequest from "../utils/errors/badRequest.js";
 class BudgetService {
     constructor() {
         this.repo = AppDataSource.getRepository(Budget)
+        this.acctRepo = AppDataSource.getRepository(Account)
+        this.accountService = new AccountService()
     }
 
     /**
@@ -20,9 +25,36 @@ class BudgetService {
     */
 
     create = async (budget) => {
+
         try {
-            
+
+            const found = await this.findType(budget.department, budget.account_type)
+
+            if(found) {
+
+                throw new BadRequest('A budget with this account type already exist.')
+                
+            }
+
+            const account = await this.accountService.findOne(budget.accountId)
+
+            if(account && new Date(account.end_date) < new Date()) {
+
+                throw new BadRequest(`Budget submission date has expired`)
+
+            } else if(account && new Date(account.start_date) > new Date()) {
+
+                throw new BadRequest(`Budget submission is yet to commence`)
+
+            } else {
+
+                const newBudget = this.repo.create({...budget})
+
+                return await this.repo.save(newBudget)
+            }
+
         } catch (err) {
+
             throw err
         }
     }
@@ -36,7 +68,16 @@ class BudgetService {
     findOne = async (id) => {
 
         try {
-            
+
+            const budget = await this.repo.findOneBy({id: id})
+
+            if(!budget) {
+
+                throw new BadRequest('Budget does not exist')
+            }
+
+            return budget
+
         } catch (error) {
 
             throw error
@@ -49,13 +90,148 @@ class BudgetService {
      * @param {Budget} department 
      * @param {Budget} account_type 
      * @return {Object} Budget
-     */
+    */
+
     findType = async (department, account_type) => {
 
         try {
 
-            const budget = await this.repo.findOneBy({department: department})
+            const budget = await this.repo.findOneBy({department: department, account: account_type})
             
+            if(!budget) {
+
+                throw new BadRequest('Budget does not exist')
+            }
+
+            return budget
+
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+    /**
+     * * findDept - Find all budgets in a department
+     * ! TODO: Create a find budget service by department
+     * @param {Budget} department 
+     * @return {Object} Budget
+    */
+
+    findDept = async (department) => {
+
+        try {
+            
+            const budget = await this.repo.findBy({department: department})
+
+            return budget
+
+        } catch (error) {
+            
+            throw error
+        }
+    }
+
+    /**
+     * * findDept - Find all budgets
+     * ! TODO: Create a find all budget service
+     * @param {Budget} department 
+     * @return {Object} Budget
+    */
+
+    findAll = async () => {
+
+        try {
+
+            const budget = await this.acctRepo.createQueryBuilder('account').select('account.id')
+            .addSelect('account.account_category').addSelect('account.account_type')
+            .addSelect('SUM(budget.january)', 'janSum').addSelect('SUM(budget.february)', 'febSum')
+            .addSelect('SUM(budget.march)', 'marSum').addSelect('SUM(budget.april)', 'aprSum')
+            .addSelect('SUM(budget.may)', 'maySum').addSelect('SUM(budget.june)', 'junSum')
+            .addSelect('SUM(budget.july)', 'julSum').addSelect('SUM(budget.august)', 'augSum')
+            .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
+            .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
+            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum').
+
+        } catch (error) {
+            
+            throw error
+        }
+    }
+
+    /**
+     * * updateOne - Update a budget in a department
+     * ! TODO: Create a update budget service by id
+     * @param {Budget} id
+     * @param {Budget} updates
+     * @return {Object} Budget
+    */
+
+    updateOne = async (id, updates) => {
+
+        try {
+            
+            const found = await this.findOne(id)
+
+            if(!found) {
+                
+                throw createCustomError('User does not exist', 404);
+
+            } else if(found && found.status === 'APPROVED' || found && found.status === 'SUSPENDED') {
+
+                throw new BadRequest(`Approved or suspended budget cannot be updated`)
+
+            } else {
+
+                const account = await this.accountService.findOne(found.account)
+
+                if(account && new Date(account.end_date) < new Date()) {
+
+                    throw new BadRequest(`Access to update budget has expired`)
+
+                }
+
+                Object.assign(found, updates)
+
+                return await this.repo.save(found)
+            }
+
+        } catch (error) {
+            
+            throw error
+        }
+    }
+
+    /**
+     * * removeOne - Remove a budget
+     * ! TODO: Create a update budget service by id
+     * @param {Budget} id
+     * @return {Object} Budget
+    */
+
+    removeOne = async (id) => {
+
+        try {
+            
+            const budget = await this.findOne(id)
+
+            if(budget && budget.status === "APPROVED" || budget && budget.status === 'SUSPENDED') {
+                
+                throw new UnauthenticatedError("Approved or suspended budget cannot be deleted.");
+    
+            } else {
+
+                const account = await this.accountService.findOne(budget.account)
+
+                if(account && new Date(account.end_date) < new Date()) {
+
+                    throw new BadRequest(`Access to delete budget has expired`)
+
+                }
+
+                return await this.repo.remove(budget);
+            }
+
         } catch (error) {
 
             throw error
