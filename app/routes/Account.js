@@ -1,13 +1,15 @@
-import express from "express";
-import { createAccount, deleteAccount, getAccount, getAccountById, updateAccount } from "../controllers/Account.js";
+import AccountController from "../controllers/Account.js";
 import authMiddleWare from '../middlewares/auth.js'
+import express from "express";
 
 const router = express.Router()
 
-router.post('/', authMiddleWare, createAccount)
-router.get('/', authMiddleWare, getAccount)
-router.patch('/', authMiddleWare, updateAccount)
-router.get('/:id', authMiddleWare, getAccountById)
-router.delete('/:id', authMiddleWare, deleteAccount)
+const accountController = new AccountController()
+
+router.post('/', authMiddleWare, accountController.createAccount)
+router.get('/', authMiddleWare, accountController.getAccounts)
+router.patch('/', authMiddleWare, accountController.updateAccount)
+router.get('/:id', authMiddleWare, accountController.getAccount)
+router.delete('/:id', authMiddleWare, accountController.deleteAccount)
 
 export default router;

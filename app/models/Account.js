@@ -179,10 +179,12 @@ const Account = new EntitySchema({
             unique: true,
         },
         start_date: {
-            type: "date",
+            type: "datetime",
+            nullable: true
         },
         end_date: {
-            type: "date",
+            type: "datetime",
+            nullable: true
         },
         created_time: {
             createDate: true

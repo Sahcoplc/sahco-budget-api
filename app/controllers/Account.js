@@ -1,168 +1,190 @@
 import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
-import Account from "../models/Account.js";
 import { createCustomError } from "../utils/customError.js";
+import AccountService from "../services/Account.service.js";
 
-export const createAccount = asyncWrapper(async (req, res) => {
+// export const deleteAccount = asyncWrapper(async (req, res) => {
 
-    if (req?.user?.role !== "ADMIN") {
-        throw new UnauthenticatedError("Not authorized to access this route");
+//     if (req?.user?.role !== "ADMIN") {
+//         throw new UnauthenticatedError("Not authorized to access this route");
+//     }
+
+//     const { id } = req.params
+
+//     try {
+//         const account = await Account.deleteById(id)
+
+//         if (account && account.code === 404) {
+//             throw createCustomError('Account does not exist', 404)
+//         }
+
+//         if(account.affectedRows > 0 && !account.code) {
+//             res.status(200).json({
+//                 message: "Budget Account Deleted Successfully.",
+//                 success: 1
+//             })
+//         }
+
+//     } catch (error) {
+//         throw error
+//     }
+// })
+
+class AccountController {
+
+    accountService;
+
+    constructor() {
+        this.accountService = new AccountService()
     }
 
-    const { account_type, account_category } = req.body;
+    createAccount = asyncWrapper(async (req, res) => {
 
-    if(!(account_type && account_category)) {
-        throw new BadRequestError("Account fields are required");
-    }
+        try {
 
-    try {
+            if (req?.user?.role !== "ADMIN") {
 
-        const account = await Account.findOne(account_type)
+                throw new UnauthenticatedError("Not authorized to access this route");
+            }
 
-        if(!account.code) {
-            
-            throw new BadRequestError('An account with this type already exists.')
-        }
+            const { account_type, account_category } = req.body;
 
-        if (account && account.code === 404) {
-            const newAcc = new Account(req.body)
+            if(!(account_type && account_category)) {
 
-            const result = await Account.createNewAccount(newAcc)
+                throw new BadRequestError("Account fields are required");
 
-            if (result) {
+            }
+
+            const account = await this.accountService.create(req.body)
+
+            if (account) {
 
                 res.status(200).json({
                     message: "Account Creation Successful.",
-                    data: result,
+                    data: account,
                     success: 1,
                 });
             }
+
+        } catch (error) {
+            
+            throw error
+
         }
+    })
 
-    } catch (error) {
-        throw error
-    }
-})
+    getAccount = asyncWrapper(async (req, res) => {
 
-export const getAccount = asyncWrapper(async (req, res) => {
+        try {
+            
+            if (req?.user?.role !== "ADMIN") {
 
-    const category = req.query.category;
+                throw new UnauthenticatedError("Not authorized to access this route");
 
-    try {
-        const account = await Account.findAll(category)
+            }
 
-        if (account && account.code === 404) {
-            throw createCustomError('Account does not exist', 404)
+            const { id } = req.params
+
+            const account = await this.accountService.findOne(id)
+
+            if(account) {
+
+                res.status(200).json({
+                    message: "Budget Account Details.",
+                    data: account,
+                    success: 1
+                })
+
+            }
+
+        } catch (error) {
+            
+            throw error
+
         }
+    })
 
-        if(account) {
+    getAccounts = asyncWrapper(async (req, res) => {
+
+        try {
+            
+            if (req?.user?.role !== "ADMIN") {
+
+                throw new UnauthenticatedError("Not authorized to access this route");
+        
+            }
+
+            const accounts = await this.accountService.findAll()
+
             res.status(200).json({
                 message: "Budget Account Details.",
-                data: account,
+                data: accounts,
                 success: 1
             })
+
+        } catch (error) {
+
+            throw error
+
         }
-        
-    } catch (error) {
-        throw error
-    }
-})
+    })
 
-export const updateAccount = asyncWrapper(async (req, res) => {
+    updateAccount = asyncWrapper(async (req, res) => {
 
-    if (req?.user?.role !== "ADMIN") {
-        throw new UnauthenticatedError("Not authorized to access this route");
-    }
+        try {
+            const { account_category } = req.body
 
-    const { account_category, start_date, end_date } = req.body;
+            if (req?.user?.role !== "ADMIN") {
 
-    if(!(account_category && start_date && end_date)) {
-        throw new BadRequestError("Account fields are required");
-    }
+                throw new UnauthenticatedError("Not authorized to access this route");
 
-    try {
+            }
 
-        const account = await Account.findByCategory(account_category, req.body)
+            const account = await this.accountService.updateType(account_category, req.body)
 
-        if(account && account.code === 404) {
+            if (account) {
 
-            throw createCustomError(`No account with category: ${account_category}`, 404);
-        }
-
-        if (account) {
-            const updates = await Account.updateByCategory(req.body)
-
-            if(updates && updates.code === 404) {
-
-                throw createCustomError(`Account does not exist`, 404);
-            } 
-
-            if (updates) {
                 res.status(200).json({
                     message: "Account updated successfully.",
-                    data: updates,
+                    data: account,
+                    success: 1
+                })
+
+            }
+
+        } catch (error) {
+
+            throw error
+        }
+    })
+
+    deleteAccount = asyncWrapper(async (req, res) => {
+
+        try {
+            
+            if (req?.user?.role !== "ADMIN") {
+                
+                throw new UnauthenticatedError("Not authorized to access this route");
+            }
+
+            const { id } = req.params
+
+            const account = await this.accountService.removeOne(id)
+
+            if(account.affected) {
+                res.status(200).json({
+                    message: "Budget Account Deleted Successfully.",
                     success: 1
                 })
             }
+
+        } catch (error) {
+            
+            throw error
+
         }
-        
-    } catch (error) {
-        throw error
-    }
-})
+    })
+}
 
-export const getAccountById = asyncWrapper(async (req, res) => {
-
-    if (req?.user?.role !== "ADMIN") {
-        throw new UnauthenticatedError("Not authorized to access this route");
-    }
-
-    const { id } = req.params
-
-    try {
-        const account = await Account.findById(id)
-
-        if (account && account.code === 404) {
-            throw createCustomError('Account does not exist', 404)
-        }
-
-        if(account) {
-            res.status(200).json({
-                message: "Budget Account Details.",
-                data: account,
-                success: 1
-            })
-        }
-
-    } catch (error) {
-        throw error
-    }
-})
-
-export const deleteAccount = asyncWrapper(async (req, res) => {
-
-    if (req?.user?.role !== "ADMIN") {
-        throw new UnauthenticatedError("Not authorized to access this route");
-    }
-
-    const { id } = req.params
-
-    try {
-        const account = await Account.deleteById(id)
-
-        if (account && account.code === 404) {
-            throw createCustomError('Account does not exist', 404)
-        }
-
-        if(account.affectedRows > 0 && !account.code) {
-            res.status(200).json({
-                message: "Budget Account Deleted Successfully.",
-                success: 1
-            })
-        }
-
-    } catch (error) {
-        throw error
-    }
-})
+export default AccountController

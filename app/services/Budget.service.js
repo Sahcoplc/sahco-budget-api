@@ -27,9 +27,10 @@ class BudgetService {
     create = async (budget) => {
 
         try {
+            console.log('Service: ', budget)
 
             const found = await this.findType(budget.department, budget.account_type)
-
+            
             if(found) {
 
                 throw new BadRequest('A budget with this account type already exist.')
@@ -49,7 +50,7 @@ class BudgetService {
             } else {
 
                 const newBudget = this.repo.create({...budget})
-
+                console.log('New budget: ', newBudget)
                 return await this.repo.save(newBudget)
             }
 
@@ -97,11 +98,11 @@ class BudgetService {
         try {
 
             const budget = await this.repo.findOneBy({department: department, account: account_type})
-            
-            if(!budget) {
+            console.log('Type: ', budget)
+            // if(!budget) {
 
-                throw new BadRequest('Budget does not exist')
-            }
+            //     throw new BadRequest('Budget does not exist')
+            // }
 
             return budget
 
@@ -151,7 +152,7 @@ class BudgetService {
             .addSelect('SUM(budget.july)', 'julSum').addSelect('SUM(budget.august)', 'augSum')
             .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
             .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
-            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum').
+            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum')
 
         } catch (error) {
             
@@ -175,7 +176,7 @@ class BudgetService {
 
             if(!found) {
                 
-                throw createCustomError('User does not exist', 404);
+                throw createCustomError('Budget does not exist', 404);
 
             } else if(found && found.status === 'APPROVED' || found && found.status === 'SUSPENDED') {
 

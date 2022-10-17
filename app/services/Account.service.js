@@ -1,8 +1,7 @@
 import { createCustomError } from "../utils/customError.js";
 import AppDataSource from "../db/connect.js";
-import Account from "models/Account.js";
+import Account from "../models/Account.js";
 import BadRequest from "../utils/errors/badRequest.js";
-
 
 class AccountService {
     constructor() {
@@ -16,21 +15,40 @@ class AccountService {
      * @return {Account} Account
     */
 
-    create = async (account) => {}
+    create = async (account) => {
+
+        try {
+
+            const acc = await this.findType(account.account_type)
+
+            if(acc) {
+            
+                throw new BadRequest('An account with this type already exists.')
+            }
+
+            const newAcc = this.repo.create({...account})
+
+            return await this.repo.save(newAcc)
+
+        } catch (error) {
+            
+            throw error
+        }
+    }
 
     /**
-     * * findeOne - Find a particular account by id
+     * * findOne - Find a particular account by id
      * ! TODO: Create find one service
      * @param {Account} id - Account id
      * @return {Object} account
-     */
+    */
 
     findOne = async (id) => {
 
         try {
             
             const account = await this.repo.findOneBy({id: id})
-
+            console.log('Account service: ', account)
             if(!account) {
 
                 throw createCustomError( `No budget account with id: ${id}`, 404)
@@ -44,7 +62,109 @@ class AccountService {
         }
     }
 
-    findAll = async () => {}
+    /**
+     * * findType - Find a particular account by type
+     * ! TODO: Create find one service
+     * @param {Account} account_type - Account type
+     * @return {Object} account
+    */
+
+    findType = async (account_type) => {
+
+        try {
+            
+            const account = await this.repo.findOneBy({account_type: account_type})
+    
+            // if(!account) {
+
+            //     throw createCustomError( `No budget account with id: ${id}`, 404)
+            // }
+
+            return account
+            
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+
+    /**
+     * * findAll - Find all accounts
+     * ! TODO: Create find all service
+     * @return {Object} account
+    */
+    findAll = async () => {
+
+        try {
+           
+            const accounts = await this.repo.find()
+
+            return accounts;
+
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+
+    /**
+     * * updateType - Update an account by type
+     * ! TODO: Create a update account service by account type
+     * @param {Account} account_category
+     * @param {Account} updates
+     * @return {Object} Account
+    */
+    updateType = async (account_category, updates) => {
+
+        try {
+            
+            const accounts = await this.repo.find(account_category)
+            
+            if(!accounts) {
+                
+                throw createCustomError('Account does not exist', 404);
+
+            }
+
+            accounts.map(account => {
+
+                Object.assign(account, updates)
+            })
+
+            await this.repo.update({account_category: account_category}, {start_date: updates.start_date, end_date: updates.end_date})
+
+            return await this.findAll()
+
+        } catch (error) {
+
+            throw error
+
+        }
+    }
+
+    /**
+     * * removeOne - Remove an account by id
+     * ! TODO: Create a remove account service by account id
+     * @param {Account} id
+     * @return {Object} Account
+    */
+
+    removeOne = async (id) => {
+
+        try {
+            
+            const account = await this.findOne(id)
+
+            return await this.repo.remove(account)
+
+        } catch (error) {
+            
+            throw error
+
+        }
+    }
 }
 
 export default AccountService
