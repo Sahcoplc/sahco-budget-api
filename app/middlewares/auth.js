@@ -8,6 +8,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
   const userService = new UsersService();
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+
     throw new UnauthenticatedError("No token provided");
 
   } else {
@@ -20,20 +21,18 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const { id, email, dept } = decoded;
     
       const user = await userService.findEmail(email)
-
+      console.log('Middleware: ', user)
       if(!user) {
 
         throw new UnauthenticatedError("Not authorized to access this route");
       }
 
-      if (user) {
-        req.user = {
-          id,
-          email,
-          dept,
-          role: user.role,
-        };
-      }
+      req.user = {
+        id,
+        email,
+        dept,
+        role: user.role,
+      };
 
       return next();
     }

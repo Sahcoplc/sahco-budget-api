@@ -390,23 +390,30 @@ class BudgetController {
     createBudget = asyncWrapper(async (req, res) => {
        
         try {
-
+            console.log('Control: ', req.body)
             if (req?.user?.role !== "USER") {
-                
-                throw new UnauthenticatedError("Not authorized to access this route");
-                
+
+                // throw new UnauthenticatedError("Not authorized to access this route");
+                res.status(401).json({
+                    message: "Not authorized to access this route.",
+                    success: 0,
+                });
+        
             }
             
             const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
             
             if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
-                
-                throw new BadRequestError('Budget records required')
+                // throw new BadRequestError('Budget records required')
+                res.status(400).json({
+                    message: "Budget records required.",
+                    success: 0,
+                });
                 
             } else {
 
-                const estimated_budget = (Number(january)) + (Number(february)) + (Number(march)) + (Number(april)) + (Number(may)) + (Number(june)) + (Number(july)) + (Number(august)) + (Number(sept)) + (Number(october)) + (Number(nov)) + (Number(december));
-                
+                const estimated_budget = (january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + (october * 1) + (nov * 1) + (december * 1);
+                console.log('Total: ', estimated_budget)
                 const data = {
                     ...req.body,
                     actual_budget: 0,

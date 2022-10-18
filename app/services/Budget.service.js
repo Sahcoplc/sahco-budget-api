@@ -27,13 +27,15 @@ class BudgetService {
     create = async (budget) => {
 
         try {
-            console.log('Service: ', budget)
-
-            const found = await this.findType(budget.department, budget.account_type)
             
-            if(found) {
+            const found = await this.findType(budget.department, budget.account_type)
+            console.log('Service: ', found)
+            
+            if(found !== null) {
 
-                throw new BadRequest('A budget with this account type already exist.')
+                console.log('Not null but can not seem to throw error')
+                throw new Error('A budget with this account type already exist.')
+                // throw BadRequest('A budget with this account type already exist.')
                 
             }
 
@@ -97,12 +99,13 @@ class BudgetService {
 
         try {
 
-            const budget = await this.repo.findOneBy({department: department, account: account_type})
-            console.log('Type: ', budget)
-            // if(!budget) {
+            const budget = await this.repo.findOneBy({department: department, account_type: account_type})
 
-            //     throw new BadRequest('Budget does not exist')
-            // }
+            if(!budget) {
+
+                return null
+                // throw new BadRequest('Budget does not exist')
+            }
 
             return budget
 

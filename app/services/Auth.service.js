@@ -53,7 +53,12 @@ class AuthService {
             const password = await comparePassword(user.pass_word, found.pass_word);
 
             if(password) {
-                const data = this.payload(found);
+
+                found.last_loginAt = new Date()
+
+                const result = await this.userService.updateOne(found.id, found)
+
+                const data = this.payload(result);
 
                 delete data.user.otp;
                 delete data.user.otpExpiresIn;

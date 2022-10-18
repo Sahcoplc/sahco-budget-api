@@ -5,6 +5,7 @@ import Mail from "./mail/Mail.js";
 // import { createCustomError } from "../utils/customError.js";
 import UsersService from "../services/User.service.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
+import BudgetService from "../services/Budget.service.js";
 
 /**
  * The user controller which has some functions to handle user requests.
@@ -25,10 +26,12 @@ class UsersController {
 
   userService;
   authService;
+  budgetService;
 
   constructor() {
     this.userService = new UsersService()
     this.authService = new AuthService()
+    this.budgetService = new BudgetService()
   }
   
   createUser = asyncWrapper(async (req, res) => {
@@ -180,7 +183,32 @@ class UsersController {
 
     try {
       
-      const user = await this.userService
+      const email = req?.user?.email;
+      const dept = req?.user?.dept
+
+      const user = await this.userService.findEmail(email)
+
+      if(user) {
+
+        const budget = await this.budgetService.findDept(dept)
+        
+        if(budget) {
+
+          const currentUser = {
+            ...user,
+          }
+
+          currentUser.budget = budget
+  
+          res.status(200).json({
+            message: "User Profile.",
+            data: currentUser,
+            success: 1
+          })
+
+        }
+
+      }
       
     } catch (error) {
       

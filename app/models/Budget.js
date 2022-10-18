@@ -207,8 +207,11 @@ const Budget = new EntitySchema({
             type: "int",
             generated: true,
         },
-        account: {
+        accountId: {
             type: "int",
+        },
+        account_type: {
+            type: "varchar"
         },
         department: {
             type: "varchar",
@@ -259,10 +262,12 @@ const Budget = new EntitySchema({
             type: "varchar"
         },
         approved_by: {
-            type: "varchar"
+            type: "varchar",
+            nullable: true
         },
         dept_approver: {
-            type: "varchar"
+            type: "varchar",
+            nullable: true
         },
         created_time: {
             createDate: true
