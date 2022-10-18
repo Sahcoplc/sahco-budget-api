@@ -21,7 +21,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
       const { id, email, dept } = decoded;
     
       const user = await userService.findEmail(email)
-      console.log('Middleware: ', user)
+
       if(!user) {
 
         throw new UnauthenticatedError("Not authorized to access this route");

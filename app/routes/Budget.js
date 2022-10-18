@@ -5,9 +5,7 @@ import authMiddleWare from '../middlewares/auth.js'
 const router = express.Router()
 
 const budgetController = new BudgetController()
-// router.post('/new',  authMiddleWare, createBudget)
-// router.get('/all',  authMiddleWare, getUserBudget)
-// router.get('/:id',  authMiddleWare, getBudget)
+
 // router.patch('/:id', authMiddleWare, updateBudget)
 // router.delete('/:id', authMiddleWare, deleteBudget)
 // router.get('/admin/all', authMiddleWare, getAllBudget)
@@ -15,5 +13,7 @@ const budgetController = new BudgetController()
 // router.patch('/status/:id', authMiddleWare, updateStatus)
 
 router.post('/new',  authMiddleWare, budgetController.createBudget)
+router.get('/all',  authMiddleWare, budgetController.getDeptBudget)
+router.get('/:id',  authMiddleWare, budgetController.getBudget)
 
 export default router;

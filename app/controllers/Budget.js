@@ -390,7 +390,7 @@ class BudgetController {
     createBudget = asyncWrapper(async (req, res) => {
        
         try {
-            console.log('Control: ', req.body)
+
             if (req?.user?.role !== "USER") {
 
                 // throw new UnauthenticatedError("Not authorized to access this route");
@@ -413,7 +413,7 @@ class BudgetController {
             } else {
 
                 const estimated_budget = (january * 1) + (february * 1) + (march * 1) + (april * 1) + (may * 1) + (june * 1) + (july * 1) + (august * 1) + (sept * 1) + (october * 1) + (nov * 1) + (december * 1);
-                console.log('Total: ', estimated_budget)
+               
                 const data = {
                     ...req.body,
                     actual_budget: 0,
@@ -431,9 +431,15 @@ class BudgetController {
     
                 const budget = await this.budgetService.create(data)
     
-                console.log(budget)
-    
-                if(budget) {
+                if(typeof budget === "string") {
+
+                    res.status(400).json({
+                        message: budget,
+                        success: 0,
+                    });
+
+                } else {
+
                     res.status(200).json({
                         message: "Budget Creation Successful.",
                         data: budget,
@@ -447,6 +453,51 @@ class BudgetController {
             
         }
     })
+
+    getBudget = asyncWrapper(async (req, res) => {
+
+        try {
+            const { id } = req.params
+
+            const budget = await this.budgetService.findOne(id)
+
+            if(budget) {
+
+                res.status(200).json({
+                    message: "Budget Details.",
+                    data: budget,
+                    success: 1,
+                });
+            }
+
+        } catch (error) {
+            
+            throw error
+        }
+    })
+
+    getDeptBudget = asyncWrapper(async (req, res) => {
+
+        try {
+
+            const { dept } = req?.user
+
+            const budget = await this.budgetService.findDeptBudget(dept)
+
+            if(budget) {
+
+                res.status(200).json({
+                    message: "Budget Details.",
+                    data: budget,
+                    success: 1,
+                });
+            }
+            
+        } catch (error) {
+            
+            throw error
+        }
+    }) 
 }
 
 export default BudgetController

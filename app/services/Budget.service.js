@@ -29,13 +29,10 @@ class BudgetService {
         try {
             
             const found = await this.findType(budget.department, budget.account_type)
-            console.log('Service: ', found)
             
             if(found !== null) {
 
-                console.log('Not null but can not seem to throw error')
-                throw new Error('A budget with this account type already exist.')
-                // throw BadRequest('A budget with this account type already exist.')
+                return 'A budget with this account type already exist.'
                 
             }
 
@@ -43,16 +40,16 @@ class BudgetService {
 
             if(account && new Date(account.end_date) < new Date()) {
 
-                throw new BadRequest(`Budget submission date has expired`)
+                return `Budget submission date has expired`
 
             } else if(account && new Date(account.start_date) > new Date()) {
 
-                throw new BadRequest(`Budget submission is yet to commence`)
+                return `Budget submission is yet to commence`
 
             } else {
 
                 const newBudget = this.repo.create({...budget})
-                console.log('New budget: ', newBudget)
+
                 return await this.repo.save(newBudget)
             }
 
@@ -122,7 +119,7 @@ class BudgetService {
      * @return {Object} Budget
     */
 
-    findDept = async (department) => {
+    findDeptBudget = async (department) => {
 
         try {
             
