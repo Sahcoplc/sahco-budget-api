@@ -175,6 +175,19 @@ class UsersController {
 
     }
   })
+
+  getSession = asyncWrapper(async (req, res) => {
+
+    try {
+      
+      const user = await this.userService
+      
+    } catch (error) {
+      
+      throw error
+
+    }
+  })
 }
 
 export default UsersController;

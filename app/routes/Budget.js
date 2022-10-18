@@ -1,6 +1,5 @@
 import BudgetController from "../controllers/Budget.js";
 import express from "express";
-// import BudgetController, { createBudget, deleteBudget, getAllBudget, getBudget, getUserBudget, getUserBudgetByDept, updateBudget, updateStatus } from "../controllers/Budget.js";
 import authMiddleWare from '../middlewares/auth.js'
 
 const router = express.Router()

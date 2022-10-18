@@ -1,10 +1,10 @@
 import express from "express";
 import UsersController from "../controllers/User.js";
+import authMiddleWare from '../middlewares/auth.js'
+import imageUpload from "../middlewares/uploads/imageUpload.js";
 
 const router = express.Router()
 
-import authMiddleWare from '../middlewares/auth.js'
-import imageUpload from "../middlewares/uploads/imageUpload.js";
 
 //Logged in user
 // router.get('/user/profile', authMiddleWare, getProfile)
