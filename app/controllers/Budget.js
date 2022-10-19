@@ -237,8 +237,6 @@ class BudgetController {
 
             const budget = await this.budgetService.findAll()
 
-            console.log('All budget: ', budget)
-
             if(budget) {
 
                 res.status(200).json({

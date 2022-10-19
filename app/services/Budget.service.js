@@ -135,9 +135,8 @@ class BudgetService {
     }
 
     /**
-     * * findDept - Find all budgets
+     * * findAll - Find all budgets
      * ! TODO: Create a find all budget service
-     * @param {Budget} department 
      * @return {Object} Budget
     */
 
@@ -145,7 +144,8 @@ class BudgetService {
 
         try {
 
-            const budget = await this.repo.createQueryBuilder('budget').leftJoinAndSelect('budget.account', 'account', 'account.id = budget.accountId').select('account.id')
+            const budget = await this.repo.createQueryBuilder('budget')
+            .leftJoinAndSelect('budget.account', 'account', 'account.id = budget.accountId').select('account.id')
             .addSelect('account.account_category').addSelect('account.account_type')
             .addSelect('SUM(budget.january)', 'janSum').addSelect('SUM(budget.february)', 'febSum')
             .addSelect('SUM(budget.march)', 'marSum').addSelect('SUM(budget.april)', 'aprSum')
@@ -153,7 +153,8 @@ class BudgetService {
             .addSelect('SUM(budget.july)', 'julSum').addSelect('SUM(budget.august)', 'augSum')
             .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
             .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
-            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum').groupBy('account.account_type').addGroupBy('account.id').getRawMany()
+            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum')
+            .groupBy('account.account_type').addGroupBy('account.id').getRawMany()
 
             return budget
 
