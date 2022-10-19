@@ -190,7 +190,11 @@ class UsersController {
 
       if(user) {
 
-        const budget = await this.budgetService.findDept(dept)
+        delete user.otp
+        delete user.otpExpiresIn
+        delete user.pass_word
+
+        const budget = await this.budgetService.findDeptBudget(dept)
         
         if(budget) {
 
