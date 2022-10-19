@@ -217,46 +217,75 @@ const Budget = new EntitySchema({
             type: "varchar",
         },
         january: {
-            type: "int",
+            // type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         february: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         march: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         april: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         may: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         june: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         july: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         august: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         sept: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         october: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         nov: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         december: {
-            type: "int",
+            type: "decimal",
+            precision: 11,
+            scale: 2
         },
         estimated_budget: {
-            type: "int",
+            type: "decimal",
+            precision: 13,
+            scale: 2
         },
         actual_budget: {
-            type: "int",
+            type: "decimal",
+            precision: 13,
+            scale: 2
         },
         status: {
             type: "varchar"

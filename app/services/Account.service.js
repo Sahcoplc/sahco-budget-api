@@ -48,7 +48,7 @@ class AccountService {
         try {
             
             const account = await this.repo.findOneBy({id: id})
-            console.log('Account service: ', account)
+
             if(!account) {
 
                 throw createCustomError( `No budget account with id: ${id}`, 404)

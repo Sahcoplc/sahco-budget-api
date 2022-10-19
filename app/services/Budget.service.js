@@ -173,19 +173,15 @@ class BudgetService {
         try {
             
             const found = await this.findOne(id)
-
-            if(!found) {
-                
-                throw createCustomError('Budget does not exist', 404);
-
-            } else if(found && found.status === 'APPROVED' || found && found.status === 'SUSPENDED') {
+            
+            if(found.status === 'APPROVED' || found.status === 'SUSPENDED') {
 
                 throw new BadRequest(`Approved or suspended budget cannot be updated`)
 
             } else {
 
                 const account = await this.accountService.findOne(found.account)
-
+                
                 if(account && new Date(account.end_date) < new Date()) {
 
                     throw new BadRequest(`Access to update budget has expired`)
@@ -204,6 +200,38 @@ class BudgetService {
     }
 
     /**
+     * * updateStatus - Update a budget in a department
+     * ! TODO: Create a update budget service by id
+     * @param {Budget} id
+     * @param {Budget} status
+     * @return {Object} Budget
+    */
+
+    updateStatus = async (id, status) => {
+
+        try {
+           
+            const found = await this.findOne(id)
+
+            if(!found) {
+                
+                throw createCustomError('Budget does not exist', 404);
+
+            }
+
+            Object.assign(found, status)
+
+            return await this.repo.save(found)
+
+        } catch (error) {
+            
+            throw error
+
+        }
+    }
+
+
+    /**
      * * removeOne - Remove a budget
      * ! TODO: Create a update budget service by id
      * @param {Budget} id
@@ -216,7 +244,7 @@ class BudgetService {
             
             const budget = await this.findOne(id)
 
-            if(budget && budget.status === "APPROVED" || budget && budget.status === 'SUSPENDED') {
+            if(budget.status === "APPROVED" || budget.status === 'SUSPENDED') {
                 
                 throw new UnauthenticatedError("Approved or suspended budget cannot be deleted.");
     

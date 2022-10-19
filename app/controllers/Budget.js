@@ -498,6 +498,106 @@ class BudgetController {
             throw error
         }
     }) 
+
+    getBudgetInDept = asyncWrapper(async (req, res) => {
+
+        try {
+
+            const { dept } = req?.params
+
+            const budget = await this.budgetService.findDeptBudget(dept)
+
+            if(budget) {
+
+                res.status(200).json({
+                    message: "Budget Details.",
+                    data: budget,
+                    success: 1,
+                });
+            }
+            
+        } catch (error) {
+            
+            throw error
+        }
+    }) 
+
+    updateBudget = asyncWrapper(async (req, res) => {
+
+        try {
+
+            const { id } = req?.params
+
+            const user = req?.user?.role
+            console.log(user)
+
+            if (req?.user?.role === "USER") {
+
+                const budget = await this.budgetService.updateOne(id, req.body)
+
+                if(budget) {
+
+                    res.status(200).json({
+                        message: "Budget Updated Successfully.",
+                        data: budget,
+                        success: 1,
+                    });
+                }
+
+            }
+
+            if (req?.user?.role === "ADMIN") {
+
+                const budget = await this.budgetService.updateStatus(id, req.body)
+    
+                if(budget) {
+    
+                    res.status(200).json({
+                        message: "Budget Updated Successfully.",
+                        data: budget,
+                        success: 1,
+                    });
+                }
+
+            }
+
+
+        } catch (error) {
+            
+            throw error
+
+        }
+    })
+
+    deleteBudget = asyncWrapper(async (req, res) => {
+
+        try {
+            
+            const { id } = req?.params
+
+            if (req?.user?.role !== "USER") {
+
+                throw new UnauthenticatedError("Not authorized to access this route");
+        
+            }
+
+            const budget = await this.budgetService.removeOne(id)
+
+            if (budget) {
+
+                res.status(200).json({
+                    message: "Budget deleted successfully",
+                    success: 1
+                })
+
+            }
+
+        } catch (error) {
+            
+            throw error
+
+        }
+    })
 }
 
 export default BudgetController

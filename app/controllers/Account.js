@@ -108,12 +108,6 @@ class AccountController {
     getAccounts = asyncWrapper(async (req, res) => {
 
         try {
-            
-            if (req?.user?.role !== "ADMIN") {
-
-                throw new UnauthenticatedError("Not authorized to access this route");
-        
-            }
 
             const accounts = await this.accountService.findAll()
 
