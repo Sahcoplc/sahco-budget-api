@@ -4,7 +4,7 @@ import Budget from "../models/Budget.js";
 import BadRequest from "../utils/errors/badRequest.js";
 import AccountService from "./Account.service.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import Account from "../models/Account.js";
+import User from "../models/User.js";
 
 /**
  * @type Class
@@ -122,7 +122,7 @@ class BudgetService {
 
         try {
             
-            const budget = await this.repo.createQueryBuilder('budget').leftJoin('budget.account', 'account')
+            const budget = await this.repo.createQueryBuilder('budget').leftJoinAndSelect('budget.account', 'account')
             .addSelect('account.id').addSelect('account.account_category').addSelect('account.account_type')
             .where('budget.department = :department', {department}).getMany()
 

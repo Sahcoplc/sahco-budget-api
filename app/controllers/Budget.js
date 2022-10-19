@@ -3,13 +3,16 @@ import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 import { createCustomError } from "../utils/customError.js";
 import BudgetService from "../services/Budget.service.js";
+import UsersService from "../services/User.service.js";
 
 class BudgetController {
 
     budgetService;
+    userService;
 
     constructor() {
         this.budgetService = new BudgetService()
+        this.userService = new UsersService()
     }
 
     createBudget = asyncWrapper(async (req, res) => {
@@ -154,9 +157,6 @@ class BudgetController {
 
             const { id } = req?.params
 
-            const user = req?.user?.role
-            console.log(user)
-
             if (req?.user?.role === "USER") {
 
                 const budget = await this.budgetService.updateOne(id, req.body)
@@ -174,7 +174,14 @@ class BudgetController {
 
             if (req?.user?.role === "ADMIN") {
 
-                const budget = await this.budgetService.updateStatus(id, req.body)
+                const user = await this.userService.findOne(req?.user?.id)
+
+                const data = {
+                    ...req.body,
+                    approved_by: user.staff_name
+                }
+
+                const budget = await this.budgetService.updateStatus(id, data)
     
                 if(budget) {
     

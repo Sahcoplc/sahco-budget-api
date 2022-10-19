@@ -1,4 +1,5 @@
 import { createCustomError } from "../utils/customError.js";
+import { Like } from 'typeorm'
 import AppDataSource from "../db/connect.js";
 import User from "../models/User.js";
 import BadRequest from "../utils/errors/badRequest.js";
@@ -40,7 +41,7 @@ class UsersService {
     }
 
     /**
-     * @param id - User id
+     * @param {User} id - User id
      * @return {Object} User
     */
 
@@ -87,6 +88,32 @@ class UsersService {
     }
 
     /**
+     * * filterAll - Gets all users by search
+     * @param {User} staff_name
+     * @return {Array<User>} users[]
+    */
+
+    filterAll = async (staff_name) => {
+        try {
+            
+            const users = await this.repo.findBy({ staff_name: Like(`%${staff_name}%`) })
+    
+            users.map(user => {
+
+                delete user.pass_word
+                delete user.otp
+                delete user.otpExpiresIn
+                
+            })
+            return users;
+
+        } catch (error) {
+
+            throw error
+        }
+    }
+
+    /**
      * * findAll - Gets all users
      * @return {Array<User>} users[]
     */
@@ -120,11 +147,6 @@ class UsersService {
         
         try {
             const user = await this.findOne(id)
-
-            if(!user) {
-
-                throw new BadRequest('User does not exist');
-            }
     
             return await this.repo.remove(user);
 

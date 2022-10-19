@@ -5,8 +5,6 @@ import imageUpload from "../middlewares/uploads/imageUpload.js";
 
 const router = express.Router()
 
-
-
 const userControl = new UsersController()
 
 router.post('/new', authMiddleWare, userControl.createUser)

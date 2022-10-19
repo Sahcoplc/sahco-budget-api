@@ -100,19 +100,34 @@ class UsersController {
 
     try {
 
+      const { staff_name } = req?.query
+
       if (req?.user?.role !== "ADMIN") {
 
         throw new UnauthenticatedError("Not authorized to access this route");
 
       }
 
-      const users = await this.userService.findAll()
-  
-      res.status(200).json({
-        message: "Users",
-        data: users,
-        success: 1
-      })
+      if (staff_name) {
+
+        const users = await this.userService.filterAll(staff_name)
+
+        res.status(200).json({
+          message: "Users",
+          data: users,
+          success: 1
+        })
+
+      } else {
+
+        const users = await this.userService.findAll()
+    
+        res.status(200).json({
+          message: "Users",
+          data: users,
+          success: 1
+        })
+      }
 
     } catch (error) {
       throw error
@@ -132,8 +147,10 @@ class UsersController {
       }
 
       const user = await this.userService.removeOne(id)
+      
+      console.log(user)
 
-      if (user.affected) {
+      if (user) {
         res.status(200).json({
           message: "User deleted successfully",
           success: 1
