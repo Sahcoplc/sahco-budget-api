@@ -49,7 +49,7 @@ class BudgetController {
                     status: "PENDING"
                 }
                 
-                if (Number(accountId) === 27 || Number(accountId) === 28 || Number(accountId) === 29 || Number(accountId) === 30 || Number(accountId) === 31) {
+                if (Number(accountId) === 25 || Number(accountId) === 26 || Number(accountId) === 27 || Number(accountId) === 28 || Number(accountId) === 29) {
         
                     data.estimated_budget = 0
     

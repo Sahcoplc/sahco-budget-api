@@ -102,11 +102,6 @@ class UsersController {
 
       const { staff_name } = req?.query
 
-      if (req?.user?.role !== "ADMIN") {
-
-        throw new UnauthenticatedError("Not authorized to access this route");
-
-      }
 
       if (staff_name) {
 
@@ -147,8 +142,7 @@ class UsersController {
       }
 
       const user = await this.userService.removeOne(id)
-      
-      console.log(user)
+
 
       if (user) {
         res.status(200).json({

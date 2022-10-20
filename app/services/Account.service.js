@@ -2,6 +2,7 @@ import { createCustomError } from "../utils/customError.js";
 import AppDataSource from "../db/connect.js";
 import Account from "../models/Account.js";
 import BadRequest from "../utils/errors/badRequest.js";
+import { Like } from "typeorm";
 
 class AccountService {
     constructor() {
@@ -92,7 +93,7 @@ class AccountService {
     /**
      * * findAll - Find all accounts
      * ! TODO: Create find all service
-     * @return {Object} account
+     * @return {Array} account
     */
     findAll = async () => {
 
@@ -108,7 +109,26 @@ class AccountService {
         }
     }
 
+    /**
+     * * filterAll - Gets all accounts by search
+     * @param {Account} account_category
+     * @return {Array<Account>} accounts[]
+    */
 
+    filterAll = async (account_category) => {
+
+        try {
+            
+            const accounts = await this.repo.findBy({ account_category: Like(`%${account_category}%`) })
+
+            return accounts
+
+            
+        } catch (error) {
+            
+            throw error
+        }
+    }
     /**
      * * updateType - Update an account by type
      * ! TODO: Create a update account service by account type

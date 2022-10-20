@@ -109,13 +109,28 @@ class AccountController {
 
         try {
 
-            const accounts = await this.accountService.findAll()
+            const { category } = req.query
 
-            res.status(200).json({
-                message: "Budget Account Details.",
-                data: accounts,
-                success: 1
-            })
+            if(category) {
+
+                const accounts = await this.accountService.filterAll(category)
+
+                res.status(200).json({
+                    message: "Budget Account Details.",
+                    data: accounts,
+                    success: 1
+                })
+
+            } else {
+
+                const accounts = await this.accountService.findAll()
+    
+                res.status(200).json({
+                    message: "Budget Account Details.",
+                    data: accounts,
+                    success: 1
+                })
+            }
 
         } catch (error) {
 
@@ -166,7 +181,7 @@ class AccountController {
 
             const account = await this.accountService.removeOne(id)
 
-            if(account.affected) {
+            if(account) {
                 res.status(200).json({
                     message: "Budget Account Deleted Successfully.",
                     success: 1
