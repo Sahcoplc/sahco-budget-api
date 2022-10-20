@@ -1,11 +1,10 @@
 import AuthService from "../services/Auth.service.js";
 import asyncWrapper from "../middlewares/async.js";
 import Mail from "./mail/Mail.js";
-// import Budget from "../models/Budget.js";
-// import { createCustomError } from "../utils/customError.js";
 import UsersService from "../services/User.service.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
+import BadRequest from "../utils/errors/badRequest.js";
 
 /**
  * The user controller which has some functions to handle user requests.
@@ -42,6 +41,13 @@ class UsersController {
 
         throw new UnauthenticatedError("Not authorized to access this route");
 
+      }
+
+      const { staff_email, staff_name, staff_id, pass_word, role, department, gender, avatar, username } = req.body
+
+      if(!(staff_email && staff_id && staff_name && pass_word && role && department && gender && avatar && username )) {
+
+        throw new BadRequest('Staff Details Required.')
       }
 
       const user = await this.authService.signUp(req.body)

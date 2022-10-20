@@ -8,17 +8,21 @@
   "scripts": {
     "start": "nodemon app/index.js",
     "server": "nodemon app/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha 'app/**/*.test.js'",
     "semantic-release": "semantic-release"
   },
+  "keywords": [
+    "mocha",
+    "chai"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
-    "chai": "^4.3.6",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "cloudinary": "^1.30.1",
@@ -31,7 +35,6 @@
     "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "mocha": "^10.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
@@ -43,7 +46,6 @@
     "nodemon": "^2.0.19",
     "reflect-metadata": "^0.1.13",
     "sib-api-v3-sdk": "^8.4.2",
-    "sinon": "^14.0.1",
     "sql-template-strings": "^2.2.2",
     "sql-template-tag": "^5.0.3",
     "tape": "^5.6.1",
@@ -53,7 +55,11 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "semantic-release": "^19.0.5"
+    "chai": "^4.3.6",
+    "jest": "^29.2.1",
+    "mocha": "^10.1.0",
+    "semantic-release": "^19.0.5",
+    "sinon": "^14.0.1"
   },
   "repository": {
     "type": "git",
