@@ -1,35 +1,7 @@
 import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BadRequestError from "../utils/errors/badRequest.js";
-import { createCustomError } from "../utils/customError.js";
 import AccountService from "../services/Account.service.js";
-
-// export const deleteAccount = asyncWrapper(async (req, res) => {
-
-//     if (req?.user?.role !== "ADMIN") {
-//         throw new UnauthenticatedError("Not authorized to access this route");
-//     }
-
-//     const { id } = req.params
-
-//     try {
-//         const account = await Account.deleteById(id)
-
-//         if (account && account.code === 404) {
-//             throw createCustomError('Account does not exist', 404)
-//         }
-
-//         if(account.affectedRows > 0 && !account.code) {
-//             res.status(200).json({
-//                 message: "Budget Account Deleted Successfully.",
-//                 success: 1
-//             })
-//         }
-
-//     } catch (error) {
-//         throw error
-//     }
-// })
 
 class AccountController {
 

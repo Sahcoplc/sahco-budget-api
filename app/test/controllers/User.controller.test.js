@@ -90,7 +90,7 @@ describe('UserController', function() {
                 updated_time: faker.faker.date.recent()
             }
           
-            userController = new UsersController().returns(stubValue)
+            userController = new UsersController()
             const stub = sinon.stub(userController, 'createUser')
             userController.createUser(req, res, next)
             expect(stub.calledOnce).to.be.true;
