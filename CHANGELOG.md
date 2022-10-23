@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.0...v1.2.1) (2022-10-23)
+
+
+### Bug Fixes
+
+* Database connection ([0bbf81a](https://github.com/Sahcoplc/sahco-budget-api/commit/0bbf81a2ec154be38899d9438eb5cb3ef81107f3))
+
 # [1.2.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.1.0...v1.2.0) (2022-10-23)
 
 
