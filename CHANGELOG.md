@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.1.0...v1.2.0) (2022-10-23)
+
+
+### Features
+
+* Claen up ([26dcb6f](https://github.com/Sahcoplc/sahco-budget-api/commit/26dcb6fad916f7a225d8640314631693724dc0ad))
+* Claen up code ([626bcd1](https://github.com/Sahcoplc/sahco-budget-api/commit/626bcd126d5bba4596a46219efde31f0ca85a9c2))
+
 # [1.1.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.0.5...v1.1.0) (2022-10-23)
 
 
