@@ -21,7 +21,7 @@ const User = new EntitySchema({
         staff_email: {
             type: "varchar",
             length: 200,
-            unique: true,
+            nullable: true
         },
         staff_id: {
             type: "varchar",

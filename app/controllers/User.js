@@ -43,9 +43,9 @@ class UsersController {
 
       }
 
-      const { staff_email, staff_name, staff_id, pass_word, role, department, gender, avatar, username } = req.body
+      const { staff_email, staff_name, staff_id, pass_word, role, department, gender, username } = req.body
 
-      if(!(staff_email && staff_id && staff_name && pass_word && role && department && gender && avatar && username )) {
+      if(!(staff_email && staff_id && staff_name && pass_word && role && department && gender && username )) {
 
         throw new BadRequest('Staff Details Required.')
       }

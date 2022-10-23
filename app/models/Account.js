@@ -14,7 +14,7 @@ const Account = new EntitySchema({
         },
         account_type: {
             type: "varchar",
-            unique: true,
+            nullable: true
         },
         start_date: {
             type: "datetime",
