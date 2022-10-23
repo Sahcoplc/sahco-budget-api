@@ -46,16 +46,8 @@ class BudgetController {
                     ...req.body,
                     creatorId: req?.user?.id,
                     actual_budget: 0,
-                    status: "PENDING"
-                }
-                
-                if (Number(accountId) === 25 || Number(accountId) === 26 || Number(accountId) === 27 || Number(accountId) === 28 || Number(accountId) === 29) {
-        
-                    data.estimated_budget = 0
-    
-                } else {
-    
-                    data.estimated_budget = estimated_budget
+                    status: "PENDING",
+                    estimated_budget: estimated_budget
                 }
     
                 const budget = await this.budgetService.create(data)
