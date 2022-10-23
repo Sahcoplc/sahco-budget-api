@@ -1,3 +1,41 @@
+# [1.1.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.0.5...v1.1.0) (2022-10-23)
+
+
+### Bug Fixes
+
+* Add auth unit testing ([d3c2f1e](https://github.com/Sahcoplc/sahco-budget-api/commit/d3c2f1e8131bcfe10df6ece1598bc0162228c876))
+* Add budget relations ([14f8740](https://github.com/Sahcoplc/sahco-budget-api/commit/14f8740fa3d6d711297e90f864cb3d7811dd4eeb))
+* Add budget service ([b2000af](https://github.com/Sahcoplc/sahco-budget-api/commit/b2000af003a784dc4de7e542f1546e9f13e7edc8))
+* Add column type ([f141f14](https://github.com/Sahcoplc/sahco-budget-api/commit/f141f146d574c85fb4ba748cf7e4c493ec4f9ba4))
+* Add get session endpoint ([0fb5b49](https://github.com/Sahcoplc/sahco-budget-api/commit/0fb5b497db62e2cbaead397dfb4a1c04fbae6e91))
+* **authentication:** Add authentication middleware ([fc57c7f](https://github.com/Sahcoplc/sahco-budget-api/commit/fc57c7fc67c7195f304bcce790720ee1f1fb2c9a))
+* **auth:** user authentication ([cbc676a](https://github.com/Sahcoplc/sahco-budget-api/commit/cbc676ab024937827fcda74c0ea5bb9339ed6f6a))
+* Budget endpoints ([77237fc](https://github.com/Sahcoplc/sahco-budget-api/commit/77237fc0fdac15267649c8096624345ed024b9f2))
+* clean up code ([5481381](https://github.com/Sahcoplc/sahco-budget-api/commit/548138168a8389964fdd54496daf4b2382c1ec4c))
+* **create:** fix faulty create user endpoint ([5a9f168](https://github.com/Sahcoplc/sahco-budget-api/commit/5a9f16858e722b453f8ca2311f5d0b37dc2bf99e))
+* **entity:** restructure entity and data connection with ORM ([fa33689](https://github.com/Sahcoplc/sahco-budget-api/commit/fa33689196609977afd1405bd8fed30ca617d421))
+* Estimated budget sum ([5179fe5](https://github.com/Sahcoplc/sahco-budget-api/commit/5179fe5f34fdd94affbc8095032af29399fdda8e))
+* **exception:** handled exception handling ([cf082cc](https://github.com/Sahcoplc/sahco-budget-api/commit/cf082ccb37b75495a25f33e5ff53c88153d5f4e5))
+* Filter users and accounts ([934b2d4](https://github.com/Sahcoplc/sahco-budget-api/commit/934b2d4046dcecb69aa6c362c4d4300239150657))
+* middle ware bugs ([9d59c16](https://github.com/Sahcoplc/sahco-budget-api/commit/9d59c160b4a17e68687d5af0b422d4a89ba8bcef))
+* Remove console debug ([1103023](https://github.com/Sahcoplc/sahco-budget-api/commit/11030237054ddc40e6eef43f912ee05421f0f47d))
+* Update budget service ([549b69a](https://github.com/Sahcoplc/sahco-budget-api/commit/549b69a0dd2710bd0e35835391b454f6a1ef352e))
+* user endpoints ([0258609](https://github.com/Sahcoplc/sahco-budget-api/commit/0258609e3f8229b619321cbca81503f10e71ab3c))
+* **user:** create user verified ([178c3f3](https://github.com/Sahcoplc/sahco-budget-api/commit/178c3f39912b785772fdcd46b5ccf0c8e20d2729))
+* **user:** remove and updates ([d46a7bf](https://github.com/Sahcoplc/sahco-budget-api/commit/d46a7bf825fdda5aba5f1d626bdff8d5577896f0))
+
+
+### Features
+
+* Add account controller an droutes ([fba8492](https://github.com/Sahcoplc/sahco-budget-api/commit/fba84927083b74d48ff752a96e430495fcff596f))
+* Add budget service ([26315d4](https://github.com/Sahcoplc/sahco-budget-api/commit/26315d4f73c8021d4db871b6f72752c160e8d1dd))
+* Add testing files ([87d596b](https://github.com/Sahcoplc/sahco-budget-api/commit/87d596b3db8b3b1fc7deeae1d8f027d7cedc0fff))
+* **auth:** Add request OTP and Verify OTP authentication and routes ([d749b7e](https://github.com/Sahcoplc/sahco-budget-api/commit/d749b7e34e7d1cb34b1c3c669de928da4f168464))
+* **authentication:** User authentication at login. ([e19bb58](https://github.com/Sahcoplc/sahco-budget-api/commit/e19bb58d22519f4a781a1d80762e94875109dc93))
+* create budget ([f1e30b0](https://github.com/Sahcoplc/sahco-budget-api/commit/f1e30b017f05fa0629ad3b7ed54eb07e69a3c6ee))
+* Merge conflicts ([350c184](https://github.com/Sahcoplc/sahco-budget-api/commit/350c1848904df78c2a82f869da79fcdb2e2d0f0c))
+* Restructure database administrations with ORMs ([ef1d6eb](https://github.com/Sahcoplc/sahco-budget-api/commit/ef1d6ebd0236cfa5e4133dc7cbacb584d1a7c6ef))
+
 ## [1.0.5](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.0.4...v1.0.5) (2022-10-11)
 
 
