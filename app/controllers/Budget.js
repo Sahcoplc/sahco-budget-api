@@ -1,7 +1,5 @@
 import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import BadRequestError from "../utils/errors/badRequest.js";
-import { createCustomError } from "../utils/customError.js";
 import BudgetService from "../services/Budget.service.js";
 import UsersService from "../services/User.service.js";
 
@@ -21,7 +19,6 @@ class BudgetController {
 
             if (req?.user?.role !== "USER") {
 
-                // throw new UnauthenticatedError("Not authorized to access this route");
                 res.status(401).json({
                     message: "Not authorized to access this route.",
                     success: 0,
@@ -32,7 +29,7 @@ class BudgetController {
             const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
             
             if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
-                // throw new BadRequestError('Budget records required')
+
                 res.status(400).json({
                     message: "Budget records required.",
                     success: 0,

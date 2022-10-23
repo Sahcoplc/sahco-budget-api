@@ -1,6 +1,3 @@
-// // ORM
-// import "reflect-metadata"
-
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config('.');
@@ -27,11 +24,6 @@ import accountRoutes from './routes/Account.js'
 import budgetRoutes from './routes/Budget.js'
 
 const app = express();
-// const corsOptions = {
-//     origin: ['http://localhost:3000', 'http://localhost:3001', 'https://www.sahcoplc.com.ng', 'https://sahcoplc-budget-react.vercel.app'],
-//     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH', 'OPTIONS'],
-//     credentials: true
-// };
 
 app.use(helmet())
 app.use(cors());
@@ -80,7 +72,6 @@ process.on("uncaughtException", (err) => {
 const server_start = async () => {
     try {
         // Open Mysql Connection
-        // await connectDb.promise()
 
         AppDataSource.initialize()
         .then(() => {
