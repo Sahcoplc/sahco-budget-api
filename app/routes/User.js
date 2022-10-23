@@ -1,18 +1,19 @@
 import express from "express";
-
-const router = express.Router()
-
-import { createUser, deleteUser, getProfile, getUser, getUsers, updatedUser } from "../controllers/User.js";
+import UsersController from "../controllers/User.js";
 import authMiddleWare from '../middlewares/auth.js'
 import imageUpload from "../middlewares/uploads/imageUpload.js";
 
-router.post('/new', authMiddleWare, createUser)
-router.get('/all', authMiddleWare, getUsers)
-router.get('/:id', authMiddleWare, getUser)
-router.patch('/update', authMiddleWare, imageUpload.array('avatar'), updatedUser)
-router.delete('/:id', authMiddleWare, deleteUser)
+const router = express.Router()
 
-//Logged in user
-router.get('/user/profile', authMiddleWare, getProfile)
+const userControl = new UsersController()
+
+router.post('/new', authMiddleWare, userControl.createUser)
+router.get('/all', authMiddleWare, userControl.findUsers)
+router.get('/:id',authMiddleWare, userControl.findUser)
+router.patch('/update', authMiddleWare, imageUpload.array('avatar'), userControl.updateUser)
+router.delete('/:id', authMiddleWare, userControl.deleteUser)
+
+// Logged in user
+router.get('/user/profile', authMiddleWare, userControl.getSession)
 
 export default router;

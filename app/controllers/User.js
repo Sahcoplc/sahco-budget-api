@@ -1,260 +1,242 @@
+import AuthService from "../services/Auth.service.js";
 import asyncWrapper from "../middlewares/async.js";
-import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import BadRequestError from "../utils/errors/badRequest.js";
-import User from "../models/User.js";
-import { generateHashString } from "../utils/encrypt.js";
 import Mail from "./mail/Mail.js";
-import Budget from "../models/Budget.js";
-import { createCustomError } from "../utils/customError.js";
+import UsersService from "../services/User.service.js";
+import UnauthenticatedError from "../utils/errors/unauthenticated.js";
+import BudgetService from "../services/Budget.service.js";
+import BadRequest from "../utils/errors/badRequest.js";
 
-export const createUser = asyncWrapper(async (req, res) => {
+/**
+ * The user controller which has some functions to handle user requests.
+ * @typedef {Object} UsersController
+ * @property {User} createUser - Creates the new user.
+ * @property {User} findUser - Finds a particular user.
+ * @property {User} findUsers - Gets all users.
+ * @property {User} deleteUser - Removes a user.
+ * @property {User} updateUser - Updates a user.
+ */
 
-  try {
-    if (req?.user?.role !== "ADMIN") {
-      throw new UnauthenticatedError("Not authorized to access this route");
-    }
+/**
+ * @class 
+ * @param {...UsersController} UsersController - One to three {@link UsersController} objects
+ * containing all three components of the User controller.
+ */ 
+class UsersController {
+
+  userService;
+  authService;
+  budgetService;
+
+  constructor() {
+    this.userService = new UsersService()
+    this.authService = new AuthService()
+    this.budgetService = new BudgetService()
+  }
   
-    const { staff_email, pass_word, role } = req.body;
-  
-    if (!role) {
-      throw new BadRequestError("User role is required")
-    }
-    //Check for duplicates
-    const user = await User.findOneByEmail(staff_email)
+  createUser = asyncWrapper(async (req, res) => {
 
-    if (user && user.code === 400) {
+    try {
 
-      throw new BadRequestError("A valid email is required");
-    }
-    
-    if (user && !user.code) {
+      if (req?.user?.role !== "ADMIN") {
 
-      throw new BadRequestError("An account with this email already exists");
-    }
-    
-    if(user && user.code === 404) {
-
-      const hashed = await generateHashString(pass_word);
-
-      const newUser = new User({
-        ...req.body,
-        pass_word: hashed,
-
-      });
-
-      const createdUser = await User.createNewAdmin(newUser)
-
-      if (createdUser && createdUser.code === 400) {
-          res.status(400).json({
-            message: "A valid SAHCO PLC email is required.",
-            success: 0,
-          });
-      } else if (createdUser) {
-          new Mail(newUser.staff_email).sendMail("REGISTRATION", {
-
-            subject: "Welcome to Skyway Aviation Handling Co.",
-            data: {
-              name: newUser.staff_name,
-              password: pass_word
-            },
-          })
-
-          delete newUser.pass_word
-
-          res.status(200).json({
-            message: "User registration successful.",
-            data: newUser,
-            success: 1,
-          });
+        throw new UnauthenticatedError("Not authorized to access this route");
 
       }
 
-    }
-     
-  } catch (error) {
-    throw error;
-  }
-});
+      const { staff_email, staff_name, staff_id, pass_word, role, department, gender, avatar, username } = req.body
 
-export const getUser = asyncWrapper(async (req, res) => {
-  if (req?.user?.role !== "ADMIN") {
-    throw new UnauthenticatedError("Not authorized to access this route");
-  }
+      if(!(staff_email && staff_id && staff_name && pass_word && role && department && gender && avatar && username )) {
 
-  const userId = req.params.id;
+        throw new BadRequest('Staff Details Required.')
+      }
 
-  try {
-    const user = await User.findOneById(userId)
+      const user = await this.authService.signUp(req.body)
 
-    if(user && user.code === 404) {
-      throw createCustomError(`No user with id: ${userId}`, 404);
-    }
+      if (user) {
 
-    if(user) {
-      delete user.pass_word;
-      delete user.otp;
-      delete user.otpExpiresIn
+        new Mail(user.staff_email).sendMail("REGISTRATION", {
 
-      res.status(200).json({
-        message: "User details",
-        data: user,
-        success: 1,
-      });
+          subject: "Welcome to Skyway Aviation Handling Co.",
+          data: {
+            name: user.staff_name,
+            password: req.pass_word
+          },
+        })
 
-    }
-  } catch (error) {
-    throw error;
-  }
-});
-
-export const getUsers = asyncWrapper(async (req, res) => {
-
-  const {name, department} = req.query;
-
-  try {
-
-    const users = await User.findAll(name, department)
-
-    if(users && users.code === 404) {
-      throw createCustomError('Some error occured while retrieving users.', 404)
-    }
-
-    if (users) {
-      users.map((user) => {
-        delete user.pass_word;
-        delete user.otp;
-        delete user.otpVerificationId,
+        delete user.pass_word
+        delete user.otp
         delete user.otpExpiresIn
 
-        if(user.staff_email === 'rakkoyespa@vusra.com' || user.staff_email === 'lestecolta@vusra.com') {
-          delete user.id
-        }
-      });
+        res.status(200).json({
+          message: "User Created Successfully.",
+          data: user,
+          success: 1
+        })
+      }
+
+    } catch (error) {
+      throw error
+    }
+  })
+
+  findUser = asyncWrapper(async (req, res) => {
+    try {
+       
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
+      const { id } = req.params
+
+      const user = await this.userService.findOne(id)
 
       res.status(200).json({
-        message: "Users",
-        data: users,
-        success: 1,
-      });
-    }
-  } catch (error) {
-    throw error;
-  }
-});
-
-export const updatedUser = asyncWrapper(async (req, res) => {
-
-  const email = req?.user?.email
-
-  const { path } = req.files[0];
-
-  const updateUser = {
-    ...req.body,
-    staff_email: email,
-    avatar: path,
-    updated_time: new Date()
-  };
-
-  try {
-    const user = await User.updateOneByEmail(updateUser)
-
-    if(user && user.code === 400) {
-      throw new BadRequestError("A valid email is required");
-    }
-
-    if (user && user.code === 400) {
-      throw createCustomError("User does not exist", 404)
-    }
-
-    if (user) {
-      res.status(200).json({
-        message: "User updated successfully.",
+        message: "User Details.",
         data: user,
         success: 1
       })
+
+    } catch (error) {
+      throw error
     }
+  })
 
-  } catch (error) {
-    throw error
-  }
-});
+  findUsers = asyncWrapper(async (req, res) => {
 
-export const deleteUser = asyncWrapper(async (req, res) => {
-  if (req?.user?.role !== "ADMIN") {
-    throw new UnauthenticatedError("Not authorized to access this route");
-  }
+    try {
 
-  const userId = req.params.id;
+      const { staff_name } = req?.query
 
-  try {
-    const user = await User.deleteOneById(userId)
 
-    if(user && user.code === 404) {
-      throw createCustomError(`No user found with id: ${userId}`, 404)
+      if (staff_name) {
+
+        const users = await this.userService.filterAll(staff_name)
+
+        res.status(200).json({
+          message: "Users",
+          data: users,
+          success: 1
+        })
+
+      } else {
+
+        const users = await this.userService.findAll()
+    
+        res.status(200).json({
+          message: "Users",
+          data: users,
+          success: 1
+        })
+      }
+
+    } catch (error) {
+      throw error
     }
+  })
 
-    if(user) {
-      res.status(200).json({
-        message: 'User Deleted Successfully',
-        success: 1,
-      });
+  deleteUser = asyncWrapper(async (req, res) => {
+
+    const { id } = req.params
+
+    try {
+
+      if (req?.user?.role !== "ADMIN") {
+
+        throw new UnauthenticatedError("Not authorized to access this route");
+
+      }
+
+      const user = await this.userService.removeOne(id)
+
+
+      if (user) {
+        res.status(200).json({
+          message: "User deleted successfully",
+          success: 1
+        })
+
+      } 
+
+    } catch (error) {
+
+      throw error
     }
-  } catch (error) {
-    throw error;
-  }
-});
+  })
 
-//Get profile
-export const getProfile = asyncWrapper(async (req, res) => {
+  updateUser = asyncWrapper(async (req, res) => {
 
-  const email = req?.user?.email;
+    try {
 
-  try {
-    const user = await User.findOneByEmail(email)
+      const { id, email } = req?.user
 
-    if (user && user.code === 400) {
-      throw new BadRequestError("A valid email is required");
+      const { path } = req?.files[0];
+
+      const updateUser = {
+        ...req.body,
+        id,
+        staff_email: email,
+        avatar: path,
+        updated_time: new Date()
+      };
+
+      const user = await this.userService.updateOne(id, updateUser)
+
+      if(user) {
+        res.status(200).json({
+          message: "User Updated Successfully.",
+          data: user,
+          success: 1
+        })
+      } 
+    } catch (error) {
+
+      throw error
+
     }
+  })
 
-    if(user && user.code === 404) {
-      throw createCustomError(`No user with email: ${email}`, 404);
-    }
+  getSession = asyncWrapper(async (req, res) => {
 
-    if(user) {
-        const budget = await Budget.findByDepartment(user.department)
+    try {
+      
+      const email = req?.user?.email;
+      const dept = req?.user?.dept
 
-        if (budget.code === 404) {
-          delete user.pass_word;
-          delete user.otp;
-          delete user.otpVerificationId,
-          delete user.otpExpiresIn
+      const user = await this.userService.findEmail(email)
 
-          res.status(200).json({
-            message: "User details",
-            data: user,
-            success: 1,
-          });
-        }
+      if(user) {
 
+        delete user.otp
+        delete user.otpExpiresIn
+        delete user.pass_word
+
+        const budget = await this.budgetService.findDeptBudget(dept)
+        
         if(budget) {
-          delete user.pass_word;
-          delete user.otp;
-          delete user.otpVerificationId,
-          delete user.otpExpiresIn
 
           const currentUser = {
             ...user,
           }
-          currentUser.budget = budget
 
+          currentUser.budget = budget
+  
           res.status(200).json({
-            message: "User details",
+            message: "User Profile.",
             data: currentUser,
-            success: 1,
-          });
+            success: 1
+          })
+
         }
+
+      }
+      
+    } catch (error) {
+      
+      throw error
+
     }
-  } catch (error) {
-    throw error
-  }
-})
+  })
+}
+
+export default UsersController;

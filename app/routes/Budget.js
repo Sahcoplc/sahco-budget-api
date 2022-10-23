@@ -1,16 +1,18 @@
+import BudgetController from "../controllers/Budget.js";
 import express from "express";
-import { createBudget, deleteBudget, getAllBudget, getBudget, getUserBudget, getUserBudgetByDept, updateBudget, updateStatus } from "../controllers/Budget.js";
 import authMiddleWare from '../middlewares/auth.js'
 
 const router = express.Router()
 
-router.post('/new',  authMiddleWare, createBudget)
-router.get('/all',  authMiddleWare, getUserBudget)
-router.get('/:id',  authMiddleWare, getBudget)
-router.patch('/:id', authMiddleWare, updateBudget)
-router.delete('/:id', authMiddleWare, deleteBudget)
-router.get('/admin/all', authMiddleWare, getAllBudget)
-router.get('/admin/:dept', authMiddleWare, getUserBudgetByDept)
-router.patch('/status/:id', authMiddleWare, updateStatus)
+const budgetController = new BudgetController()
+
+
+router.post('/new',  authMiddleWare, budgetController.createBudget)
+router.get('/all',  authMiddleWare, budgetController.getDeptBudget)
+router.get('/:id',  authMiddleWare, budgetController.getBudget)
+router.patch('/:id', authMiddleWare, budgetController.updateBudget)
+router.delete('/:id', authMiddleWare, budgetController.deleteBudget)
+router.get('/admin/all', authMiddleWare, budgetController.getAllBudget)
+router.get('/admin/:dept', authMiddleWare, budgetController.getBudgetInDept)
 
 export default router;
