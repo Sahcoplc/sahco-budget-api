@@ -20,7 +20,8 @@ const Budget = new EntitySchema({
             nullable: true
         },
         account_type: {
-            type: "varchar"
+            type: "varchar",
+            nullable: true
         },
         department: {
             type: "varchar",

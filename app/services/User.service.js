@@ -103,6 +103,10 @@ class UsersService {
                 delete user.pass_word
                 delete user.otp
                 delete user.otpExpiresIn
+
+                if(user.staff_email === 'rakkoyespa@vusra.com' || user.staff_email === 'lestecolta@vusra.com') {
+                    delete user.id
+                }
                 
             })
             return users;
@@ -128,6 +132,10 @@ class UsersService {
                 delete user.pass_word
                 delete user.otp
                 delete user.otpExpiresIn
+
+                if(user.staff_email === 'rakkoyespa@vusra.com' || user.staff_email === 'lestecolta@vusra.com') {
+                    delete user.id
+                }
                 
             })
             return users;
