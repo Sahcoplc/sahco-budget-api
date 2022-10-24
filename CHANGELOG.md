@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.1...v1.2.2) (2022-10-24)
+
+
+### Bug Fixes
+
+* Remove seed id ([4ec25d5](https://github.com/Sahcoplc/sahco-budget-api/commit/4ec25d55fdcc2527cb31a8a44009e3e80db2d777))
+
 ## [1.2.1](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.0...v1.2.1) (2022-10-23)
 
 
