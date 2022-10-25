@@ -106,12 +106,21 @@ class UsersController {
 
     try {
 
-      const { staff_name } = req?.query
-
+      const { staff_name, department } = req?.query
 
       if (staff_name) {
 
         const users = await this.userService.filterAll(staff_name)
+
+        res.status(200).json({
+          message: "Users",
+          data: users,
+          success: 1
+        })
+
+      } else if(department) {
+
+        const users = await this.userService.filterDept(department)
 
         res.status(200).json({
           message: "Users",
