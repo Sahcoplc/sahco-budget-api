@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.2...v1.2.3) (2022-10-25)
+
+
+### Bug Fixes
+
+* Update budgets by user ([8dca614](https://github.com/Sahcoplc/sahco-budget-api/commit/8dca61427e9dc963c2b285d7e93b2761557365d4))
+
 ## [1.2.2](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.1...v1.2.2) (2022-10-24)
 
 
