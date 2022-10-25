@@ -184,6 +184,13 @@ class BudgetService {
 
             } else {
 
+                const estimated_budget = (updates.january * 1) + (updates.february * 1) + (updates.march * 1) + (updates.april * 1) + (updates.may * 1) + (updates.june * 1) + (updates.july * 1) + (updates.august * 1) + (updates.sept * 1) + (updates.october * 1) + (updates.nov * 1) + (updates.december * 1);
+
+                const data = {
+                    ...updates,
+                    estimated_budget: estimated_budget
+                }
+
                 const account = await this.accountService.findOne(found.account)
                 
                 if(account && new Date(account.end_date) < new Date()) {
@@ -192,7 +199,7 @@ class BudgetService {
 
                 }
 
-                Object.assign(found, updates)
+                Object.assign(found, data)
 
                 return await this.repo.save(found)
             }
