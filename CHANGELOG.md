@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.3...v1.2.4) (2022-10-25)
+
+
+### Bug Fixes
+
+* Add filter users by department ([40fdb99](https://github.com/Sahcoplc/sahco-budget-api/commit/40fdb9909cb675630ce0fc61c70a2f96d76e494c))
+
 ## [1.2.3](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.2...v1.2.3) (2022-10-25)
 
 
