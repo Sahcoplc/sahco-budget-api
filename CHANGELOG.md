@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.4...v1.2.5) (2022-11-16)
+
+
+### Bug Fixes
+
+* Add get profit endpoints ([c0477b9](https://github.com/Sahcoplc/sahco-budget-api/commit/c0477b9a7feec0b64c630a8b3e4bf23b027580ea))
+
 ## [1.2.4](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.3...v1.2.4) (2022-10-25)
 
 
