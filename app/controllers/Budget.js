@@ -248,6 +248,34 @@ class BudgetController {
 
         }
     })
+
+    getAllBudgetProfit = asyncWrapper(async (req, res) => {
+
+        try {
+            
+            if (req?.user?.role !== "ADMIN") {
+
+                throw new UnauthenticatedError("Not authorized to access this route");
+        
+            }
+
+            const budget = await this.budgetService.findAllSum()
+
+            if(budget) {
+
+                res.status(200).json({
+                    message: "All Budget Profits.",
+                    data: budget,
+                    success: 1,
+                });
+            }
+
+        } catch (error) {
+            
+            throw error
+
+        }
+    })
 }
 
 export default BudgetController

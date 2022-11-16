@@ -14,5 +14,6 @@ router.patch('/:id', authMiddleWare, budgetController.updateBudget)
 router.delete('/:id', authMiddleWare, budgetController.deleteBudget)
 router.get('/admin/all', authMiddleWare, budgetController.getAllBudget)
 router.get('/admin/:dept', authMiddleWare, budgetController.getBudgetInDept)
+router.get('/admin/sum/profit', authMiddleWare, budgetController.getAllBudgetProfit)
 
 export default router;

@@ -135,7 +135,37 @@ class BudgetService {
     }
 
     /**
-     * * findAll - Find all budgets
+     * * findAll - Find all budgets sum
+     * ! TODO: Create a find all budget service that returns a sum of a budget type
+     * @return {Object} Budget
+    */
+
+    findAllSum = async () => {
+
+        try {
+
+            const budget = await this.repo.createQueryBuilder('budget')
+            .leftJoinAndSelect('budget.account', 'account', 'account.id = budget.accountId').select('account.id')
+            .addSelect('account.account_category').addSelect('account.account_type')
+            .addSelect('SUM(budget.january)', 'janSum').addSelect('SUM(budget.february)', 'febSum')
+            .addSelect('SUM(budget.march)', 'marSum').addSelect('SUM(budget.april)', 'aprSum')
+            .addSelect('SUM(budget.may)', 'maySum').addSelect('SUM(budget.june)', 'junSum')
+            .addSelect('SUM(budget.july)', 'julSum').addSelect('SUM(budget.august)', 'augSum')
+            .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
+            .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
+            .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum').where('budget.status != :status', {status: 'DECLINED'})
+            .groupBy('account.account_type').addGroupBy('account.id').getRawMany()
+
+            return budget
+
+        } catch (error) {
+            
+            throw error
+        }
+    }
+
+    /**
+     * * findAll - Find all budgets sum
      * ! TODO: Create a find all budget service
      * @return {Object} Budget
     */
