@@ -59,7 +59,7 @@ class UsersController {
           subject: "Welcome to Skyway Aviation Handling Co.",
           data: {
             name: user.staff_name,
-            password: req.pass_word
+            password: pass_word
           },
         })
 
