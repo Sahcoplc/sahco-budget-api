@@ -82,7 +82,11 @@ process.on("uncaughtException", (err) => {
 const server = http.createServer(app)
 
 // Socket setup
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+})
 
 // Socket middleware
 // io.use( async (socket, next) => {
@@ -129,20 +133,31 @@ const io = new Server(server)
 
 io.on("connection", (socket) => {
     console.log("Made socket connection");
+    // console.log(socket.id)
 
+    socket.on('joinNotification', (params) => {
+        console.log(params)
+        if(params.role === 'ADMIN') {
+            socket.join('ADMIN ROOM')
+            console.log('joined')
+        } else {
+            socket.join('USER ROOM')
+            console.log('user joined')
+        }
+    })
     socket.on('newBudget', (data) => {
         console.log(data)
-        socket.emit('newBudget', {message: 'A new budget record has been added'})
+        socket.to('ADMIN ROOM').emit('newBudget', {message: 'A new budget record has been added'})
     })
 
     socket.on('updateBudget', (data) => {
         console.log(data)
-        socket.emit('updateBudget', {message: 'A budget record has been updated'})
+        socket.to('ADMIN ROOM').emit('updateBudget', {message: 'A budget record has been updated'})
     })
 
     socket.on('deleteBudget', (data) => {
         console.log(data)
-        socket.emit('deleteBudget', {message: 'A budget record has been deleted'})
+        socket.to('ADMIN ROOM').emit('deleteBudget', {message: 'A budget record has been deleted'})
     })
 
     socket.on('approveBudget', (data) => {

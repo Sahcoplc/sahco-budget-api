@@ -29,19 +29,19 @@ const Notification = new EntitySchema({
             updateDate: true,
         }
     },
-    // relations: {
-    //     user: {
-    //         target: "Users",
-    //         type: "one-to-many",
-    //         joinColumn: true,
-    //         cascade: true
-    //     },
-    // },
-    // relationIds: {
-    //     userId: {
-    //         relationName: 'user'
-    //     }
-    // }
+    relations: {
+        user: {
+            target: "Users",
+            type: "many-to-one",
+            joinColumn: true,
+            cascade: true
+        },
+    },
+    relationIds: {
+        userId: {
+            relationName: 'user'
+        }
+    }
 })
 
 export default Notification;
