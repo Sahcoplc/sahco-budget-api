@@ -9,6 +9,11 @@ const User = new EntitySchema({
             type: "int",
             generated: true,
         },
+        notificationId: {
+            type: "int",
+            unique: false,
+            nullable: true
+        },
         username: {
             type: "varchar",
             unique: true,
@@ -65,7 +70,7 @@ const User = new EntitySchema({
         updated_time: {
             updateDate: true,
         }
-    }
+    },
 })
 
 export default User;

@@ -2,22 +2,26 @@ import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
 import UsersService from "../services/User.service.js";
+import NotificationService from "../services/Notification.service.js";
 
 class BudgetController {
 
     budgetService;
     userService;
+    notifyService;
 
     constructor() {
         this.budgetService = new BudgetService()
         this.userService = new UsersService()
+        this.notifyService = new NotificationService()
     }
 
     createBudget = asyncWrapper(async (req, res) => {
        
         try {
+            const { user: { role, id } } = req
 
-            if (req?.user?.role !== "USER") {
+            if (role !== "USER") {
 
                 res.status(401).json({
                     message: "Not authorized to access this route.",
@@ -41,13 +45,21 @@ class BudgetController {
                
                 const data = {
                     ...req.body,
-                    creatorId: req?.user?.id,
+                    creatorId: id,
                     actual_budget: 0,
                     status: "PENDING",
                     estimated_budget: estimated_budget
                 }
     
+                const notify = {
+                    userId: id,
+                    message: 'A new budget record has been added',
+                    isRead: false
+                }
+
                 const budget = await this.budgetService.create(data)
+
+                const notification = await this.notifyService.create(notify)
     
                 if(typeof budget === "string") {
 
@@ -144,11 +156,19 @@ class BudgetController {
 
         try {
 
-            const { id } = req?.params
+            const { params: { id }, user: { role, staff_name }, body } = req
 
-            if (req?.user?.role === "USER") {
+            const notify = {
+                userId: req?.user?.id,
+                message: 'A budget record has been updated',
+                isRead: false
+            }
 
-                const budget = await this.budgetService.updateOne(id, req.body)
+            if (role === "USER") {
+
+                const budget = await this.budgetService.updateOne(id, body)
+
+                const notification = await this.notifyService.create(notify)
 
                 if(budget) {
 
@@ -161,16 +181,24 @@ class BudgetController {
 
             }
 
-            if (req?.user?.role === "ADMIN") {
+            if (role === "ADMIN") {
 
-                const user = await this.userService.findOne(req?.user?.id)
+                const user = await this.userService.findOne(user?.id)
 
                 const data = {
-                    ...req.body,
-                    approved_by: user.staff_name
+                    ...body,
+                    approved_by: staff_name
+                }
+
+                const adminNotify = {
+                    userId: user,
+                    message: 'A budget record has been reviewed',
+                    isRead: false
                 }
 
                 const budget = await this.budgetService.updateStatus(id, data)
+
+                const notification = await this.notifyService.create(adminNotify)
     
                 if(budget) {
     
@@ -195,15 +223,23 @@ class BudgetController {
 
         try {
             
-            const { id } = req?.params
+            const { params: { id }, user: { role } } = req
 
-            if (req?.user?.role !== "USER") {
+            const notify = {
+                userId: req?.user.id,
+                message: 'A budget record has been deleted',
+                isRead: false
+            }
+
+            if (role !== "USER") {
 
                 throw new UnauthenticatedError("Not authorized to access this route");
         
             }
 
             const budget = await this.budgetService.removeOne(id)
+
+            const notification = await this.notifyService.create(notify)
 
             if (budget) {
 
