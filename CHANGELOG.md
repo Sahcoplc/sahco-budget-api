@@ -1,3 +1,11 @@
+## [1.2.6](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.5...v1.2.6) (2022-11-24)
+
+
+### Bug Fixes
+
+* Add notifications ([9b2829f](https://github.com/Sahcoplc/sahco-budget-api/commit/9b2829f9573b75b60a4a1123a76b8c3860373f57))
+* sockets ([987383c](https://github.com/Sahcoplc/sahco-budget-api/commit/987383c47b2e425c5dd0053ce6e2a51fea6b0b85))
+
 ## [1.2.5](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.4...v1.2.5) (2022-11-16)
 
 
