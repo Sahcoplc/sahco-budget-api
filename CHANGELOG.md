@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.6...v1.3.0) (2022-11-24)
+
+
+### Features
+
+* Emit and listen to socket events ([c694981](https://github.com/Sahcoplc/sahco-budget-api/commit/c694981e68e35a0afb70b651861e8ad2b6352bf9))
+
 ## [1.2.6](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.5...v1.2.6) (2022-11-24)
 
 
