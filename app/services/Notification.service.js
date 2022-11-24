@@ -46,8 +46,8 @@ class NotificationService {
 
         try {
 
-            const activities = await this.repo.createQueryBuilder('notification')
-            .leftJoinAndSelect('notification.user', 'user', 'user.id = notification.userId')
+            const activities = await this.repo.createQueryBuilder('activities')
+            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId')
             .getMany()
 
             return activities;
@@ -61,8 +61,8 @@ class NotificationService {
 
         try {
             
-            const activities = await this.repo.createQueryBuilder('notification')
-            .leftJoinAndSelect('notification.user', 'user', 'user.id = notification.userId').where('notification.isRead = :isRead', { isRead: true })
+            const activities = await this.repo.createQueryBuilder('activities')
+            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId').where('activities.isRead = :isRead', { isRead: true })
             .getMany()
 
             return activities;

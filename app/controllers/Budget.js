@@ -183,7 +183,7 @@ class BudgetController {
 
             if (role === "ADMIN") {
 
-                const user = await this.userService.findOne(user?.id)
+                const user = await this.userService.findOne(id)
 
                 const data = {
                     ...body,
@@ -191,7 +191,7 @@ class BudgetController {
                 }
 
                 const adminNotify = {
-                    userId: user,
+                    userId: req?.user?.id,
                     message: 'A budget record has been reviewed',
                     isRead: false
                 }
