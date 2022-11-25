@@ -169,6 +169,10 @@ io.on("connection", (socket) => {
         console.log(data)
         socket.emit('declineBudget', {message: 'A budget record has been declined'})
     })
+    socket.on('suspendBudget', (data) => {
+        console.log(data)
+        socket.emit('suspendBudget', {message: 'A budget record has been declined'})
+    })
 });
 
 const server_start = async () => {
