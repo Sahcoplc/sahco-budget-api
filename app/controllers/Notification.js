@@ -30,6 +30,14 @@ class NotificationController {
 
         try {
 
+            const { user: { role } } = req
+
+            if(role != 'ADMIN') {
+
+                throw new UnauthenticatedError('Not authorized to access this route.')
+  
+            }
+
             const activities = await this.notifyService.findAll()
 
             res.status(200).json({
