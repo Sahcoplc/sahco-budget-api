@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.2...v1.3.3) (2022-11-25)
+
+
+### Bug Fixes
+
+* Admin to notifications alone ([624d854](https://github.com/Sahcoplc/sahco-budget-api/commit/624d8545041f2badfbaca65c680959ca487e2bb3))
+* Socket rooms ([0df3765](https://github.com/Sahcoplc/sahco-budget-api/commit/0df37654a175eeaf8bb553574b75ea36676fea65))
+
 ## [1.3.2](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.1...v1.3.2) (2022-11-25)
 
 
