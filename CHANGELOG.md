@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.0...v1.3.1) (2022-11-25)
+
+
+### Bug Fixes
+
+* fix socket cors ([758a8d5](https://github.com/Sahcoplc/sahco-budget-api/commit/758a8d583da719623cdda4b2f2f2dc8d05b8e3c9))
+
 # [1.3.0](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.2.6...v1.3.0) (2022-11-24)
 
 
