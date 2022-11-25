@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.3...v1.3.4) (2022-11-25)
+
+
+### Bug Fixes
+
+* Add suspend socket event ([ceb1016](https://github.com/Sahcoplc/sahco-budget-api/commit/ceb10169cbb83e9907dc7fe668311509413f77a8))
+
 ## [1.3.3](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.2...v1.3.3) (2022-11-25)
 
 
