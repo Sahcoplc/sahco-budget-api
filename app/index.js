@@ -147,17 +147,17 @@ io.on("connection", (socket) => {
     })
     socket.on('newBudget', (data) => {
         console.log(data)
-        socket.to('ADMIN ROOM').emit('newBudget', {message: 'A new budget record has been added'})
+        socket.emit('newBudget', {message: 'A new budget record has been added'})
     })
 
     socket.on('updateBudget', (data) => {
         console.log(data)
-        socket.to('ADMIN ROOM').emit('updateBudget', {message: 'A budget record has been updated'})
+        socket.emit('updateBudget', {message: 'A budget record has been updated'})
     })
 
     socket.on('deleteBudget', (data) => {
         console.log(data)
-        socket.to('ADMIN ROOM').emit('deleteBudget', {message: 'A budget record has been deleted'})
+        socket.emit('deleteBudget', {message: 'A budget record has been deleted'})
     })
 
     socket.on('approveBudget', (data) => {
