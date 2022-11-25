@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.1...v1.3.2) (2022-11-25)
+
+
+### Bug Fixes
+
+* Add origin header to CORS policy for sockets ([1c7dc29](https://github.com/Sahcoplc/sahco-budget-api/commit/1c7dc29a9df8b1e804cde3a5274048fc8cf79b4e))
+
 ## [1.3.1](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.0...v1.3.1) (2022-11-25)
 
 
