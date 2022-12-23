@@ -9,7 +9,6 @@ import path from "path";
 import { create } from "express-handlebars";
 import { __dirname } from "./__Globals.js";
 import helmet from "helmet";
-import jwt from "jsonwebtoken";
 
 // Connect to DB with TypeORM
 import AppDataSource from "./db/connect.js";
@@ -20,8 +19,6 @@ import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 
 //Socket
 import { Server } from "socket.io";
-
-import UserService from "./services/User.service.js";
 
 // Import routes
 import homeRoutes from './routes/home.js'
@@ -84,7 +81,7 @@ const server = http.createServer(app)
 // Socket setup
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:300", "https://sahcoplc.com.ng"]
+        origin: ["http://localhost:3000", "https://sahcoplc.com.ng"]
     }
 })
 
