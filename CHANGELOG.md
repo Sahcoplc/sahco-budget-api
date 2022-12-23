@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.4...v1.3.5) (2022-12-23)
+
+
+### Bug Fixes
+
+* forgot password bug ([d6477ad](https://github.com/Sahcoplc/sahco-budget-api/commit/d6477ad3e48c2ef9755dbeed1d9caf3a85b15925))
+
 ## [1.3.4](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.3...v1.3.4) (2022-11-25)
 
 
