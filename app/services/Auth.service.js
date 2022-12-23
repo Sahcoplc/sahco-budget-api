@@ -113,8 +113,8 @@ class AuthService {
             if(found) {
 
                 const otp = Math.floor(100000 + Math.random() * 900000);
-                const otpExpiresIn = addHoursToDate(new Date(), 1);
-
+                const otpExpiresIn = addHoursToDate(new Date(), 2);
+                
                 const newUpdate = {
                     ...found,
                     otp,
@@ -144,7 +144,7 @@ class AuthService {
 
                 throw createCustomError(`No user with id: ${id}`, 404)
 
-            } else if(found && found.otp !== parseInt(otp)) {
+            } else if(found && found.otp !== Number(otp)) {
 
                 throw new BadRequest("Invalid OTP Pin received");
 

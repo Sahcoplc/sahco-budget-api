@@ -56,8 +56,6 @@ class UsersService {
             }
 
             delete user.pass_word
-            delete user.otp
-            delete user.otpExpiresIn
 
             return user;
 

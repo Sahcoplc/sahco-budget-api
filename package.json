@@ -6,8 +6,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon app/index.js",
-    "server": "nodemon app/index.js",
+    "start": "nodemon --experimental-loader=newrelic/esm-loader.mjs app/index.js",
+    "server": "nodemon --experimental-loader=newrelic/esm-loader.mjs app/index.js",
     "test": "mocha 'app/**/*.test.js'",
     "semantic-release": "semantic-release"
   },
@@ -40,6 +40,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
+    "newrelic": "^9.7.0",
     "nodemailer": "^6.7.8",
     "nodemailer-express-handlebars": "^5.0.0",
     "nodemailer-sendinblue-transport": "^1.2.3",
