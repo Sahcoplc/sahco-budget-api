@@ -1,133 +1,34 @@
-import { EntitySchema } from "typeorm";
+import { model, Schema } from "mongoose";
+import paginator from "mongoose-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const Budget = new EntitySchema({
-    name: "Budgets",
-    tableName: "budgets",
-    columns: {
-        id: {
-            primary: true,
-            type: "int",
-            generated: true,
-        },
-        creatorId: {
-            type: "int",
-            unique: false,
-            nullable: true,
-        },
-        accountId: {
-            type: "int",
-            unique: false,
-            nullable: true
-        },
-        account_type: {
-            type: "varchar",
-            nullable: true
-        },
-        department: {
-            type: "varchar",
-        },
-        january: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        february: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        march: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        april: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        may: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        june: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        july: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        august: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        sept: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        october: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        nov: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        december: {
-            type: "decimal",
-            precision: 13,
-            scale: 2
-        },
-        estimated_budget: {
-            type: "decimal",
-            precision: 15,
-            scale: 2
-        },
-        actual_budget: {
-            type: "decimal",
-            precision: 15,
-            scale: 2
-        },
-        status: {
-            type: "varchar"
-        },
-        approved_by: {
-            type: "varchar",
-            nullable: true
-        },
-        dept_approver: {
-            type: "varchar",
-            nullable: true
-        },
-        created_time: {
-            createDate: true
-        },
-        updated_time: {
-            updateDate: true,
-        }
+const schema = new Schema(
+    {
+        account: { type: Schema.Types.ObjectId, ref: "Account", required: true },
+        status: { type: String, enum: ["PENDING", "APPROVED", "DECLINED", "SUSPENDED"], default: "PENDING", required: true },
+        january: { type: Number },
+        february: { type: Number },
+        march: { type: Number },
+        april: { type: Number },
+        may: { type: Number },
+        june: { type: Number },
+        july: { type: Number },
+        august: { type: Number },
+        sept: { type: Number },
+        october: { type: Number },
+        nov: { type: Number },
+        december: { type: Number },
+        estimatedBudget: { type: Number },
+        actualBudget: { type: Number },
+        deptApprover: { id: String, name: String },
+        auditApprover: { id: String, name: String },
+        mgtApprover: { id: String, name: String },
+        operator: { id: String, name: String },
+        department: { id: String, name: String },
     },
-    relations: {
-        user: {
-            target: "Users",
-            type: "one-to-many",
-            joinColumn: true,
-            cascade: true
-        },
-        account: {
-            target: "Account",
-            type: "many-to-one",
-            joinColumn: true,
-            cascade: true
-        }
-    }
-})
+    { timestamps: true }
+)
 
-export default Budget;
+schema.plugin(paginator);
+schema.plugin(mongooseAggregatePaginate);
+export default model("Budget", schema);

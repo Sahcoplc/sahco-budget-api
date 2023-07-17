@@ -1,10 +1,13 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config()
+
+const { NODE_ENV } = process.env
 
 const __filename = fileURLToPath(import.meta.url);
 
-export const __dirname = path.dirname(__filename);
-// Globals - No Window object
+const __dir = path.dirname(__filename);
 
-//__dirname - path to current directory
-//__filename - file name
+export const __dirname = NODE_ENV === "test" ? __dir.slice(0, -4) : __dir;

@@ -1,7 +1,7 @@
 import asyncWrapper from "../middlewares/async.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
-import UsersService from "../services/User.service.js";
+// import UsersService from "../services/User.service.js";
 import NotificationService from "../services/Notification.service.js";
 
 class BudgetController {
@@ -12,7 +12,7 @@ class BudgetController {
 
     constructor() {
         this.budgetService = new BudgetService()
-        this.userService = new UsersService()
+        // this.userService = new UsersService()
         this.notifyService = new NotificationService()
     }
 
@@ -183,7 +183,7 @@ class BudgetController {
 
             if (role === "ADMIN") {
 
-                const user = await this.userService.findOne(id)
+                // const user = await this.userService.findOne(id)
 
                 const data = {
                     ...body,

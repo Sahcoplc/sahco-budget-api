@@ -1,47 +1,43 @@
 import asyncWrapper from "../middlewares/async.js";
-import UnauthenticatedError from "../utils/errors/unauthenticated.js";
+import Account from "../models/Account.js";
+import { error, success } from "../helpers/response.js";
+import { createCustomError } from "../utils/errors/customError.js";
+import { paginate } from "../helpers/paginate.js";
 import BadRequestError from "../utils/errors/badRequest.js";
-import AccountService from "../services/Account.service.js";
 
 class AccountController {
 
-    accountService;
+    uploadAccounts = asyncWrapper(async (req, res) => {
+        try {
+            
+            return success(res, 201)
 
-    constructor() {
-        this.accountService = new AccountService()
-    }
+        } catch (err) {
+            return error(res, 500, err)
+        }
+    })
 
     createAccount = asyncWrapper(async (req, res) => {
 
         try {
 
-            if (req?.user?.role !== "ADMIN") {
+            const { user: { fullName, _id }, body } = req
 
-                throw new UnauthenticatedError("Not authorized to access this route");
-            }
+            const operator = { id: _id, name: fullName }
 
-            const { account_type, account_category } = req.body;
-
-            if(!(account_type && account_category)) {
-
-                throw new BadRequestError("Account fields are required");
-
-            }
-
-            const account = await this.accountService.create(req.body)
+            let account = await Account.findOne({ accountType: body.accountType })
 
             if (account) {
-
-                res.status(200).json({
-                    message: "Account Creation Successful.",
-                    data: account,
-                    success: 1,
-                });
+                throw new BadRequestError('Account already exists')
             }
 
-        } catch (error) {
+            account = await new Account({ ...body, operator }).save()
+
+           return success(res, 201, account)
+
+        } catch (err) {
             
-            throw error
+            return error(res, 500, err)
 
         }
     })
@@ -49,30 +45,23 @@ class AccountController {
     getAccount = asyncWrapper(async (req, res) => {
 
         try {
-            
-            if (req?.user?.role !== "ADMIN") {
 
-                throw new UnauthenticatedError("Not authorized to access this route");
+            const { params: { id } } = req
 
+            const account = await Account.findById({_id: id})
+
+            if(!account) {
+
+                throw createCustomError('Account does not exist', 404)
+
+            } else {
+
+                return success(res, 200, account)
             }
 
-            const { id } = req.params
-
-            const account = await this.accountService.findOne(id)
-
-            if(account) {
-
-                res.status(200).json({
-                    message: "Budget Account Details.",
-                    data: account,
-                    success: 1
-                })
-
-            }
-
-        } catch (error) {
-            
-            throw error
+        } catch (err) {
+            console.log('ERR::: ', err)
+            return error(res, 500, err)
 
         }
     })
@@ -81,32 +70,27 @@ class AccountController {
 
         try {
 
-            const { category } = req.query
+            const { query: { accountCategory, page, limit } } = req
 
-            if(category) {
+            let filter = { }
 
-                const accounts = await this.accountService.filterAll(category)
-
-                res.status(200).json({
-                    message: "Budget Account Details.",
-                    data: accounts,
-                    success: 1
-                })
-
-            } else {
-
-                const accounts = await this.accountService.findAll()
-    
-                res.status(200).json({
-                    message: "Budget Account Details.",
-                    data: accounts,
-                    success: 1
-                })
+            if(accountCategory) {
+                // eslint-disable-next-line prefer-template
+                const regex = new RegExp(`${accountCategory}`, 'i');
+                filter = { ...filter, accountCategory: { $regex: regex } }
             }
 
-        } catch (error) {
+            const modelName = "Account";
 
-            throw error
+            const options = { page, limit, filter, modelName, sort: { createdAt: -1 } };
+
+            const accounts = await paginate(options);
+
+            return success(res, 200, accounts)
+
+        } catch (err) {
+            console.log('ERR::: ', err)
+            return error(res, 500, err)
 
         }
     })
@@ -114,55 +98,31 @@ class AccountController {
     updateAccount = asyncWrapper(async (req, res) => {
 
         try {
-            const { account_category } = req.body
+            const { params: { accountCategory }, body } = req
 
-            if (req?.user?.role !== "ADMIN") {
+            const accounts = await Account.updateMany({ accountCategory }, { $set: { ...body } }, { new: true })
 
-                throw new UnauthenticatedError("Not authorized to access this route");
+            return success(res, 200, accounts)
 
-            }
+        } catch (err) {
 
-            const account = await this.accountService.updateType(account_category, req.body)
-
-            if (account) {
-
-                res.status(200).json({
-                    message: "Account updated successfully.",
-                    data: account,
-                    success: 1
-                })
-
-            }
-
-        } catch (error) {
-
-            throw error
+            return error(res, 500, err)
         }
     })
 
     deleteAccount = asyncWrapper(async (req, res) => {
 
         try {
-            
-            if (req?.user?.role !== "ADMIN") {
-                
-                throw new UnauthenticatedError("Not authorized to access this route");
-            }
 
             const { id } = req.params
 
-            const account = await this.accountService.removeOne(id)
+            const account = await Account.findByIdAndDelete({_id: id})
 
-            if(account) {
-                res.status(200).json({
-                    message: "Budget Account Deleted Successfully.",
-                    success: 1
-                })
-            }
+            return success(res, 200, account)
 
-        } catch (error) {
+        } catch (err) {
             
-            throw error
+            return error(res, 500, err)
 
         }
     })

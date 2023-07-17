@@ -1,4 +1,4 @@
-import { createCustomError } from "../utils/customError.js";
+import { createCustomError } from "../utils/errors/customError.js";
 import AppDataSource from "../db/connect.js";
 import Account from "../models/Account.js";
 import BadRequest from "../utils/errors/badRequest.js";

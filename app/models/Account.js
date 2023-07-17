@@ -1,36 +1,18 @@
-import { EntitySchema } from "typeorm";
+import { model, Schema } from "mongoose";
+import paginator from "mongoose-paginate-v2";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const Account = new EntitySchema({
-    name: "Account", // Will use table name `category` as default behaviour.
-    tableName: "account", // Optional: Provide `tableName` property to override the default behaviour for table name.
-    columns: {
-        id: {
-            primary: true,
-            type: "int",
-            generated: true,
-        },
-        account_category: {
-            type: "varchar",
-        },
-        account_type: {
-            type: "varchar",
-            nullable: true
-        },
-        start_date: {
-            type: "datetime",
-            nullable: true
-        },
-        end_date: {
-            type: "datetime",
-            nullable: true
-        },
-        created_time: {
-            createDate: true
-        },
-        updated_time: {
-            updateDate: true,
-        }
-    }
-})
+const schema = new Schema(
+    {
+        accountCategory: { type: String, required: true },
+        accountType: { type: String },
+        startDate: { type: Date },
+        endDate: { type: Date },
+        operator: { id: String, name: String },
+    },
+    { timestamps: true }
+)
 
-export default Account;
+schema.plugin(paginator);
+schema.plugin(mongooseAggregatePaginate);
+export default model("Account", schema);

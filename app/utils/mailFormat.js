@@ -1,4 +1,4 @@
-import { createCustomError } from "./customError.js";
+import { createCustomError } from "./errors/customError.js";
 
 /* eslint-disable max-len */
 const BACKEND_URL =

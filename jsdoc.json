@@ -1,0 +1,16 @@
+{
+    "plugins": ["plugins/markdown", "plugins/summarize"],
+    "recurseDepth": 10,
+    "source": {
+        "include": ["./app"],
+        "includePattern": ".js, .env",
+        "excludePattern": "(node_modules|docs)"
+    },
+    "opts": {
+        "encoding": "utf8",
+        "readme": "./readme.md",
+        "destination": "docs/",
+        "recurse": true,
+        "verbose": true
+    }
+}

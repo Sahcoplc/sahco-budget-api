@@ -1,4 +1,7 @@
 import express from "express";
+import accountRoutes from "./Account.js"
+import budgetRoutes from "./Budget.js"
+import staticRoutes from "./Static.js"
 
 const router = express.Router();
 
@@ -8,5 +11,9 @@ router.get("/", (req, res) => {
       success: 1,
     });
 });
+
+router.use('/account', accountRoutes);
+router.use('/budget', budgetRoutes);
+router.use('/static-data', staticRoutes)
 
 export default router;

@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import { DataSource } from "typeorm"
 import Account from '../models/Account.js';
 import Budget from '../models/Budget.js';
-import User from '../models/User.js';
 import Notification from '../models/Notification.js';
 dotenv.config();
 
@@ -13,7 +12,7 @@ const AppDataSource = new DataSource({
     password: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_PASSWORD : process.env.PROD_DB_PASSWORD,
     database: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_DATABASE : process.env.PROD_DB_DATABASE,
     port: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_PORT : process.env.PROD_DB_PORT,
-    entities: [User, Budget, Account, Notification],
+    entities: [Budget, Account, Notification],
     synchronize: true,
     logging: true,
     connectorPackage: 'mysql2'

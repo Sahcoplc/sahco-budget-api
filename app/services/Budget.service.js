@@ -1,10 +1,9 @@
-import { createCustomError } from "../utils/customError.js";
+import { createCustomError } from "../utils/errors/customError.js";
 import AppDataSource from "../db/connect.js";
 import Budget from "../models/Budget.js";
 import BadRequest from "../utils/errors/badRequest.js";
 import AccountService from "./Account.service.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
-import User from "../models/User.js";
 
 /**
  * @type Class

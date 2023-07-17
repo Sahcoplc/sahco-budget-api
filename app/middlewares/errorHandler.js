@@ -1,4 +1,4 @@
-import { CustomAPIError } from "../utils/customError.js";
+import { CustomAPIError } from "../utils/errors/customError.js";
 
 const errorResponse = (res, statusCode, msg) =>
   res.status(statusCode).json({ message: msg, success: 0 });
