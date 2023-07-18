@@ -19,7 +19,7 @@ export const createAccountSchema = Joi.object({
     accountCategory: Joi.string().required(),
     accountType: Joi.string().required(),
     startDate: Joi.date(),
-    endDate: Joi.date(),
+    endDate: Joi.date().greater(Joi.ref("startDate")),
 })
 
 export const fetchAccountSchema = Joi.object({

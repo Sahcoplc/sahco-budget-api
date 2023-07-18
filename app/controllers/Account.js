@@ -5,8 +5,14 @@ import { createCustomError } from "../utils/errors/customError.js";
 import { paginate } from "../helpers/paginate.js";
 import BadRequestError from "../utils/errors/badRequest.js";
 
+/**
+ * @class
+ */
 class AccountController {
 
+    /**
+     * ! TODO: Create a bulk upload contoller to handle the bulk upload for current budget data, apply same to budget
+     */
     uploadAccounts = asyncWrapper(async (req, res) => {
         try {
             
