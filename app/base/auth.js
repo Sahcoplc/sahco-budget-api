@@ -14,7 +14,7 @@ const authMiddleware = asyncWrapper(async (req, res, next) => {
     if (isOpenRoute) return next();
     const apiKey = req.headers["x-sahcoapi-key"];
     const { data: user } = await getEmployee(apiKey);
-    const { data: permissions } = await getPermission(user._id, apiKey)
+    const { data: permissions } = await getPermission(user.permissions, apiKey);
 
     req.user = { ...user, permissions };
 
