@@ -30,9 +30,9 @@ class BudgetController {
         
             }
             
-            const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
+            const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december, year} = req.body
             
-            if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
+            if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december && year)) {
 
                 res.status(400).json({
                     message: "Budget records required.",
@@ -106,6 +106,10 @@ class BudgetController {
         }
     })
 
+    /**
+     * ! Modify this to fetch by dept and year
+     */
+
     getDeptBudget = asyncWrapper(async (req, res) => {
 
         try {
@@ -127,7 +131,11 @@ class BudgetController {
             
             throw error
         }
-    }) 
+    })
+    
+    /**
+     * ! Create a get budget by dept and 
+     */
 
     getBudgetInDept = asyncWrapper(async (req, res) => {
 
@@ -260,6 +268,8 @@ class BudgetController {
     getAllBudget = asyncWrapper(async (req, res) => {
 
         try {
+
+            const { query: { year } } = req
             
             if (req?.user?.role !== "ADMIN") {
 
@@ -267,7 +277,7 @@ class BudgetController {
         
             }
 
-            const budget = await this.budgetService.findAll()
+            const budget = await this.budgetService.findAll(year)
 
             if(budget) {
 
@@ -295,7 +305,9 @@ class BudgetController {
         
             }
 
-            const budget = await this.budgetService.findAllSum()
+            const { query: { year } } = req
+
+            const budget = await this.budgetService.findAllSum(year)
 
             if(budget) {
 
