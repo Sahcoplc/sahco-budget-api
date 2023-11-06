@@ -170,7 +170,7 @@ class BudgetService {
      * @return {Object} Budget
     */
 
-    findAll = async () => {
+    findAll = async (year) => {
 
         try {
 

@@ -3,6 +3,7 @@ import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
 import UsersService from "../services/User.service.js";
 import NotificationService from "../services/Notification.service.js";
+import { budgetYears } from "helpers/constants.js";
 
 class BudgetController {
 
@@ -115,8 +116,9 @@ class BudgetController {
         try {
 
             const { dept } = req?.user
+            const { year } = req.query
 
-            const budget = await this.budgetService.findDeptBudget(dept)
+            const budget = await this.budgetService.findDeptBudget(dept, year)
 
             if(budget) {
 
@@ -324,6 +326,25 @@ class BudgetController {
 
         }
     })
+
+    /***
+     * *Fetch all available years in the database
+     * ! TO DO: Add this to the routes
+     */
+
+    getAllYears = asyncWrapper(async (req, res) => {
+        try {
+            res.status(200).json({
+                message: 'Budget Years',
+                success: 1,
+                data: budgetYears
+            })
+        } catch (e) {
+            throw e
+        }
+
+    })
+
 }
 
 export default BudgetController
