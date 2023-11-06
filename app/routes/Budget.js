@@ -15,5 +15,7 @@ router.delete('/:id', authMiddleWare, budgetController.deleteBudget)
 router.get('/admin/all', authMiddleWare, budgetController.getAllBudget)
 router.get('/admin/:dept', authMiddleWare, budgetController.getBudgetInDept)
 router.get('/admin/sum/profit', authMiddleWare, budgetController.getAllBudgetProfit)
+router.get('/years', authMiddleWare, budgetController.getAllYears)
+
 
 export default router;
