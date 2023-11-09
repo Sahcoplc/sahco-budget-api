@@ -3,7 +3,7 @@ import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
 import UsersService from "../services/User.service.js";
 import NotificationService from "../services/Notification.service.js";
-import { budgetYears } from "helpers/constants.js";
+import { budgetYears } from "../helpers/constants.js";
 
 class BudgetController {
 
@@ -21,6 +21,7 @@ class BudgetController {
        
         try {
             const { user: { role, id } } = req
+            console.log(role)
 
             if (role !== "USER") {
 
@@ -30,6 +31,7 @@ class BudgetController {
                 });
         
             }
+            
             
             const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december, year} = req.body
             
@@ -142,10 +144,9 @@ class BudgetController {
     getBudgetInDept = asyncWrapper(async (req, res) => {
 
         try {
+            const { year, dept } = req.query
 
-            const { dept } = req?.params
-
-            const budget = await this.budgetService.findDeptBudget(dept)
+            const budget = await this.budgetService.findDeptBudget(dept, year)
 
             if(budget) {
 
