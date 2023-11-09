@@ -126,8 +126,6 @@ class BudgetService {
             .addSelect('account.id').addSelect('account.account_category').addSelect('account.account_type')
             .where('budget.department = :department', {department}).andWhere('budget.year = :year', {year}).getMany()
             
-            console.log({budget})
-            
             return budget
 
         } catch (error) {

@@ -21,7 +21,7 @@ class BudgetController {
        
         try {
             const { user: { role, id } } = req
-            console.log(role)
+        
 
             if (role !== "USER") {
 
