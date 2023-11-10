@@ -15,7 +15,7 @@ const AppDataSource = new DataSource({
     port: process.env.NODE_ENV !== "production" ? process.env.DEV_DB_PORT : process.env.PROD_DB_PORT,
     entities: [User, Budget, Account, Notification],
     synchronize: true,
-    logging: true,
+    logging: false,
     connectorPackage: 'mysql2'
 })
 // to initialize initial connection with the database, register all entities

@@ -3,6 +3,7 @@ import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import BudgetService from "../services/Budget.service.js";
 import UsersService from "../services/User.service.js";
 import NotificationService from "../services/Notification.service.js";
+import { budgetYears } from "../helpers/constants.js";
 
 class BudgetController {
 
@@ -20,6 +21,7 @@ class BudgetController {
        
         try {
             const { user: { role, id } } = req
+        
 
             if (role !== "USER") {
 
@@ -30,9 +32,10 @@ class BudgetController {
         
             }
             
-            const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december} = req.body
             
-            if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december)) {
+            const {accountId, january, february, march, april, may, june, july, august, sept, october, nov, december, year} = req.body
+            
+            if (!(accountId && january && february && march && april && may && june && july && august && sept && october && nov && december && year)) {
 
                 res.status(400).json({
                     message: "Budget records required.",
@@ -106,13 +109,18 @@ class BudgetController {
         }
     })
 
+    /**
+     * ! Modify this to fetch by dept and year
+     */
+
     getDeptBudget = asyncWrapper(async (req, res) => {
 
         try {
 
             const { dept } = req?.user
+            const { year } = req.query
 
-            const budget = await this.budgetService.findDeptBudget(dept)
+            const budget = await this.budgetService.findDeptBudget(dept, year)
 
             if(budget) {
 
@@ -127,15 +135,18 @@ class BudgetController {
             
             throw error
         }
-    }) 
+    })
+    
+    /**
+     * ! Create a get budget by dept and 
+     */
 
     getBudgetInDept = asyncWrapper(async (req, res) => {
 
         try {
+            const { year, dept } = req.query
 
-            const { dept } = req?.params
-
-            const budget = await this.budgetService.findDeptBudget(dept)
+            const budget = await this.budgetService.findDeptBudget(dept, year)
 
             if(budget) {
 
@@ -260,6 +271,8 @@ class BudgetController {
     getAllBudget = asyncWrapper(async (req, res) => {
 
         try {
+
+            const { query: { year } } = req
             
             if (req?.user?.role !== "ADMIN") {
 
@@ -267,7 +280,7 @@ class BudgetController {
         
             }
 
-            const budget = await this.budgetService.findAll()
+            const budget = await this.budgetService.findAll(year)
 
             if(budget) {
 
@@ -295,7 +308,9 @@ class BudgetController {
         
             }
 
-            const budget = await this.budgetService.findAllSum()
+            const { query: { year } } = req
+
+            const budget = await this.budgetService.findAllSum(year)
 
             if(budget) {
 
@@ -312,6 +327,25 @@ class BudgetController {
 
         }
     })
+
+    /***
+     * *Fetch all available years in the database
+     * ! TO DO: Add this to the routes
+     */
+
+    getAllYears = asyncWrapper(async (req, res) => {
+        try {
+            res.status(200).json({
+                message: 'Budget Years',
+                success: 1,
+                data: budgetYears
+            })
+        } catch (e) {
+            throw e
+        }
+
+    })
+
 }
 
 export default BudgetController

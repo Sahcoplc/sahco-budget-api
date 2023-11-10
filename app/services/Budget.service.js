@@ -118,14 +118,14 @@ class BudgetService {
      * @return {Object} Budget
     */
 
-    findDeptBudget = async (department) => {
+    findDeptBudget = async (department, year) => {
 
         try {
-            
-            const budget = await this.repo.createQueryBuilder('budget').leftJoinAndSelect('budget.account', 'account')
+            console.log({year})
+            const budget = await this.repo.createQueryBuilder('budget').leftJoinAndSelect('budget.account', 'account', 'account.id = budget.accountId')
             .addSelect('account.id').addSelect('account.account_category').addSelect('account.account_type')
-            .where('budget.department = :department', {department}).getMany()
-
+            .where('budget.department = :department', {department}).andWhere('budget.year = :year', {year}).getMany()
+            
             return budget
 
         } catch (error) {
@@ -140,7 +140,7 @@ class BudgetService {
      * @return {Object} Budget
     */
 
-    findAllSum = async () => {
+    findAllSum = async (year) => {
 
         try {
 
@@ -154,7 +154,7 @@ class BudgetService {
             .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
             .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
             .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum').where('budget.status != :status', {status: 'DECLINED'})
-            .groupBy('account.account_type').addGroupBy('account.id').getRawMany()
+            .andWhere('budget.year = :year', {year}).groupBy('account.account_type').addGroupBy('account.id').getRawMany()
 
             return budget
 
@@ -170,8 +170,8 @@ class BudgetService {
      * @return {Object} Budget
     */
 
-    findAll = async () => {
-
+    findAll = async (year) => {
+        
         try {
 
             const budget = await this.repo.createQueryBuilder('budget')
@@ -184,7 +184,7 @@ class BudgetService {
             .addSelect('SUM(budget.sept)', 'septSum').addSelect('SUM(budget.october)', 'octSum')
             .addSelect('SUM(budget.nov)', 'novSum').addSelect('SUM(budget.december)', 'decSum')
             .addSelect('SUM(budget.estimated_budget)', 'estimatedSum').addSelect('SUM(budget.actual_budget)', 'actualSum')
-            .groupBy('account.account_type').addGroupBy('account.id').getRawMany()
+            .where('budget.year = :year', {year}).groupBy('account.account_type').addGroupBy('account.id').getRawMany()
 
             return budget
 
