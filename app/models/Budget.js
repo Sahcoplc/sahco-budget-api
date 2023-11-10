@@ -26,6 +26,9 @@ const Budget = new EntitySchema({
         department: {
             type: "varchar",
         },
+        year: {
+            type: "varchar",
+        },
         january: {
             type: "decimal",
             precision: 13,
@@ -85,9 +88,6 @@ const Budget = new EntitySchema({
             type: "decimal",
             precision: 13,
             scale: 2
-        },
-        year: {
-            type: "varchar"
         },
         estimated_budget: {
             type: "decimal",
