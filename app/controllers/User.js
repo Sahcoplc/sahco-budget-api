@@ -228,8 +228,6 @@ class UsersController {
             ...user,
             budget
           }
-
-          currentUser.budget = budget
   
           res.status(200).json({
             message: "User Profile.",
