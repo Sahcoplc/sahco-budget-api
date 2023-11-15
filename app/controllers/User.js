@@ -220,15 +220,14 @@ class UsersController {
         delete user.otpExpiresIn
         delete user.pass_word
 
-        const budget = await this.budgetService.findDeptBudget(dept)
+        const budget = await this.budgetService.findDeptBudget(dept, budgetYears[1])
         
         if(budget) {
 
           const currentUser = {
             ...user,
+            budget
           }
-
-          currentUser.budget = budget
   
           res.status(200).json({
             message: "User Profile.",
