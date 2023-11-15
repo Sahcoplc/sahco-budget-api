@@ -121,7 +121,6 @@ class BudgetService {
     findDeptBudget = async (department, year) => {
 
         try {
-            console.log({year})
             const budget = await this.repo.createQueryBuilder('budget').leftJoinAndSelect('budget.account', 'account', 'account.id = budget.accountId')
             .addSelect('account.id').addSelect('account.account_category').addSelect('account.account_type')
             .where('budget.department = :department', {department}).andWhere('budget.year = :year', {year}).getMany()
