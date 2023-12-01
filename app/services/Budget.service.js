@@ -6,6 +6,7 @@ import AccountService from "./Account.service.js";
 import UnauthenticatedError from "../utils/errors/unauthenticated.js";
 import User from "../models/User.js";
 
+
 /**
  * @type Class
  */
@@ -29,7 +30,7 @@ class BudgetService {
             
             const found = await this.findType(budget.department, budget.account_type)
             
-            if(found !== null) {
+            if(found !== null && found.year === budget.year) {
 
                 return 'A budget with this account type already exist.'
                 
