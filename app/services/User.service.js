@@ -147,7 +147,7 @@ class UsersService {
     findAll = async () => {
         try {
             
-            const users = await this.repo.find()
+            const users = await this.repo.createQueryBuilder("user").orderBy("user.created_time", "DESC").getMany()
     
             users.map(user => {
 

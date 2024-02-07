@@ -47,7 +47,7 @@ class NotificationService {
         try {
 
             const activities = await this.repo.createQueryBuilder('activities')
-            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId')
+            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId').where('activities.isRead = :isRead', { isRead: false }).orderBy("activities.created_time", "DESC")
             .getMany()
 
             return activities;
@@ -62,7 +62,7 @@ class NotificationService {
         try {
             
             const activities = await this.repo.createQueryBuilder('activities')
-            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId').where('activities.isRead = :isRead', { isRead: true })
+            .leftJoinAndSelect('activities.user', 'user', 'user.id = activities.userId').where('activities.isRead = :isRead', { isRead: true }).orderBy("activities.created_time", "DESC")
             .getMany()
 
             return activities;

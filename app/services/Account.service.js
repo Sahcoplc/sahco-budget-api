@@ -99,7 +99,7 @@ class AccountService {
 
         try {
            
-            const accounts = await this.repo.find()
+            const accounts = await this.repo.createQueryBuilder("account").orderBy("account.created_time", "DESC").getMany()
 
             return accounts;
 
