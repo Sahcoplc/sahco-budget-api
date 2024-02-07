@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.5...v1.3.6) (2024-02-07)
+
+
+### Bug Fixes
+
+* Update queries to fetch by order and activities be fetched by isRead ([093a7a2](https://github.com/Sahcoplc/sahco-budget-api/commit/093a7a2ddce2218de907128a1c0678625ef7ca5a))
+
 ## [1.3.5](https://github.com/Sahcoplc/sahco-budget-api/compare/v1.3.4...v1.3.5) (2022-12-23)
 
 
